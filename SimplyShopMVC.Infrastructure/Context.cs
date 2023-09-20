@@ -16,6 +16,8 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<Category> Categories { get; set; }
         public DbSet<ConnectArticleTag> ConnectArticleTag { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<ItemTag> ItemTags { get; set; }
+        public DbSet<ConnectItemTag> ConnectItemTag { get; set; }
 
         public Context(DbContextOptions options) : base(options)
         {
@@ -36,6 +38,19 @@ namespace SimplyShopMVC.Infrastructure
                 .HasOne<ArticleTag>(cat => cat.ArticleTag)
                 .WithMany(at => at.ConnectArticleTags)
                 .HasForeignKey(cat => cat.ArticleTagId);
+
+            builder.Entity<ConnectItemTag>()
+               .HasKey(cit => new { cit.ItemId, cit.ItemTagId });
+
+            builder.Entity<ConnectItemTag>()
+                .HasOne<Item>(cit => cit.Item)
+                .WithMany(i => i.ConnectItemTags)
+                .HasForeignKey(cit => cit.ItemId);
+
+            builder.Entity<ConnectItemTag>()
+                .HasOne<ItemTag>(cit => cit.ItemTag)
+                .WithMany(it => it.ConnectItemTags)
+                .HasForeignKey(cit => cit.ItemTagId);
         }
     }
 }

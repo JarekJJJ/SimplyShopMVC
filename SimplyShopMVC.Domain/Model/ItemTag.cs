@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace SimplyShopMVC.Domain.Model
 {
-    public class Item
+    public class ItemTag
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int CategoryId { get; set; }
-
-        public virtual Category Category { get; set; }
+        public string Description { get; set; }
         public ICollection<ConnectItemTag> ConnectItemTags { get; set; }
+
 
     }
 }
