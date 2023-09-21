@@ -16,6 +16,8 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<Category> Categories { get; set; }
         public DbSet<ConnectArticleTag> ConnectArticleTag { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<ItemWarehouse> ItemWarehouses { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<ItemTag> ItemTags { get; set; }
         public DbSet<ConnectItemTag> ConnectItemTag { get; set; }
 
