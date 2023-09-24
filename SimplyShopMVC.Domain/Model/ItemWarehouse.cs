@@ -13,10 +13,10 @@ namespace SimplyShopMVC.Domain.Model
         public int WarehouseId { get; set; }
         public int ItemId { get; set; }
         public string WName { get; set; }
-        public string WDescription { get; set; }
+        public string? WDescription { get; set; }
         public int Quantity { get; set; }
         public int DeliveryTime { get; set; }
-        public decimal NetPurchasePrice { get; set; }
+        public decimal? NetPurchasePrice { get; set; }
         public decimal FinalPriceA { get; set; }
 
         public virtual Item Item { get; set; }

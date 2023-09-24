@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SimplyShopMVC.Application;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Infrastructure;
+using SimplyShopMVC.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Context>();
+//Tutaj trzeba powi¹zaæ interfejsy z repository !!!
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -41,7 +47,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "blog",
-    pattern: "{controller=News}/{action=Index}/{id?}");
+    pattern: "{controller=Article}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
