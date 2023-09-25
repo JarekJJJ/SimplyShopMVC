@@ -12,7 +12,7 @@ namespace SimplyShopMVC.Domain.Interface
         void DeleteArticle(int articleid);
 
         int AddArticle(Article article);
-        int UpdateArticle(Article article);
+        void UpdateArticle(Article article);
 
         IQueryable<Article> GetArticlesByTagId(int tagId);
 

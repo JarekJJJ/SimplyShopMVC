@@ -29,6 +29,7 @@ namespace SimplyShopMVC.Web.Controllers
             return View(new NewArticleVm());
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult AddArticle(NewArticleVm model)
         {
             ValidationResult result = _articleValidator.Validate(model);
@@ -37,9 +38,37 @@ namespace SimplyShopMVC.Web.Controllers
                 result.AddToModelState(this.ModelState);
                 return View("AddArticle", model);
             }
+            if(ModelState.IsValid)
+            {
+                var id = _articleService.AddArticle(model);
+                return RedirectToAction("Index");
+            }
+            return View("AddArticle", model);
 
-            var id = _articleService.AddArticle(model);
-            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult UpdateArticle(int id)
+        {
+            var article = _articleService.GetArticleToUpdate(id);
+            return View(article);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateArticle(NewArticleVm model)
+        {
+            ValidationResult result = _articleValidator.Validate(model);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(this.ModelState);
+                return View("UpdateArticle", model);
+            }
+            if (ModelState.IsValid)
+            {
+                _articleService.UpdateArticle(model);
+                return RedirectToAction("Index");
+            }
+            return View("UpdateArticle", model);
+
         }
     }
 }

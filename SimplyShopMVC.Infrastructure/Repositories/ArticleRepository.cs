@@ -35,7 +35,8 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public Article GetArticleById(int articleId)
         {
-            throw new NotImplementedException();
+            var result= _context.Articles.FirstOrDefault(a => a.Id == articleId);
+            return result;
         }
 
         public IQueryable<Article> GetArticlesByTagId(int tagId)
@@ -43,9 +44,16 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public int UpdateArticle(Article article)
+        public void UpdateArticle(Article article)
         {
-            throw new NotImplementedException();
+            //var _article = _context.Articles.Where(i=>i.Id == article.Id).FirstOrDefault();
+            //if (_article != null)
+            //{
+            //    _article = article;
+            //    _context.SaveChanges();
+            //}
+            _context.Articles.Update(article);
+            _context.SaveChanges();
         }
     }
 }

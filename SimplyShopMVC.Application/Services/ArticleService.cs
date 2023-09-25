@@ -55,9 +55,18 @@ namespace SimplyShopMVC.Application.Services
             return articleVm;
         }
 
-        public int UpdateArticle(NewArticleVm article)
+        public NewArticleVm GetArticleToUpdate(int articleId)
         {
-            throw new NotImplementedException();
+            var article = _articleRepo.GetArticleById(articleId);
+            var articleVm = _mapper.Map<NewArticleVm>(article);
+            return articleVm;
+        }
+
+        public void UpdateArticle(NewArticleVm model)
+        {
+            var article = _mapper.Map<Article>(model);
+            _articleRepo.UpdateArticle(article);
+
         }
     }
 }
