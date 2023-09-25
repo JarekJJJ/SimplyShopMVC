@@ -1,6 +1,9 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Application;
+using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Infrastructure;
 using SimplyShopMVC.Infrastructure.Repositories;
@@ -18,9 +21,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 //Tutaj trzeba powi¹zaæ interfejsy z repository !!!
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
+
 builder.Services.AddControllersWithViews();
+//Fluent Validation przeniesiono do DependencyInjection w Aplication
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

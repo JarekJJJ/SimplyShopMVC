@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Domain.Interface;
+using SimplyShopMVC.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,9 @@ namespace SimplyShopMVC.Application.Services
 
         public int AddArticle(NewArticleVm article)
         {
-            throw new NotImplementedException();
+            var art = _mapper.Map<Article>(article); //Wskazuje docelowy model w domain i przekazuje obiekt article
+            var id = _articleRepo.AddArticle(art);
+            return id;
         }
 
         public int DeleteArticle(int id)

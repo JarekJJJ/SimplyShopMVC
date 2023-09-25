@@ -9,10 +9,10 @@ namespace SimplyShopMVC.Domain.Interface
 {
     public interface IArticleRepository
     {
-        void DeleteArticle(int Articleid);
+        void DeleteArticle(int articleid);
 
-        int AddArticle(Article Article);
-        int UpdateArticle(Article Article);
+        int AddArticle(Article article);
+        int UpdateArticle(Article article);
 
         IQueryable<Article> GetArticlesByTagId(int tagId);
 

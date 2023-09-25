@@ -15,12 +15,14 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             _context = context;
         }
-        public int AddArticle(Article Article)
+        public int AddArticle(Article article)
         {
-            throw new NotImplementedException();
+            _context.Articles.Add(article);
+            _context.SaveChanges();
+            return article.Id;
         }
 
-        public void DeleteArticle(int Articleid)
+        public void DeleteArticle(int articleid)
         {
             throw new NotImplementedException();
         }
@@ -41,7 +43,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public int UpdateArticle(Article Article)
+        public int UpdateArticle(Article article)
         {
             throw new NotImplementedException();
         }

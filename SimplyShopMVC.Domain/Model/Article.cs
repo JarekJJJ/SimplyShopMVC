@@ -12,9 +12,9 @@ namespace SimplyShopMVC.Domain.Model
         public string Title { get; set; }
         public string ShortDescription { get; set; }
         public string Content { get; set; }
-
+        public DateTime Created { get; set; }
         public ICollection<ConnectArticleTag> ConnectArticleTags { get; set; }
 
-    
+
     }
 }
