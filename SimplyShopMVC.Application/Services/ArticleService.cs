@@ -29,9 +29,9 @@ namespace SimplyShopMVC.Application.Services
             return id;
         }
 
-        public int DeleteArticle(int id)
+        public void DeleteArticle(int id)
         {
-            throw new NotImplementedException();
+            _articleRepo.DeleteArticle(id);
         }
 
         public ListArticleForListVm GetAllArticleForList()

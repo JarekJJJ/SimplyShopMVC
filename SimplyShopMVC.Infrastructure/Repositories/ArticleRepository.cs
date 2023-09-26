@@ -24,18 +24,20 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public void DeleteArticle(int articleid)
         {
-            throw new NotImplementedException();
+            var article = _context.Articles.Find(articleid);
+            _context.Articles.Remove(article);
+            _context.SaveChanges();
         }
 
         public IQueryable<Article> GetAllArticles()
         {
-           var articles= _context.Articles;
+            var articles = _context.Articles;
             return articles;
         }
 
         public Article GetArticleById(int articleId)
         {
-            var result= _context.Articles.FirstOrDefault(a => a.Id == articleId);
+            var result = _context.Articles.FirstOrDefault(a => a.Id == articleId);
             return result;
         }
 

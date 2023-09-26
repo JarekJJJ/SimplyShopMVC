@@ -70,5 +70,10 @@ namespace SimplyShopMVC.Web.Controllers
             return View("UpdateArticle", model);
 
         }
+        public IActionResult Delete(int id)
+        {
+            _articleService.DeleteArticle(id);
+            return RedirectToAction("Index");
+        }
     }
 }
