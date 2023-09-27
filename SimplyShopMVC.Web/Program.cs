@@ -18,13 +18,17 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Context>();
-//Tutaj trzeba powi¹zaæ interfejsy z repository !!!
+//Tutaj trzeba powiï¿½zaï¿½ interfejsy z repository !!!
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
 builder.Services.AddControllersWithViews();
 //Fluent Validation przeniesiono do DependencyInjection w Aplication
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = false;
 
+});
 
 var app = builder.Build();
 
