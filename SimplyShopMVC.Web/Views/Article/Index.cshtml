@@ -4,11 +4,16 @@
     ViewData["Title"] = "Article";
 }
 
-<h1>Article</h1>
 
-<p>
+<h1>Article</h1>
+@if(User.IsInRole("Admin"))
+{
+  <p>
     <a asp-action="AddArticle">Create New</a>
-</p>
+</p>  
+}
+
+
 <table class="table">
     <thead>
         <tr>

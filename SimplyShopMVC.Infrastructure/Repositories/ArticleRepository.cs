@@ -1,4 +1,5 @@
-﻿using SimplyShopMVC.Domain.Interface;
+﻿using Microsoft.AspNetCore.Identity;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         }
         public int AddArticle(Article article)
         {
-            _context.Articles.Add(article);
+            _context.Articles.Add(article);            
             _context.SaveChanges();
             return article.Id;
         }
@@ -56,6 +57,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             //}
             _context.Articles.Update(article);
             _context.SaveChanges();
-        }
+        }      
     }
 }

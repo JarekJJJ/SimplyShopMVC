@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Identity;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Domain.Interface;
@@ -43,7 +44,7 @@ namespace SimplyShopMVC.Application.Services
             {
                 Articles = articles,
                 Count = articles.Count
-            };
+            };           
             return articlesList;
         }
 

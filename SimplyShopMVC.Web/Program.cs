@@ -16,7 +16,7 @@ builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Context>();
 //Tutaj trzeba powi�za� interfejsy z repository !!!
 builder.Services.AddApplication();
@@ -29,7 +29,15 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.SignIn.RequireConfirmedEmail = false;
 
 });
-
+//lekcja 9.8, 9.10
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanEditArticle", policy =>
+    {
+        policy.RequireClaim("EditArticle");
+        policy.RequireRole("Admin");
+    });
+});
 var app = builder.Build();
 
 

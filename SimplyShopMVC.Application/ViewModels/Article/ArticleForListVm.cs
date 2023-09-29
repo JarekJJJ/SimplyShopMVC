@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using SimplyShopMVC.Application.Mapping;
 using System;
 using System.Collections.Generic;

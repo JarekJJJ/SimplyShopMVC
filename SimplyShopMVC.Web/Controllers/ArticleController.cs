@@ -1,12 +1,15 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
+using SimplyShopMVC.Web.Filters;
 
 namespace SimplyShopMVC.Web.Controllers
 {
+    
     public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
@@ -17,12 +20,14 @@ namespace SimplyShopMVC.Web.Controllers
             _articleService = articleService;
             _articleValidator = articleValidator;
         }
-
+       // [Authorize]
+       // [CheckPermissions("Read")]
         public IActionResult Index()
         {
             var articles = _articleService.GetAllArticleForList();
             return View(articles);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult AddArticle()
         {
@@ -46,6 +51,7 @@ namespace SimplyShopMVC.Web.Controllers
             return View("AddArticle", model);
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult UpdateArticle(int id)
         {
