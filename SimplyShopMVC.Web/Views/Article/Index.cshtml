@@ -6,11 +6,11 @@
 
 
 <h1>Article</h1>
-@if(User.IsInRole("Admin"))
+@if (User.IsInRole("Admin"))
 {
-  <p>
-    <a asp-action="AddArticle">Create New</a>
-</p>  
+    <p>
+        <a asp-action="AddArticle">Create New</a>
+    </p>
 }
 
 
@@ -26,20 +26,39 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Articles) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                 @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.ActionLink("UpdateArticle", "UpdateArticle", new {id=item.Id}) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id})
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Articles)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.ActionLink("UpdateArticle", "UpdateArticle", new {id=item.Id}) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.Id})
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+@foreach (var item in Model.Articles)
+{
+    <div class="card mb-6" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="~/media/articleimg/@(Html.DisplayFor(modelItem =>item.Id)).jpg" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                    <p class="card-text text-truncate ">@Html.DisplayFor(modelItem => item.ShortDescription)</p>
+                    <p><button type="button" class="btn btn-light nav-link"> @Html.ActionLink("Czytaj>>", "ArticleDetail", new {id=item.Id}) |</button></p>
+                    <p class="card-text"><small class="text-body-secondary">Ostatnia aktualizacja: @(item.Created.ToShortDateString())</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
