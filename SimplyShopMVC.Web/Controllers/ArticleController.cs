@@ -35,7 +35,7 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddArticle(NewArticleVm model)
+        public IActionResult AddArticle(NewArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
         {
             ValidationResult result = _articleValidator.Validate(model);
             if (!result.IsValid)
@@ -45,7 +45,7 @@ namespace SimplyShopMVC.Web.Controllers
             }
             if(ModelState.IsValid)
             {
-                var id = _articleService.AddArticle(model);
+                var id = _articleService.AddArticle(model, oHostingEnvironment);               
                 return RedirectToAction("Index");
             }
             return View("AddArticle", model);

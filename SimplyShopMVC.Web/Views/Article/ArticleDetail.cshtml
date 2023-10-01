@@ -4,9 +4,15 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    string thumbImage = Model.imagePath.FirstOrDefault();
 }
 <div class="card mb-3">
-    <img src="~/media/articleimg/@(Html.DisplayFor(m=>m.Id)).jpg" class="card-img-top object-fit-scale border rounded" height="200px" width="auto" alt="...">
+    <img src="~/media/articleimg/@(Model.Id)/@thumbImage" class="card-img-top object-fit-scale border rounded" height="200px" width="auto" alt="...">
+  <div class="card-body">
+        <h5 class="card-title">@(Html.DisplayFor(m => m.Title))</h5>
+        <p class="card-text">@(Html.Raw(Model.Content))</p>
+        <p class="card-text"><small class="text-body-secondary">Utworzono: @(Model.Created.ToShortDateString())</small></p>
+  </div>
   <div class="card-body">
         <h5 class="card-title">@(Html.DisplayFor(m => m.Title))</h5>
         <p class="card-text">@(Html.Raw(Model.Content))</p>

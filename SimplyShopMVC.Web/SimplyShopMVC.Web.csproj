@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\media\articleimg\mini\" />
+    <Folder Include="wwwroot\media\articleimg\9\" />
   </ItemGroup>
 
 </Project>

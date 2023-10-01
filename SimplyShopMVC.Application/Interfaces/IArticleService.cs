@@ -1,4 +1,6 @@
-﻿using SimplyShopMVC.Application.ViewModels.Article;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using SimplyShopMVC.Application.ViewModels.Article;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,8 @@ namespace SimplyShopMVC.Application.Interfaces
         ListArticleForListVm GetAllArticleForList();
         ArticleDetailVm GetArticleDetails(int articleId);
         NewArticleVm GetArticleToUpdate(int articleId);
-        int AddArticle(NewArticleVm article);
+        int AddArticle(NewArticleVm article, [FromServices] IHostingEnvironment oHostingEnvironment);
         void UpdateArticle(NewArticleVm article);
         void DeleteArticle(int id);
-        
-
-
     }
 }

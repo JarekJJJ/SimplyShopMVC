@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
+using SimplyShopMVC.Application.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,16 +21,29 @@ namespace SimplyShopMVC.Application.Services
     {
         private readonly IArticleRepository _articleRepo;
         private readonly IMapper _mapper;
-        public ArticleService(IArticleRepository articleRepo, IMapper mapper)
+        private readonly IHostingEnvironment _hosting;
+        public ArticleService(IArticleRepository articleRepo, IMapper mapper, IHostingEnvironment hostingEnvironment)
         {
             _articleRepo = articleRepo;
             _mapper = mapper;
+            _hosting = hostingEnvironment;
         }
 
-        public int AddArticle(NewArticleVm article)
+        public int AddArticle(NewArticleVm article, [FromServices] IHostingEnvironment oHostingEnvironment)
         {
             var art = _mapper.Map<Article>(article); //Wskazuje docelowy model w domain i przekazuje obiekt article
             var id = _articleRepo.AddArticle(art);
+            var folderName = art.Id.ToString();
+            string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
+            Directory.CreateDirectory(newFolderPath);
+
+            string fileName = $"{article.Image.FileName}";
+            string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+            using (FileStream fileStream = System.IO.File.Create(filePath))
+            {
+                article.Image.CopyTo(fileStream);
+                fileStream.Flush();
+            }
             return id;
         }
 
@@ -40,6 +57,13 @@ namespace SimplyShopMVC.Application.Services
             //.projectTo - stosujemy przy kolekcjacj Iquerable
             var articles = _articleRepo.GetAllArticles()
                   .ProjectTo<ArticleForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var article in articles)
+            {
+                var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
+                var imageToList = ImageHelper.AllImageFromPath(_pathImage).Take(1).ToList();
+                //Pobierane są wszystkie zdjęcia z folderu o id artykułu i przypisywane do listy Viewmodelu
+                article.imagePath = imageToList;
+            }
             var articlesList = new ListArticleForListVm()
             {
                 Articles = articles,
@@ -53,6 +77,9 @@ namespace SimplyShopMVC.Application.Services
             // metoda _mapper.Map jest wykorzystywana przy pojedynczym obiekcie!
            var article = _articleRepo.GetArticleById(articleId);
             var articleVm = _mapper.Map<ArticleDetailVm>(article);
+            var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
+            var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+            articleVm.imagePath = imageToList;
             return articleVm;
         }
 
@@ -69,5 +96,6 @@ namespace SimplyShopMVC.Application.Services
             _articleRepo.UpdateArticle(article);
 
         }
+        
     }
 }

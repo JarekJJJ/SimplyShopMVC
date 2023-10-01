@@ -15,9 +15,11 @@ namespace SimplyShopMVC.Application.ViewModels.Article
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
+        public List<string> imagePath { get; set; }
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<SimplyShopMVC.Domain.Model.Article, ArticleDetailVm>();
+            profile.CreateMap<SimplyShopMVC.Domain.Model.Article, ArticleDetailVm>()
+                .ForMember(s => s.imagePath, opt => opt.Ignore());
         }
     }
 

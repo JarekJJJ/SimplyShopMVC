@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using SimplyShopMVC.Application.Mapping;
 using System;
 using System.Collections.Generic;
@@ -20,10 +21,12 @@ namespace SimplyShopMVC.Application.ViewModels.Article
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
+        public IFormFile Image { get; set; }  
         public void Mapping(Profile profile)
         {
             //przy tworzeniu nowego obiektu mapujemy z Vm-a do modelu w domain !!! 
-            profile.CreateMap<NewArticleVm, SimplyShopMVC.Domain.Model.Article>().ReverseMap();
+            profile.CreateMap<NewArticleVm, SimplyShopMVC.Domain.Model.Article>().ReverseMap()
+                .ForMember(s=>s.Image, opt=>opt.Ignore());
         }
     }
     public class NewArticleValidation : AbstractValidator<NewArticleVm>
