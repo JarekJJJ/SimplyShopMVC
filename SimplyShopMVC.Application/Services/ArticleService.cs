@@ -68,14 +68,14 @@ namespace SimplyShopMVC.Application.Services
             {
                 Articles = articles,
                 Count = articles.Count
-            };           
+            };
             return articlesList;
         }
 
         public ArticleDetailVm GetArticleDetails(int articleId)
         {
             // metoda _mapper.Map jest wykorzystywana przy pojedynczym obiekcie!
-           var article = _articleRepo.GetArticleById(articleId);
+            var article = _articleRepo.GetArticleById(articleId);
             var articleVm = _mapper.Map<ArticleDetailVm>(article);
             var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
             var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
@@ -90,12 +90,25 @@ namespace SimplyShopMVC.Application.Services
             return articleVm;
         }
 
-        public void UpdateArticle(NewArticleVm model)
+        public void UpdateArticle(NewArticleVm model, [FromServices] IHostingEnvironment oHostingEnvironment)
         {
             var article = _mapper.Map<Article>(model);
             _articleRepo.UpdateArticle(article);
+            var folderName = article.Id.ToString();
+            string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
+           // Directory.CreateDirectory(newFolderPath);
+            if (model.Image != null)
+            {
+                string fileName = $"{model.Image.FileName}";
+                string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                using (FileStream fileStream = System.IO.File.Create(filePath))
+                {
+                    model.Image.CopyTo(fileStream);
+                    fileStream.Flush();
+                }
+            }
 
         }
-        
+
     }
 }
