@@ -91,3 +91,12 @@ body {
     .bd-mode-toggle .dropdown-menu .active .bi {
         display: block !important;
     }
+.text-container {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* Ogranicz do 3 linijek */
+    overflow: hidden;
+}
+div.article-list {
+    height: 250px;
+}
