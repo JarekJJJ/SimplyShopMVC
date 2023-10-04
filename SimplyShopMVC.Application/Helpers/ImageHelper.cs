@@ -9,13 +9,21 @@ namespace SimplyShopMVC.Application.Helpers
     public static class ImageHelper
     {
         
-        public static List<string> AllImageFromPath(string path)
+        public static List<string> AllImageFromPath(string path) // pobiera nazwy plików
         {
             string folderPath = path;
             List<string> imagePaths = Directory.GetFiles(folderPath)
                 .Where(file => IsImageFile(file)).ToList();
             var listFile = imagePaths.Select(f=>Path.GetFileName(f)).ToList();
             return listFile;
+        }
+        public static List<string> AllImageUrlFromPath(string path) // pobiera pliki wraz ze ścieżką
+        {
+            string folderPath = path;
+            List<string> imagePaths = Directory.GetFiles(folderPath)
+                .Where(file => IsImageFile(file)).ToList();
+            //var listFile = imagePaths.Select(f => Path.GetFileName(f)).ToList();
+            return imagePaths;
         }
         static bool IsImageFile(string filePath)
         {

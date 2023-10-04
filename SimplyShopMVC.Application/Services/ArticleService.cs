@@ -36,13 +36,15 @@ namespace SimplyShopMVC.Application.Services
             var folderName = art.Id.ToString();
             string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
             Directory.CreateDirectory(newFolderPath);
-
-            string fileName = $"{article.Image.FileName}";
-            string filePath = System.IO.Path.Combine(newFolderPath, fileName);
-            using (FileStream fileStream = System.IO.File.Create(filePath))
+            foreach (var file in article.Image)
             {
-                article.Image.CopyTo(fileStream);
-                fileStream.Flush();
+                string fileName = $"{file.FileName}";
+                string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                using (FileStream fileStream = System.IO.File.Create(filePath))
+                {
+                    file.CopyTo(fileStream);
+                    fileStream.Flush();
+                }
             }
             return id;
         }
@@ -83,14 +85,23 @@ namespace SimplyShopMVC.Application.Services
             return articleVm;
         }
 
-        public NewArticleVm GetArticleToUpdate(int articleId)
+        public UpdateArticleVm GetArticleToUpdate(int articleId)
         {
             var article = _articleRepo.GetArticleById(articleId);
-            var articleVm = _mapper.Map<NewArticleVm>(article);
+            var articleVm = _mapper.Map<UpdateArticleVm>(article);
+            var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
+            var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+            articleVm.ImageUrl = new List<string>();
+            foreach (var imageUrl in imageToList)
+            {
+                var _imgUrl = $"/media/articleimg/{articleId}/{imageUrl}";
+                articleVm.ImageUrl.Add(_imgUrl);
+           
+            }          
             return articleVm;
         }
 
-        public void UpdateArticle(NewArticleVm model, [FromServices] IHostingEnvironment oHostingEnvironment)
+        public void UpdateArticle(UpdateArticleVm model, [FromServices] IHostingEnvironment oHostingEnvironment)
         {
             var article = _mapper.Map<Article>(model);
             _articleRepo.UpdateArticle(article);
@@ -99,12 +110,15 @@ namespace SimplyShopMVC.Application.Services
            // Directory.CreateDirectory(newFolderPath);
             if (model.Image != null)
             {
-                string fileName = $"{model.Image.FileName}";
-                string filePath = System.IO.Path.Combine(newFolderPath, fileName);
-                using (FileStream fileStream = System.IO.File.Create(filePath))
+                foreach (var image in model.Image)
                 {
-                    model.Image.CopyTo(fileStream);
-                    fileStream.Flush();
+                    string fileName = $"{image.FileName}";
+                    string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                    using (FileStream fileStream = System.IO.File.Create(filePath))
+                    {
+                        image.CopyTo(fileStream);
+                        fileStream.Flush();
+                    }
                 }
             }
 

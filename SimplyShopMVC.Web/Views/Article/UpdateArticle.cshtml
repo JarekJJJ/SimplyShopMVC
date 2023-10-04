@@ -1,4 +1,4 @@
-﻿@model SimplyShopMVC.Application.ViewModels.Article.NewArticleVm
+﻿@model SimplyShopMVC.Application.ViewModels.Article.UpdateArticleVm
 
 @{
     ViewData["Title"] = "UpdateArticle";
@@ -36,6 +36,17 @@
             <div class="form-group">
                 <label asp-for="Image" class="form-label">Wybierz zdjęcie główne</label>
                 <input asp-for="Image" class="form-control" type="file" name="Image" id="Image">
+            </div>
+            <div class="form-group">
+                
+                    @foreach (var imageUrl in Model.ImageUrl)
+                    {
+                        <div class="col-auto">
+                            <img src="@imageUrl" width="100">
+                            <code>@imageUrl</code>
+                        </div>
+                    }
+                
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

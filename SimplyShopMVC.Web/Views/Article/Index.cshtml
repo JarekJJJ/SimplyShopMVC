@@ -68,35 +68,4 @@
             }
         }
     </div>
-
-
-
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        @{
-            foreach (var item in Model.Articles)
-            {
-                string thumbImage = item.imagePath.FirstOrDefault();
-
-
-                <div class="col">
-                    <div class="card shadow-sm" style="max-height:400px;">
-                        <img src="~/media/articleimg/@(item.Id)/@thumbImage" class="img-fluid object-fit-scale border rounded" height="200" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                            <p class="card-text">@Html.DisplayFor(modelItem => item.ShortDescription)</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary ">@Html.ActionLink("Więcej", "ArticleDetail", new {id=item.Id})</button>
-
-                                </div>
-                                <small class="text-body-secondary">Utworzony:  @(item.Created.ToShortDateString()) </small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-            }
-        }
-    </div>
 </div>

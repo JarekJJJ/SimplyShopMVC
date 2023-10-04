@@ -4,37 +4,41 @@ using Microsoft.AspNetCore.Http;
 using SimplyShopMVC.Application.Mapping;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SimplyShopMVC.Application.ViewModels.Article
 {
-    public class NewArticleVm : IMapFrom<SimplyShopMVC.Domain.Model.Article>
+    public class UpdateArticleVm : IMapFrom<SimplyShopMVC.Domain.Model.Article>
     {
         public int Id { get; set; }
         [DisplayName("Tytuł")]
         public string Title { get; set; }
-        [StringLength(255, MinimumLength =5), Required]
+        [StringLength(255, MinimumLength = 5), Required]
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
-        public List<IFormFile> Image { get; set; }  
+        public List<IFormFile> Image { get; set; }
+        public List<string> ImageUrl { get; set; }
+        public string MainImage { get; set; } //ToDo dodać do modelu i zrobić migracje !
         public void Mapping(Profile profile)
         {
             //przy tworzeniu nowego obiektu mapujemy z Vm-a do modelu w domain !!! 
-            profile.CreateMap<NewArticleVm, SimplyShopMVC.Domain.Model.Article>().ReverseMap()
-                .ForMember(s=>s.Image, opt=>opt.Ignore());
+            profile.CreateMap<UpdateArticleVm, SimplyShopMVC.Domain.Model.Article>().ReverseMap()
+                .ForMember(s => s.Image, opt => opt.Ignore())
+                .ForMember(s => s.ImageUrl, opt => opt.Ignore());
         }
     }
-    public class NewArticleValidation : AbstractValidator<NewArticleVm>
+    public class UpdateArticleValidation : AbstractValidator<UpdateArticleVm>
     {
-        public NewArticleValidation()
+        public UpdateArticleValidation()
         {
             RuleFor(x => x.Id).NotNull();
             RuleFor(x => x.Title).MinimumLength(5).NotEmpty();
         }
     }
 }
+

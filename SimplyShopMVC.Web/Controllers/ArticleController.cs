@@ -14,11 +14,13 @@ namespace SimplyShopMVC.Web.Controllers
     {
         private readonly IArticleService _articleService;
         private readonly IValidator<NewArticleVm> _articleValidator;
+        private readonly IValidator<UpdateArticleVm> _updateArticleValidator;
         public ArticleController(IArticleService articleService, 
-            IValidator<NewArticleVm> articleValidator)
+            IValidator<NewArticleVm> articleValidator, IValidator<UpdateArticleVm> updateArticleValidator)
         {
             _articleService = articleService;
             _articleValidator = articleValidator;
+            _updateArticleValidator= updateArticleValidator;
         }
        // [Authorize]
        // [CheckPermissions("Read")]
@@ -35,9 +37,9 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddArticle(NewArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
+        public async Task<IActionResult> AddArticle(NewArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
         {
-            ValidationResult result = _articleValidator.Validate(model);
+            ValidationResult result = await _articleValidator.ValidateAsync(model);
             if (!result.IsValid)
             {
                 result.AddToModelState(this.ModelState);
@@ -60,9 +62,9 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateArticle(NewArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
+        public IActionResult UpdateArticle(UpdateArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
         {
-            ValidationResult result = _articleValidator.Validate(model);
+            ValidationResult result = _updateArticleValidator.Validate(model);
             if (!result.IsValid)
             {
                 result.AddToModelState(this.ModelState);
