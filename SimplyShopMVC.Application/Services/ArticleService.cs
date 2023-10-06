@@ -91,23 +91,30 @@ namespace SimplyShopMVC.Application.Services
             var articleVm = _mapper.Map<UpdateArticleVm>(article);
             var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
             var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
-            articleVm.ImageUrl = new List<string>();
+            var listImage = new List<PhotoArticleVm>();
+            int photoId = 0;
             foreach (var imageUrl in imageToList)
             {
-                var _imgUrl = $"/media/articleimg/{articleId}/{imageUrl}";
-                articleVm.ImageUrl.Add(_imgUrl);
-           
-            }          
+                var photoDetail = new PhotoArticleVm();
+                photoDetail.Id = photoId;
+                photoId++;
+                photoDetail.Name = imageUrl;
+                var _imgFullUrl = $"/media/articleimg/{articleId}/{imageUrl}";
+                photoDetail.ImageUrl = _imgFullUrl;
+                photoDetail.IsSelected = false;
+                listImage.Add(photoDetail);
+            }
+            articleVm.ListImages = listImage;
             return articleVm;
         }
 
-        public void UpdateArticle(UpdateArticleVm model, [FromServices] IHostingEnvironment oHostingEnvironment)
+        public void UpdateArticle(UpdateArticleVm model, [FromServices] IHostingEnvironment oHostingEnvironment, List<string> selectedImage)
         {
             var article = _mapper.Map<Article>(model);
             _articleRepo.UpdateArticle(article);
             var folderName = article.Id.ToString();
             string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
-           // Directory.CreateDirectory(newFolderPath);
+            // Directory.CreateDirectory(newFolderPath);
             if (model.Image != null)
             {
                 foreach (var image in model.Image)
@@ -121,8 +128,13 @@ namespace SimplyShopMVC.Application.Services
                     }
                 }
             }
-
+            if (selectedImage != null)
+            {
+                foreach (var _image in selectedImage)
+                {
+                    var result = ImageHelper.DeleteImage(_image, newFolderPath);
+                }
+            }
         }
-
     }
 }

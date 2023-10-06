@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace SimplyShopMVC.Application.Helpers
 {
@@ -33,5 +34,17 @@ namespace SimplyShopMVC.Application.Helpers
 
             return validExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase);
         }
+        public static bool DeleteImage(string fileName, string path)
+        {
+            bool result = false;
+            string filePath = Path.Combine(path, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                result = true;
+            }
+
+            return result;
+        } 
     }
 }

@@ -62,7 +62,7 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateArticle(UpdateArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
+        public IActionResult UpdateArticle(UpdateArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment, List<string> SelectedImage)
         {
             ValidationResult result = _updateArticleValidator.Validate(model);
             if (!result.IsValid)
@@ -72,7 +72,7 @@ namespace SimplyShopMVC.Web.Controllers
             }
             if (result.IsValid)
             {
-                _articleService.UpdateArticle(model, oHostingEnvironment);
+                _articleService.UpdateArticle(model, oHostingEnvironment, SelectedImage);
                 return RedirectToAction("Index");
             }
             return View("UpdateArticle", model);

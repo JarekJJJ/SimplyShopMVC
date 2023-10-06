@@ -23,13 +23,17 @@ namespace SimplyShopMVC.Application.ViewModels.Article
         public DateTime Created { get; set; }
         public List<IFormFile> Image { get; set; }
         public List<string> ImageUrl { get; set; }
+        public List<PhotoArticleVm> ListImages { get; set; }
+        public List<string> SelectedImage { get; set; }
         public string MainImage { get; set; } //ToDo dodać do modelu i zrobić migracje !
         public void Mapping(Profile profile)
         {
             //przy tworzeniu nowego obiektu mapujemy z Vm-a do modelu w domain !!! 
             profile.CreateMap<UpdateArticleVm, SimplyShopMVC.Domain.Model.Article>().ReverseMap()
                 .ForMember(s => s.Image, opt => opt.Ignore())
-                .ForMember(s => s.ImageUrl, opt => opt.Ignore());
+                .ForMember(s => s.ImageUrl, opt => opt.Ignore())
+                .ForMember(s => s.ListImages, opt => opt.Ignore())
+                .ForMember(s => s.SelectedImage, opt => opt.Ignore());
         }
     }
     public class UpdateArticleValidation : AbstractValidator<UpdateArticleVm>
