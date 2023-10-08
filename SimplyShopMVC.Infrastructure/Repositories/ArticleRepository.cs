@@ -18,9 +18,28 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         }
         public int AddArticle(Article article)
         {
-            _context.Articles.Add(article);            
+
+            _context.Articles.Add(article);
             _context.SaveChanges();
+
             return article.Id;
+        }
+
+        public int AddArticleTag(ArticleTag articleTag)
+        {
+            _context.ArticleTags.Add(articleTag);
+            _context.SaveChanges();
+            return articleTag.Id;
+        }
+
+        public void AddConnectionArticleTags(int articleId, ArticleTag tag)
+        {
+            var article = GetArticleById(articleId);
+            ConnectArticleTag con = new ConnectArticleTag();
+            con.ArticleId = article.Id;
+            con.ArticleTagId = tag.Id;
+            _context.ConnectArticleTag.Add(con);
+            _context.SaveChanges();
         }
 
         public void DeleteArticle(int articleid)
@@ -36,6 +55,12 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             return articles;
         }
 
+        public IQueryable<ArticleTag> GetAllArticleTags()
+        {
+            var tags = _context.ArticleTags;
+            return tags;
+        }
+
         public Article GetArticleById(int articleId)
         {
             var result = _context.Articles.FirstOrDefault(a => a.Id == articleId);
@@ -45,6 +70,12 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         public IQueryable<Article> GetArticlesByTagId(int tagId)
         {
             throw new NotImplementedException();
+        }
+
+        public ArticleTag GetArticleTagByTagId(int tagId)
+        {
+            var result = _context.ArticleTags.FirstOrDefault(t => t.Id == tagId);
+            return result;
         }
 
         public void UpdateArticle(Article article)
@@ -57,6 +88,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             //}
             _context.Articles.Update(article);
             _context.SaveChanges();
-        }      
+        }
     }
 }

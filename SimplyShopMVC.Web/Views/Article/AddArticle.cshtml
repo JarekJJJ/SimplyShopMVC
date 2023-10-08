@@ -9,42 +9,73 @@
 <h4>NewArticleVm</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6 border-bottom">
         <form asp-action="AddArticle" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="TagId" />
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                <label asp-for="TagName" class="control-label"></label>
+                <input asp-for="TagName" class="form-control" />
+                <span asp-validation-for="TagName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ShortDescription" class="control-label"></label>
-                <input asp-for="ShortDescription" class="form-control" />
-                <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                <label asp-for="TagDescription" class="control-label"></label>
+                <input asp-for="TagDescription" class="form-control" />
+                <span asp-validation-for="TagDescription" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <textarea asp-for="Content" id="mytextarea" class="form-control">Wpisz tekst</textarea>
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Image" class="form-label">Wybierz zdjęcie główne</label>
-                <input asp-for="Image" class="form-control" type="file" name="Image" id="Image" multiple>
-            </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
+    <div class="row mt-2">
+        <div class="col-md-6">
+            <form asp-action="AddArticle" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <p class="mt-1 mb-0">Wybierz Tag (kategorię) artykułu</p>
+                    <select class="form-select" id="SelectedTags" name="SelectedTags" multiple>
+                        
+                        @foreach (var tags in Model.Tags)
+                        {
+                            <option value="@tags.Id" name="@tags.Name">@tags.Name</option>
+                        }
+                        <span asp-validation-for="SelectedTags" class="text-danger"></span>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ShortDescription" class="control-label"></label>
+                    <input asp-for="ShortDescription" class="form-control" />
+                    <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Content" class="control-label"></label>
+                    <textarea asp-for="Content" id="mytextarea" class="form-control">Wpisz tekst</textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Created" class="control-label"></label>
+                    <input asp-for="Created" class="form-control" />
+                    <span asp-validation-for="Created" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Image" class="form-label">Wybierz zdjęcie główne</label>
+                    <input asp-for="Image" class="form-control" type="file" name="Image" id="Image" multiple>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
 

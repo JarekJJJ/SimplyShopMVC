@@ -31,24 +31,33 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult AddArticle()
+        public IActionResult AddArticle([FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
         {
-            return View(new NewArticleVm());
+            NewArticleVm vm = new NewArticleVm();
+            var newArticle = _articleService.AddArticle(vm, oHostingEnvironment);
+            return View(newArticle);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddArticle(NewArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
         {
-            ValidationResult result = await _articleValidator.ValidateAsync(model);
-            if (!result.IsValid)
+            if (model.Title != null)
             {
-                result.AddToModelState(this.ModelState);
-                return View("AddArticle", model);
+                ValidationResult result = await _articleValidator.ValidateAsync(model);
+                if (!result.IsValid)
+                {
+                    result.AddToModelState(this.ModelState);
+                    return View("AddArticle", model);
+                }
+                if (result.IsValid)
+                {
+                    var id = _articleService.AddArticle(model, oHostingEnvironment);
+                    return RedirectToAction("Index");
+                }
             }
-            if(ModelState.IsValid)
+            else
             {
-                var id = _articleService.AddArticle(model, oHostingEnvironment);               
-                return RedirectToAction("Index");
+                var id = _articleService.AddTag(model);
             }
             return View("AddArticle", model);
 

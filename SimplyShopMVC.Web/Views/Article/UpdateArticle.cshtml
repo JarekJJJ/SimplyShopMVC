@@ -13,6 +13,7 @@
         <form asp-action="UpdateArticle" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -35,23 +36,45 @@
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="form-label">Wybierz zdjęcie główne</label>
-                <input asp-for="Image" class="form-control" type="file" name="Image" id="Image">
+                <input asp-for="Image" class="form-control" type="file" name="Image" id="Image" multiple>
             </div>
+
             <div class="form-group">
                 <select class="form-select" id="SelectedImage" name="SelectedImage" multiple>
                     @foreach (var images in Model.ListImages)
                     {
-                        <option value="@images.Name" name="SelectedImage">@images.Name</option>                          
+                        <option value="@images.Name" name="SelectedImage">@images.Name</option>
                     }
-        </select>
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+        
     </div>
-</div>
+    <div class="col-md-4">
+        @foreach (var images in Model.ListImages)
+        {
 
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+
+                <div class="card" style="max-height:400px" >
+                    <div class="text-center">
+                        <img src="@images.ImageUrl" class="card-img-top object-fit-contain borderrounded img-thumbnail w-75 h-100" alt="@images.Name">
+                    </div>
+                    <div class="card-body overflow-auto">
+                        <h5 class="card-title d-inline-block text-truncate">@images.Name</h5>
+                        <p class="card-text overflow-y-auto"><code>&lt;img src=&quot;@images.ImageUrl&quot; class=&quot;img-fluid rounded mx-auto d-block&quot; alt=&quot;@images.Id&quot;&gt;</code></p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+
+</div>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

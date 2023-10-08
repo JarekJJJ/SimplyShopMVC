@@ -94,7 +94,7 @@ body {
 .text-container {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3; /* Ogranicz do 3 linijek */
+    -webkit-line-clamp: 2; /* Ogranicz do 2 linijek */
     overflow: hidden;
 }
 div.article-list {

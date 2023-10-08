@@ -28,25 +28,73 @@ namespace SimplyShopMVC.Application.Services
             _mapper = mapper;
             _hosting = hostingEnvironment;
         }
-
-        public int AddArticle(NewArticleVm article, [FromServices] IHostingEnvironment oHostingEnvironment)
+        public NewArticleVm AddArticle(NewArticleVm article, [FromServices] IHostingEnvironment? oHostingEnvironment)
         {
             var art = _mapper.Map<Article>(article); //Wskazuje docelowy model w domain i przekazuje obiekt article
-            var id = _articleRepo.AddArticle(art);
-            var folderName = art.Id.ToString();
-            string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
-            Directory.CreateDirectory(newFolderPath);
-            foreach (var file in article.Image)
+
+            if (article.Title != null) // przy dodawaniu artykułu - validation nie pozwoli dodać artykułu bez tytułu dlatego można sprawdzić jaki formularz jest wysyłany czy add article czy add tag
             {
-                string fileName = $"{file.FileName}";
-                string filePath = System.IO.Path.Combine(newFolderPath, fileName);
-                using (FileStream fileStream = System.IO.File.Create(filePath))
+                List<ArticleTag> tags = new List<ArticleTag>();
+                var id = _articleRepo.AddArticle(art);
+                var selectedTags = _articleRepo.GetAllArticleTags().Where(t => t.Id == article.Id);
+                foreach (var stags in article.SelectedTags)
                 {
-                    file.CopyTo(fileStream);
-                    fileStream.Flush();
+                    var element = _articleRepo.GetArticleTagByTagId(stags);
+                    _articleRepo.AddConnectionArticleTags(id, element);
+                }                                                                                    
+                var folderName = art.Id.ToString();
+                string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
+                Directory.CreateDirectory(newFolderPath);
+                foreach (var file in article.Image)
+                {
+                    string fileName = $"{file.FileName}";
+                    string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                    using (FileStream fileStream = System.IO.File.Create(filePath))
+                    {
+                        file.CopyTo(fileStream);
+                        fileStream.Flush();
+                    }
                 }
+                
             }
-            return id;
+            else
+            {
+                List<ArticleTagsForListVm> listTags = new List<ArticleTagsForListVm>();
+                var tags = _articleRepo.GetAllArticleTags()
+                    .ProjectTo<ArticleTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+                foreach (var tag in tags)
+                {
+                    listTags.Add(tag);
+                }
+
+                article.Tags = listTags;
+            }
+
+            return article;
+        }
+
+        public int AddTag(NewArticleVm model)
+        {
+            //
+            var listAvailableTags = _articleRepo.GetAllArticleTags().Where(t => t.Name.Equals(model.TagName)).Count();
+            if (model.TagName != null && listAvailableTags == 0) // przy dodawaniu samego tagu bez dodawania artykułu - formularz AddTags
+            {
+
+                //var result = new NewArticleVm();
+                //result.Tags = new List<ArticleTagsForListVm>();
+                var tags = new ArticleTagsForListVm()
+                {
+                    Id = model.TagId,
+                    Name = model.TagName,
+                    Description = model.TagDescription,
+                };
+                var tagMap = _mapper.Map<ArticleTag>(tags);
+                //result.Tags.Add(tags);
+                var id = _articleRepo.AddArticleTag(tagMap);
+                return id;
+            }
+            return 0;
+
         }
 
         public void DeleteArticle(int id)
