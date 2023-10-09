@@ -54,7 +54,14 @@
                 <div class="col-md-5">
                     <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative  article-list">
                         <div class="col-8 p-4 d-flex flex-column">
-                            <strong class="d-inline-block mb-2 text-primary-emphasis">Kategoria: </strong>
+                            <strong class="d-inline-block mb-2 text-primary-emphasis">
+                                Kategoria: @{
+                                    foreach(var tag in item.artTags)
+                                    {
+                                        @tag.Name
+                                    }
+                                }
+                            </strong>
                             <h5 class="mb-0">@(item.Title)</h5>
                             <p class="card-text mb-auto mt-2 text-container">@(item.ShortDescription)</p>
                             <a href="/Article/ArticleDetail/@item.Id" class="icon-link gap-1 icon-link-hover stretched-link">Więcej</a>

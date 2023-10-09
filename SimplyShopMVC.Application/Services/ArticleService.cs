@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -41,7 +42,7 @@ namespace SimplyShopMVC.Application.Services
                 {
                     var element = _articleRepo.GetArticleTagByTagId(stags);
                     _articleRepo.AddConnectionArticleTags(id, element);
-                }                                                                                    
+                }
                 var folderName = art.Id.ToString();
                 string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
                 Directory.CreateDirectory(newFolderPath);
@@ -55,7 +56,6 @@ namespace SimplyShopMVC.Application.Services
                         fileStream.Flush();
                     }
                 }
-                
             }
             else
             {
@@ -66,10 +66,8 @@ namespace SimplyShopMVC.Application.Services
                 {
                     listTags.Add(tag);
                 }
-
                 article.Tags = listTags;
             }
-
             return article;
         }
 
@@ -79,9 +77,6 @@ namespace SimplyShopMVC.Application.Services
             var listAvailableTags = _articleRepo.GetAllArticleTags().Where(t => t.Name.Equals(model.TagName)).Count();
             if (model.TagName != null && listAvailableTags == 0) // przy dodawaniu samego tagu bez dodawania artykułu - formularz AddTags
             {
-
-                //var result = new NewArticleVm();
-                //result.Tags = new List<ArticleTagsForListVm>();
                 var tags = new ArticleTagsForListVm()
                 {
                     Id = model.TagId,
@@ -94,7 +89,6 @@ namespace SimplyShopMVC.Application.Services
                 return id;
             }
             return 0;
-
         }
 
         public void DeleteArticle(int id)
@@ -107,12 +101,29 @@ namespace SimplyShopMVC.Application.Services
             //.projectTo - stosujemy przy kolekcjacj Iquerable
             var articles = _articleRepo.GetAllArticles()
                   .ProjectTo<ArticleForListVm>(_mapper.ConfigurationProvider).ToList();
+
             foreach (var article in articles)
             {
+                var innerList = new List<ArticleTagsForListVm>();
                 var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
                 var imageToList = ImageHelper.AllImageFromPath(_pathImage).Take(1).ToList();
                 //Pobierane są wszystkie zdjęcia z folderu o id artykułu i przypisywane do listy Viewmodelu
                 article.imagePath = imageToList;
+                var test = _articleRepo.GetArticleById(article.Id);
+                var test2 = test.ConnectArticleTags.Where(a => a.ArticleId == article.Id);
+                if (test2.Count() >= 1)
+                {
+                    foreach (var t in test2)
+                    {
+                        ArticleTagsForListVm newList = new ArticleTagsForListVm();
+                        var tag = _articleRepo.GetArticleTagByTagId(t.ArticleTagId);
+                        newList.Id = tag.Id;
+                        newList.Name = tag.Name;
+                        newList.Description = tag.Description;
+                        innerList.Add(newList);
+                    }
+                }
+                article.artTags = innerList;
             }
             var articlesList = new ListArticleForListVm()
             {

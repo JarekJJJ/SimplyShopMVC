@@ -13,6 +13,7 @@ namespace SimplyShopMVC.Domain.Interface
         void UpdateArticle(Article article);
 
         IQueryable<Article> GetArticlesByTagId(int tagId);
+        IQueryable<ConnectArticleTag> GetConnectArticleTags(int articleId);
 
         Article GetArticleById(int articleId);
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
 using System;
@@ -63,7 +64,9 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public Article GetArticleById(int articleId)
         {
-            var result = _context.Articles.FirstOrDefault(a => a.Id == articleId);
+           
+            var result = _context.Articles.Where(a => a.Id == articleId).Include(a => a.ConnectArticleTags).ThenInclude(at => at.ArticleTag).FirstOrDefault();
+                //FirstOrDefault(a => a.Id == articleId);
             return result;
         }
 
@@ -75,6 +78,12 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         public ArticleTag GetArticleTagByTagId(int tagId)
         {
             var result = _context.ArticleTags.FirstOrDefault(t => t.Id == tagId);
+            return result;
+        }
+
+        public IQueryable<ConnectArticleTag> GetConnectArticleTags(int articleId)
+        {
+           var result = _context.ConnectArticleTag.Where(t=>t.ArticleId== articleId);
             return result;
         }
 
