@@ -21,6 +21,10 @@ namespace SimplyShopMVC.Application.ViewModels.Article
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
+        // pomocnicz
+        public List<ArticleTagsForListVm> Tags { get; set; } // Do wyświetlania tagów przy tworzeniu artykułów.
+        public List<ArticleTagsForListVm> SelectedTags { get; set; } // do dodawania tagów do artykułu w serwisie
+        public List<int> NewSelectedTags { get; set; } 
         public List<IFormFile> Image { get; set; }
         public List<string> ImageUrl { get; set; }
         public List<PhotoArticleVm> ListImages { get; set; }
@@ -33,7 +37,9 @@ namespace SimplyShopMVC.Application.ViewModels.Article
                 .ForMember(s => s.Image, opt => opt.Ignore())
                 .ForMember(s => s.ImageUrl, opt => opt.Ignore())
                 .ForMember(s => s.ListImages, opt => opt.Ignore())
-                .ForMember(s => s.SelectedImage, opt => opt.Ignore());
+                .ForMember(s => s.SelectedImage, opt => opt.Ignore())
+                .ForMember(s => s.Tags, opt => opt.Ignore())
+                .ForMember(s => s.SelectedTags, opt => opt.Ignore());
         }
     }
     public class UpdateArticleValidation : AbstractValidator<UpdateArticleVm>

@@ -58,6 +58,8 @@ namespace SimplyShopMVC.Web.Controllers
             else
             {
                 var id = _articleService.AddTag(model);
+                NewArticleVm vm = new NewArticleVm();
+                model = _articleService.AddArticle(vm, oHostingEnvironment);
             }
             return View("AddArticle", model);
 

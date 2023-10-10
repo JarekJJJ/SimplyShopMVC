@@ -36,26 +36,24 @@ namespace SimplyShopMVC.Application.Services
             if (article.Title != null) // przy dodawaniu artykułu - validation nie pozwoli dodać artykułu bez tytułu dlatego można sprawdzić jaki formularz jest wysyłany czy add article czy add tag
             {
                 List<ArticleTag> tags = new List<ArticleTag>();
-                var id = _articleRepo.AddArticle(art);
-                var selectedTags = _articleRepo.GetAllArticleTags().Where(t => t.Id == article.Id);
-                foreach (var stags in article.SelectedTags)
-                {
-                    var element = _articleRepo.GetArticleTagByTagId(stags);
-                    _articleRepo.AddConnectionArticleTags(id, element);
-                }
+                var id = _articleRepo.AddArticle(art);                
                 var folderName = art.Id.ToString();
                 string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
                 Directory.CreateDirectory(newFolderPath);
-                foreach (var file in article.Image)
+                if (article.Image != null)
                 {
-                    string fileName = $"{file.FileName}";
-                    string filePath = System.IO.Path.Combine(newFolderPath, fileName);
-                    using (FileStream fileStream = System.IO.File.Create(filePath))
+                    foreach (var file in article.Image)
                     {
-                        file.CopyTo(fileStream);
-                        fileStream.Flush();
+                        string fileName = $"{file.FileName}";
+                        string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                        using (FileStream fileStream = System.IO.File.Create(filePath))
+                        {
+                            file.CopyTo(fileStream);
+                            fileStream.Flush();
+                        }
                     }
                 }
+                AddTagsToArticle(article.SelectedTags, id);
             }
             else
             {
@@ -67,6 +65,7 @@ namespace SimplyShopMVC.Application.Services
                     listTags.Add(tag);
                 }
                 article.Tags = listTags;
+
             }
             return article;
         }
@@ -90,7 +89,16 @@ namespace SimplyShopMVC.Application.Services
             }
             return 0;
         }
-
+        public void AddTagsToArticle(List<int> tags, int articleId)
+        {
+            _articleRepo.DeleteConnectionArticleTags(articleId);
+            foreach (var stags in tags)
+            {
+                var element = _articleRepo.GetArticleTagByTagId(stags);
+                _articleRepo.AddConnectionArticleTags(articleId, element);
+            }
+        }
+       
         public void DeleteArticle(int id)
         {
             _articleRepo.DeleteArticle(id);
@@ -104,26 +112,20 @@ namespace SimplyShopMVC.Application.Services
 
             foreach (var article in articles)
             {
-                var innerList = new List<ArticleTagsForListVm>();
-                var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
-                var imageToList = ImageHelper.AllImageFromPath(_pathImage).Take(1).ToList();
-                //Pobierane są wszystkie zdjęcia z folderu o id artykułu i przypisywane do listy Viewmodelu
-                article.imagePath = imageToList;
-                var test = _articleRepo.GetArticleById(article.Id);
-                var test2 = test.ConnectArticleTags.Where(a => a.ArticleId == article.Id);
-                if (test2.Count() >= 1)
+                try
                 {
-                    foreach (var t in test2)
-                    {
-                        ArticleTagsForListVm newList = new ArticleTagsForListVm();
-                        var tag = _articleRepo.GetArticleTagByTagId(t.ArticleTagId);
-                        newList.Id = tag.Id;
-                        newList.Name = tag.Name;
-                        newList.Description = tag.Description;
-                        innerList.Add(newList);
-                    }
+                    var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
+                    var imageToList = ImageHelper.AllImageFromPath(_pathImage).Take(1).ToList();
+                    //Pobierane są wszystkie zdjęcia z folderu o id artykułu i przypisywane do listy Viewmodelu
+                    article.imagePath = imageToList;
+
+                    article.artTags = GetAllSelectedTagsForList(article.Id);
                 }
-                article.artTags = innerList;
+                catch(Exception ex)
+                {
+
+                }
+               
             }
             var articlesList = new ListArticleForListVm()
             {
@@ -163,6 +165,8 @@ namespace SimplyShopMVC.Application.Services
                 photoDetail.IsSelected = false;
                 listImage.Add(photoDetail);
             }
+            articleVm.Tags = GetAllTagsToList();
+            articleVm.SelectedTags = GetAllSelectedTagsForList(articleId);
             articleVm.ListImages = listImage;
             return articleVm;
         }
@@ -194,6 +198,37 @@ namespace SimplyShopMVC.Application.Services
                     var result = ImageHelper.DeleteImage(_image, newFolderPath);
                 }
             }
+            AddTagsToArticle(model.NewSelectedTags, model.Id);
+        }
+        public List<ArticleTagsForListVm> GetAllTagsToList()
+        {
+            List<ArticleTagsForListVm> listTags = new List<ArticleTagsForListVm>();
+            var tags = _articleRepo.GetAllArticleTags()
+                .ProjectTo<ArticleTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var tag in tags)
+            {
+                listTags.Add(tag);
+            }
+            return listTags;
+        }
+        public List<ArticleTagsForListVm> GetAllSelectedTagsForList(int articleId)
+        {
+            var innerList = new List<ArticleTagsForListVm>();
+            var tempArticle = _articleRepo.GetArticleById(articleId);
+            var tempListTag = tempArticle.ConnectArticleTags.Where(a => a.ArticleId == articleId);
+            if (tempListTag.Count() >= 1)
+            {
+                foreach (var t in tempListTag)
+                {
+                    ArticleTagsForListVm newList = new ArticleTagsForListVm();
+                    var tag = _articleRepo.GetArticleTagByTagId(t.ArticleTagId);
+                    newList.Id = tag.Id;
+                    newList.Name = tag.Name;
+                    newList.Description = tag.Description;
+                    innerList.Add(newList);
+                }
+            }
+            return innerList;
         }
     }
 }

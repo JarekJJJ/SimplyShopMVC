@@ -50,6 +50,13 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
+        public void DeleteConnectionArticleTags(int articleId)
+        {
+            var result = _context.ConnectArticleTag.Where(a => a.ArticleId == articleId);
+            _context.ConnectArticleTag.RemoveRange(result);
+            _context.SaveChanges();
+        }
+
         public IQueryable<Article> GetAllArticles()
         {
             var articles = _context.Articles;
