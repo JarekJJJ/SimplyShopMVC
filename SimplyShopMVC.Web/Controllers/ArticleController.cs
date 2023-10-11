@@ -4,31 +4,36 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
+using SimplyShopMVC.Application.Services;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Web.Filters;
 
 namespace SimplyShopMVC.Web.Controllers
 {
-    
+
     public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
         private readonly IValidator<NewArticleVm> _articleValidator;
         private readonly IValidator<UpdateArticleVm> _updateArticleValidator;
-        public ArticleController(IArticleService articleService, 
+        public ArticleController(IArticleService articleService,
             IValidator<NewArticleVm> articleValidator, IValidator<UpdateArticleVm> updateArticleValidator)
         {
             _articleService = articleService;
             _articleValidator = articleValidator;
-            _updateArticleValidator= updateArticleValidator;
+            _updateArticleValidator = updateArticleValidator;
         }
-       // [Authorize]
-       // [CheckPermissions("Read")]
+        // [Authorize]
+        // [CheckPermissions("Read")]
         public IActionResult Index()
         {
             var articles = _articleService.GetAllArticleForList();
             return View(articles);
         }
+
+
+
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult AddArticle([FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
@@ -99,5 +104,12 @@ namespace SimplyShopMVC.Web.Controllers
             var articleDetail = _articleService.GetArticleDetails(id);
             return View(articleDetail);
         }
+        public IActionResult ListArticle(int idTag)
+        {
+            var articles = _articleService.GetAllArticlesByTagId(idTag);
+
+            return View("ListArticle", articles);
+        }
     }
 }
+

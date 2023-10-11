@@ -103,6 +103,36 @@ namespace SimplyShopMVC.Application.Services
         {
             _articleRepo.DeleteArticle(id);
         }
+        public ListArticleForListVm GetAllArticlesByTagId(int tagId)
+        {
+            var articles = _articleRepo.GetArticlesByTagId(tagId)
+                 .ProjectTo<ArticleForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var article in articles)
+            {
+                try
+                {
+                    var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
+                    var imageToList = ImageHelper.AllImageFromPath(_pathImage).Take(1).ToList();
+                    //Pobierane są wszystkie zdjęcia z folderu o id artykułu i przypisywane do listy Viewmodelu
+                    article.imagePath = imageToList;
+
+                    article.artTags = GetAllSelectedTagsForList(article.Id);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+            }
+            var articlesList = new ListArticleForListVm()
+            {
+                Articles = articles,
+                Tags = GetAllTagsToList(),
+                Count = articles.Count
+            };
+
+            return articlesList;
+        }
 
         public ListArticleForListVm GetAllArticleForList()
         {
@@ -130,6 +160,7 @@ namespace SimplyShopMVC.Application.Services
             var articlesList = new ListArticleForListVm()
             {
                 Articles = articles,
+                Tags = GetAllTagsToList(),
                 Count = articles.Count
             };
             return articlesList;

@@ -10,7 +10,7 @@
 <h4>NewArticleVm</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form asp-action="UpdateArticle" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -47,10 +47,10 @@
                 <span asp-validation-for="Created" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Image" class="form-label">Wybierz zdjęcie główne</label>
+                <label asp-for="Image" class="form-label">Dodaj zdjęcie:</label>
                 <input asp-for="Image" class="form-control" type="file" name="Image" id="Image" multiple>
             </div>
-
+            <p class="mb-0">Wybierz zdjęcie do usunięcia: </p>
             <div class="form-group">
                 <select class="form-select" id="SelectedImage" name="SelectedImage" multiple>
                     @foreach (var images in Model.ListImages)

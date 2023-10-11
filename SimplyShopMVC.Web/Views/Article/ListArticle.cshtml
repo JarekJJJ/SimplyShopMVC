@@ -4,7 +4,7 @@
     ViewData["Title"] = "Informacje";
 }
 
-<h1>Informacje</h1>
+<h1>Test</h1>
 @if (User.IsInRole("Admin"))
 {
     <p>
@@ -56,9 +56,11 @@
                         <div class="col-8 p-4 d-flex flex-column">
                             <strong class="d-inline-block mb-2 text-primary-emphasis">
                                 Kategoria: @{
-                                    foreach(var tag in item.artTags)
+                                    foreach (var tag in item.artTags)
                                     {
-                                        @tag.Name<span> , </span>
+                                        @tag.Name
+
+                                        <span> , </span>
                                     }
                                 }
                             </strong>
@@ -74,13 +76,10 @@
                 </div>
             }
         }
-        <div class="col-2 position-absolute top-0 end-0 d-grid gap-2 bg-light rounded p-2">
-            @foreach(var tags in Model.Tags)
+        <div class="col-2 position-absolute top-0 end-0">
+            @foreach (var tags in Model.Tags)
             {
-                <button type="button" class="btn btn-primary ">
-                    @Html.ActionLink(tags.Name, "ListArticle", new {idTag=tags.Id}, new{@class="text-white link-offset-2 link-underline link-underline-opacity-0"})
-                </button>
-                
+                <p class="">@Html.ActionLink(tags.Name, "ListArticle", new {idTag=tags.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </p>
             }
 
         </div>

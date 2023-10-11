@@ -71,7 +71,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public Article GetArticleById(int articleId)
         {
-           
+
             var result = _context.Articles.Where(a => a.Id == articleId).Include(a => a.ConnectArticleTags).ThenInclude(at => at.ArticleTag).FirstOrDefault();
                 //FirstOrDefault(a => a.Id == articleId);
             return result;
@@ -79,7 +79,8 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public IQueryable<Article> GetArticlesByTagId(int tagId)
         {
-            throw new NotImplementedException();
+            var result = _context.Articles.Where(at => at.ConnectArticleTags.Any(at=>at.ArticleTagId==tagId));           
+            return result;
         }
 
         public ArticleTag GetArticleTagByTagId(int tagId)
