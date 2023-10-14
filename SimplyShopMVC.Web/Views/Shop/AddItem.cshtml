@@ -1,0 +1,35 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Item.AddItemVm
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "AddArticle";
+}
+<div class="col  border-1 mt-2">
+    <form asp-action="AddItem" class="row g-3" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="col-md-6">
+            <label for="Name" class="form-label">Nazwa Towaru</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="Name">
+        </div>
+        <div class="col-md-6">
+            <label for="ItemSymbol" class="form-label">Symbol towaru</label>
+            <input type="text" placeholder="Zostaw puste żeby nadać symbol automatycznie!" class="form-control shadow-sm rounded" asp-for="ItemSymbol">
+        </div>
+        <div class="col-md-4">
+            <label for="EanCode" class="form-label">Wpisz kod Ean artykułu</label>
+            <input type="text" placeholder="xxxxxxxxxxxxxx" class="form-control shadow-sm rounded" asp-for="EanCode">
+        </div>
+        <div class="col-md-8">
+            <label for="ShortDescription" class="form-label">Krótki opis towaru</label>
+            <textarea placeholder="" class="form-control shadow-sm rounded" asp-for="ShortDescription"> </textarea>
+        </div>
+        <div class="col">
+            <label asp-for="Description" class="control-label">Dodaj pełny opis produktu</label>
+            <textarea asp-for="Description" id="mytextarea" class="shadow-sm rounded">Wpisz tekst</textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+    </form>
+</div>
+

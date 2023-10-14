@@ -67,6 +67,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "blog",
     pattern: "{controller=Article}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "Sklep",
+    pattern: "{controller=Shop}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
