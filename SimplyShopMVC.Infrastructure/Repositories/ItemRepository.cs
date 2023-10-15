@@ -48,5 +48,102 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             var items = _context.Items;
             return items;
         }
+
+        public void UpdateItem(Item item)
+        {
+            var result = _context.Items.FirstOrDefault(c=>c.Id== item.Id);
+            if (result != null)
+            {
+                _context.Items.Update(item);
+                _context.SaveChanges();
+            }
+
+        }
+
+        public IQueryable<ItemTag> GetAllItemTags()
+        {
+            var result = _context.ItemTags;
+            return result;
+        }
+
+        public IQueryable<Item> GetItemsByTagId(int tagId)
+        {
+            var result = _context.Items.Where(at => at.ConnectItemTags.Any(at => at.ItemTagId == tagId));
+            return result;
+        }
+
+        public IQueryable<ConnectItemTag> GetConnectItemTags(int itemId)
+        {
+            var result = _context.ConnectItemTag.Where(t => t.ItemId == itemId);
+            return result;
+        }
+
+        public int AddItemTag(ItemTag itemTag)
+        {
+           _context.ItemTags.Add(itemTag);
+            _context.SaveChanges();
+            return itemTag.Id;
+        }
+
+        public ItemTag GetItemTagByTagId(int tagId)
+        {
+            var result = _context.ItemTags.FirstOrDefault(t => t.Id == tagId);
+            return result;
+        }
+
+        public void AddConnectionItemTags(int itemId, ItemTag tags)
+        {
+            var item = GetItemById(itemId);
+            ConnectItemTag con = new ConnectItemTag();
+            con.ItemId = item.Id;
+            con.ItemTagId = tags.Id;
+            _context.ConnectItemTag.Add(con);
+            _context.SaveChanges();
+        }
+
+        public void DeleteConnectionItemTags(int itemId)
+        {
+            var result = _context.ConnectItemTag.Where(a => a.ItemId == itemId);
+            _context.ConnectItemTag.RemoveRange(result);
+            _context.SaveChanges();
+        }
+
+        public IQueryable<Category> GetAllCategories()
+        {
+           var categories =  _context.Categories;
+            return categories;
+        }
+
+        public void AddCategory(Category category)
+        {
+           _context.Categories.Add(category);
+            _context.SaveChanges();
+        }
+
+        public Category GetCategoryById(int id)
+        {
+           var result = _context.Categories.FirstOrDefault(c => c.Id == id);
+            return result;
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            var result = _context.Categories.FirstOrDefault(c=>c.Id == category.Id);
+            if (result != null)
+            {
+                _context.Categories.Update(category);
+                _context.SaveChanges();
+            }
+        }
+
+        public void DeleteCategory(int categoryId)
+        {
+           var result = _context.Categories.FirstOrDefault(c=>c.Id== categoryId);
+            if (result != null)
+            {
+                _context.Categories.Remove(result);
+                _context.SaveChanges();
+            }
+        }
     }
 }

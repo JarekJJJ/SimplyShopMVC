@@ -3,9 +3,30 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    ViewData["Title"] = "AddArticle";
+    ViewData["Title"] = "AddItem";
 }
-<div class="col  border-1 mt-2">
+<div class="row bg-light rounded m-2 pb-4">
+    
+        <form asp-action="AddItem"  class="row g-3" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TagId" />
+            <div class="col-md-4">
+                <label asp-for="TagName" class="control-label"> Nazwa tagu</label>
+                <input asp-for="TagName" class="form-control" />
+                <span asp-validation-for="TagName" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="TagDescription" class="control-label">Opis tagu </label>
+                <input asp-for="TagDescription" class="form-control" />
+                <span asp-validation-for="TagDescription" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <input type="submit" value="Create" class="btn btn-primary mt-4" />
+            </div>
+        </form>
+  
+</div>
+<div class="row">
     <form asp-action="AddItem" class="row g-3" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
@@ -17,7 +38,18 @@
             <label for="ItemSymbol" class="form-label">Symbol towaru</label>
             <input type="text" placeholder="Zostaw puste żeby nadać symbol automatycznie!" class="form-control shadow-sm rounded" asp-for="ItemSymbol">
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
+                    <p class="mt-1 mb-0">Wybierz Tag (kategorię) artykułu</p>
+                    <select class="form-select" id="SelectedTags" name="SelectedTags" multiple>
+
+                @foreach (var tags in Model.ItemTags)
+                {
+                                <option value="@tags.Id" name="@tags.Name">@tags.Name</option>
+                }
+                        <span asp-validation-for="SelectedTags" class="text-danger"></span>
+                    </select>
+                </div>
+        <div class="col-md-4 pt-3">
             <label for="EanCode" class="form-label">Wpisz kod Ean artykułu</label>
             <input type="text" placeholder="xxxxxxxxxxxxxx" class="form-control shadow-sm rounded" asp-for="EanCode">
         </div>

@@ -97,12 +97,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public void UpdateArticle(Article article)
         {
-            //var _article = _context.Articles.Where(i=>i.Id == article.Id).FirstOrDefault();
-            //if (_article != null)
-            //{
-            //    _article = article;
-            //    _context.SaveChanges();
-            //}
             _context.Articles.Update(article);
             _context.SaveChanges();
         }
