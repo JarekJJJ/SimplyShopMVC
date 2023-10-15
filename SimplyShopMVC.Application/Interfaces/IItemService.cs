@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.ViewModels.Item;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,11 @@ namespace SimplyShopMVC.Application.Interfaces
 {
     public interface IItemService
     {
-        AddItemVm AddItem(AddItemVm item);
+        AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder);
         void UpdateItem(UpdateItemVm item, List<string> selectedImage);      
         void DeleteItem(int id);
         int AddItemTag(AddItemVm item);
+        int AddCategory(AddItemVm item);
         UpdateItemVm GetItemToUpdate(int itemId);
         //ItemDetailVm GetItemDetails(int itemId);
         //ListItemForListVm GetAllItemsByTagId(int tagId);

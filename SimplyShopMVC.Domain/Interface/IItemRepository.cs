@@ -26,7 +26,7 @@ namespace SimplyShopMVC.Domain.Interface
         // Kategorie
         IQueryable<Category> GetAllCategories();
         IQueryable<Item> GetItemsByCategoryId(int categoryId);  
-        void AddCategory(Category category);
+        int AddCategory(Category category);
         Category GetCategoryById(int id);
 
         void UpdateCategory(Category category);

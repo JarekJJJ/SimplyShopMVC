@@ -114,10 +114,11 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             return categories;
         }
 
-        public void AddCategory(Category category)
+        public int AddCategory(Category category)
         {
            _context.Categories.Add(category);
             _context.SaveChanges();
+            return category.Id;
         }
 
         public Category GetCategoryById(int id)
