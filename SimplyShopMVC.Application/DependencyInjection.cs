@@ -22,6 +22,7 @@ namespace SimplyShopMVC.Application
             services.AddValidatorsFromAssemblyContaining<NewArticleValidation>();
             //services
             services.AddTransient<IArticleService, ArticleService>();
+            services.AddTransient<IItemService, ItemService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

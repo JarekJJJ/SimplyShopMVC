@@ -10,7 +10,6 @@ namespace SimplyShopMVC.Application.ViewModels.Article
     {
         public List<ArticleForListVm> Articles { get; set; }
         public List<ArticleTagsForListVm> Tags { get; set; }
-       // public List<string> AllTags { get; set; }
         public int Count { get; set; }
 
 
