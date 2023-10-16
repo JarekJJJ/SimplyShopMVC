@@ -86,7 +86,10 @@ namespace SimplyShopMVC.Application.Services
                 {
                     Id = item.CategoryId,
                     Name = item.categoryName,
-                    Description = item.categoryDescription
+                    Description = item.categoryDescription,
+                    IsActive= item.isActiveCategory,
+                    IsMainCategory = item.isMainCategory,
+                    MainCategoryId= item.mainCategoryId
                 };
                 var categoryMap = _mapper.Map<Category>(category);
                 var id = _itemRepo.AddCategory(categoryMap);

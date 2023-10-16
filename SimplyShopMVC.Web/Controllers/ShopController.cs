@@ -35,21 +35,24 @@ namespace SimplyShopMVC.Web.Controllers
            if(ModelState.IsValid)
             {
                 var id = _itemService.AddItem(model, webHostFolder);
-                return RedirectToAction("Index");
+                return RedirectToAction("AddItem");
             }
             if(model.TagName!=null)
             {
                 var id = _itemService.AddItemTag(model);
                 AddItemVm vm = new AddItemVm();
-               model =  _itemService.AddItem(vm, webHostFolder);
-                return View ("AddItem", model);
+               var newItemPost =  _itemService.AddItem(vm, webHostFolder);
+                return RedirectToAction ("AddItem");
             }
             if(model.categoryName!=null)
             {
                 var id = _itemService.AddCategory(model);
-                return View("AddItem", model);
+                AddItemVm vm = new AddItemVm();
+                var newItemPost = _itemService.AddItem(vm, webHostFolder);
+                return RedirectToAction("AddItem");
             }
-            return View("AddItem", model);
+            
+            return RedirectToAction("AddItem");
 
         }
     }

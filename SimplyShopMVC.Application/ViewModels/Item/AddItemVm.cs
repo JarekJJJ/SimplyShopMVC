@@ -36,8 +36,9 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public int categoryId { get; set; }
         public string categoryName { get; set; }
         public string? categoryDescription { get; set; }
-        public bool IsMainCategory { get; set; }
-        public int? MainCategoryId { get; set; }
+        public bool isActiveCategory { get; set; }
+        public bool isMainCategory { get; set; }
+        public int? mainCategoryId { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -52,8 +53,9 @@ namespace SimplyShopMVC.Application.ViewModels.Item
                             .ForMember(s => s.categoryId, opt => opt.Ignore())
                             .ForMember(s => s.categoryDescription, opt => opt.Ignore())
                             .ForMember(s => s.categoryName, opt => opt.Ignore())
-                            .ForMember(s => s.IsMainCategory, opt => opt.Ignore())
-                            .ForMember(s => s.MainCategoryId, opt => opt.Ignore());
+                            .ForMember(s => s.isMainCategory, opt => opt.Ignore())
+                            .ForMember(s => s.isActiveCategory, opt => opt.Ignore())
+                            .ForMember(s => s.mainCategoryId, opt => opt.Ignore());
         }
     }
 }
