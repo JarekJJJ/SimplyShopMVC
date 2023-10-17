@@ -31,32 +31,61 @@ namespace SimplyShopMVC.Application.Services
             if (mItem.Name != null)
             {
                 List<ItemTagsForListVm> tags = new List<ItemTagsForListVm>();
-                var id = _itemRepo.AddItem(mItem);
+                string folderName;
+
                 if (mItem.EanCode != null)
                 {
-                    var folderName = mItem.EanCode;
-                } // Tutaj dokończyć --------- Dodawanie item !
+                    folderName = mItem.EanCode;
+                    mItem.ImageFolder = folderName;
+                }
+                else
+                {
+                    DateTime now = DateTime.Now;
+                    folderName = now.ToString("yyyyMMddHHmmss");
+                    mItem.ImageFolder = folderName;
+                }
+                mItem.CategoryId = item.selectedCategory;
+                var id = _itemRepo.AddItem(mItem);
+                string newFolderPath = Path.Combine(webHostFolder.WebRootPath, "media\\itemimg", folderName);
+                Directory.CreateDirectory(newFolderPath);
+                if (item.Image != null)
+                {
+                    foreach (var file in item.Image)
+                    {
+                        string fileName = $"{file.FileName}";
+                        string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                        using (FileStream fileStream = System.IO.File.Create(filePath))
+                        {
+                            file.CopyTo(fileStream);
+                            fileStream.Flush();
+                        }
+                    }
+                }              
+                AddTagsToItem(item.SelectedTags, id);
+                // teraz kategorie !
+
+                // Tutaj dokończyć --------- Dodawanie item !
             }
-           
-                List<ItemTagsForListVm> listTags = new List<ItemTagsForListVm>();
-                var allTags = _itemRepo.GetAllItemTags()
-                    .ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
-                foreach (var tag in allTags)
-                {
-                    listTags.Add(tag);
-                }
-                item.ItemTags = listTags;
-           //to samo z kategoriami !
-           
-                List<CategoryForListVm> listCategory = new List<CategoryForListVm>();
-                var allCategories = _itemRepo.GetAllCategories()
-                    .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
-                foreach (var category in allCategories)
-                {
-                    listCategory.Add(category);
-                }
-                item.Categories = listCategory;
-            
+
+            List<ItemTagsForListVm> listTags = new List<ItemTagsForListVm>();
+            var allTags = _itemRepo.GetAllItemTags()
+                .ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var tag in allTags)
+            {
+                listTags.Add(tag);
+            }
+            item.ItemTags = listTags;
+            //to samo z kategoriami !
+
+            List<CategoryForListVm> listCategory = new List<CategoryForListVm>();
+            var allCategories = _itemRepo.GetAllCategories()
+                .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var category in allCategories)
+            {
+                listCategory.Add(category);
+            }
+            item.Categories = listCategory;
+
 
             return item;
         }
@@ -70,7 +99,7 @@ namespace SimplyShopMVC.Application.Services
                 {
                     Id = item.TagId,
                     Name = item.TagName,
-                    Description= item.TagDescription
+                    Description = item.TagDescription
                 };
                 var tagMap = _mapper.Map<ItemTag>(tags);
                 var id = _itemRepo.AddItemTag(tagMap);
@@ -80,16 +109,16 @@ namespace SimplyShopMVC.Application.Services
         }
         public int AddCategory(AddItemVm item)
         {
-            if(item.categoryName!=null)
+            if (item.categoryName != null)
             {
                 var category = new CategoryForListVm()
                 {
                     Id = item.CategoryId,
                     Name = item.categoryName,
                     Description = item.categoryDescription,
-                    IsActive= item.isActiveCategory,
+                    IsActive = item.isActiveCategory,
                     IsMainCategory = item.isMainCategory,
-                    MainCategoryId= item.mainCategoryId
+                    MainCategoryId = item.mainCategoryId
                 };
                 var categoryMap = _mapper.Map<Category>(category);
                 var id = _itemRepo.AddCategory(categoryMap);
@@ -111,6 +140,15 @@ namespace SimplyShopMVC.Application.Services
         public void UpdateItem(UpdateItemVm item, List<string> selectedImage)
         {
             throw new NotImplementedException();
+        }
+        public void AddTagsToItem(List<int> tags, int itemId)
+        {
+            _itemRepo.DeleteConnectionItemTags(itemId);
+            foreach (var stags in tags)
+            {
+                var element = _itemRepo.GetItemTagByTagId(stags);
+                _itemRepo.AddConnectionItemTags(itemId, element);
+            }
         }
     }
 }

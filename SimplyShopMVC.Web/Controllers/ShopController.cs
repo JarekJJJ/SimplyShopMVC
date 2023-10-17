@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
@@ -10,9 +12,12 @@ namespace SimplyShopMVC.Web.Controllers
     public class ShopController : Controller
     {
         private readonly IItemService _itemService;
-        public ShopController(IItemService itemService)
+        private readonly IValidator<AddItemVm> _itemValidator;
+        //private readonly IValidator<UpdateArticleVm> _updateArticleValidator;
+        public ShopController(IValidator<AddItemVm> itemValidator, IItemService itemService)
         {
             _itemService = itemService;
+            _itemValidator = itemValidator;
         }
         public IActionResult Index()
         {
@@ -32,7 +37,8 @@ namespace SimplyShopMVC.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddItem(AddItemVm model, [FromServices] IWebHostEnvironment webHostFolder)
         {
-           if(ModelState.IsValid)
+            ValidationResult result = await _itemValidator.ValidateAsync(model);
+           if (result.IsValid)
             {
                 var id = _itemService.AddItem(model, webHostFolder);
                 return RedirectToAction("AddItem");

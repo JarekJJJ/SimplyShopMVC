@@ -98,7 +98,7 @@ namespace SimplyShopMVC.Application.Services
                 _articleRepo.AddConnectionArticleTags(articleId, element);
             }
         }
-       
+
         public void DeleteArticle(int id)
         {
             _articleRepo.DeleteArticle(id);

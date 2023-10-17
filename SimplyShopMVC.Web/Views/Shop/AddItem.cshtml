@@ -76,16 +76,21 @@
         <input type="hidden" asp-for="Id" />
         <div class="col-md-6">
             <p class="mt-1 mb-0">Wybierz kategorię towaru: </p>
-            <select class="form-select" id="selectedCategory" name="selectedCategory">
+            <select class="form-select mb-2" id="selectedCategory" name="selectedCategory">
+                <option value="0">Wybierz kategorię</option>
                 @if (Model.Categories != null)
                 {
                     @foreach (var cat in Model.Categories)
                     {
                         <option value="@cat.Id" name="@cat.Name">@cat.Name</option>
                     }
-                }
-                <span asp-validation-for="selectedCategory" class="text-danger"></span>
+                }              
             </select>
+            <span asp-validation-for="selectedCategory" class="text-danger"></span>
+             
+            <label asp-for="Image" class="form-label">Wybierz zdjęcie główne</label>
+            <input asp-for="Image" class="form-control" type="file" name="Image" id="Image" multiple>
+            
         </div>
         <div class="col-md-6">
             <p class="mt-1 mb-0">Wybierz Tag towaru: </p>
@@ -96,9 +101,9 @@
                     {
                         <option value="@tags.Id" name="@tags.Name">@tags.Name</option>
                     }
-                }
-                <span asp-validation-for="SelectedTags" class="text-danger"></span>
+                }             
             </select>
+            <span asp-validation-for="SelectedTags" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">
@@ -118,10 +123,18 @@
             <label for="ShortDescription" class="form-label">Krótki opis towaru</label>
             <textarea placeholder="" class="form-control shadow-sm rounded" asp-for="ShortDescription"> </textarea>
         </div>
-        <div class="col">
+        <div class="col-md-4">
+        <input class="form-check-input h4" type="checkbox" asp-for="IsActive">
+            <label class="form-check-label h4" for="flexCheckDefault">Towar aktywny.</label>
+           
+        </div>
+        <div class="col-md-12">
             <label asp-for="Description" class="control-label">Dodaj pełny opis produktu</label>
             <textarea asp-for="Description" id="mytextarea" class="shadow-sm rounded">Wpisz tekst</textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
         </div>
     </form>
 </div>
