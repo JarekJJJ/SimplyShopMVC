@@ -17,6 +17,7 @@ namespace SimplyShopMVC.Application.Interfaces
         int AddItemTag(AddItemVm item);
         int AddCategory(AddItemVm item);
         UpdateItemVm GetItemToUpdate(int itemId);
+        AddItemWarehouseVm AddItemWarehouse(AddItemWarehouseVm item);
         //ItemDetailVm GetItemDetails(int itemId);
         //ListItemForListVm GetAllItemsByTagId(int tagId);
         //ListItemForListVm GetAllItemsForList();

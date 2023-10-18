@@ -1,0 +1,26 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Item.AddItemWarehouseVm
+
+@{
+    ViewData["Title"] = "AddItemWarehouse";
+}
+
+<h1>AddItemWarehouse</h1>
+
+<h4>AddItemWarehouseVm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddItemWarehouse">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="itemWarehouse.ItemId" />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

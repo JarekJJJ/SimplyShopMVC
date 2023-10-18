@@ -21,7 +21,6 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public int CategoryId { get; set; }
         public string? EanCode { get; set; }
         public string? ItemSymbol { get; set; }
-        public int? VatRate { get; set; }
         public string? ImageFolder { get; set; }
         // pomocnicze
         // p.1 - dodawanie i obsługa tagów

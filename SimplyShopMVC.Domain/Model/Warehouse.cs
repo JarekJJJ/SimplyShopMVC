@@ -11,6 +11,8 @@ namespace SimplyShopMVC.Domain.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
+        public int DeliveryTime { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual ICollection<ItemWarehouse> ItemWarehouses { get; set; }
 

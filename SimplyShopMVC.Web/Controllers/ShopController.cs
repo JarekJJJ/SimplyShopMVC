@@ -61,5 +61,11 @@ namespace SimplyShopMVC.Web.Controllers
             return RedirectToAction("AddItem");
 
         }
+        public IActionResult AddItemWarehouse()
+        {
+            AddItemWarehouseVm vm = new AddItemWarehouseVm();
+            var newItemW = _itemService.AddItemWarehouse(vm);
+            return View(newItemW);
+        }
     }
 }

@@ -28,10 +28,11 @@ namespace SimplyShopMVC.Domain.Interface
         IQueryable<Item> GetItemsByCategoryId(int categoryId);  
         int AddCategory(Category category);
         Category GetCategoryById(int id);
-
         void UpdateCategory(Category category);
         void DeleteCategory(int categoryId);
-
+        //Warehouse
+        int AddWarehouse(Warehouse warehouse);
+        void DeleteWarehouse(int warehouseId);
 
   
         

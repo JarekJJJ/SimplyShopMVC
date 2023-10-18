@@ -62,9 +62,6 @@ namespace SimplyShopMVC.Application.Services
                     }
                 }              
                 AddTagsToItem(item.SelectedTags, id);
-                // teraz kategorie !
-
-                // Tutaj dokończyć --------- Dodawanie item !
             }
 
             List<ItemTagsForListVm> listTags = new List<ItemTagsForListVm>();
@@ -74,8 +71,7 @@ namespace SimplyShopMVC.Application.Services
             {
                 listTags.Add(tag);
             }
-            item.ItemTags = listTags;
-            //to samo z kategoriami !
+            item.ItemTags = listTags;          
 
             List<CategoryForListVm> listCategory = new List<CategoryForListVm>();
             var allCategories = _itemRepo.GetAllCategories()
@@ -149,6 +145,11 @@ namespace SimplyShopMVC.Application.Services
                 var element = _itemRepo.GetItemTagByTagId(stags);
                 _itemRepo.AddConnectionItemTags(itemId, element);
             }
+        }
+
+        public AddItemWarehouseVm AddItemWarehouse(AddItemWarehouseVm item)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -19,7 +19,6 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public int CategoryId { get; set; }
         public string? EanCode { get; set; }
         public string ItemSymbol { get; set; }
-        public int VatRate { get; set; }
         public string ImageFolder { get; set; }
 
         public void Mapping(Profile profile)

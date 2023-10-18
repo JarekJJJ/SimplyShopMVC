@@ -17,7 +17,6 @@ namespace SimplyShopMVC.Domain.Model
         public int? CategoryId { get; set; }
         public string? EanCode { get; set; }
         public string ItemSymbol { get; set; }
-        public int VatRate { get; set; }
         public string? ImageFolder { get; set; }
 
         public virtual Category Category { get; set; }

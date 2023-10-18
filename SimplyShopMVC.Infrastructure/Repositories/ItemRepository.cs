@@ -146,5 +146,22 @@ namespace SimplyShopMVC.Infrastructure.Repositories
                 _context.SaveChanges();
             }
         }
+
+        public int AddWarehouse(Warehouse warehouse)
+        {
+           _context.Warehouses.Add(warehouse);
+            _context.SaveChanges();
+            return warehouse.Id;
+        }
+
+        public void DeleteWarehouse(int warehouseId)
+        {
+            var result = _context.Warehouses.FirstOrDefault(w=>w.Id== warehouseId);
+            if (result != null)
+            {
+                _context.Warehouses.Remove(result);
+                _context.SaveChanges();
+            }
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using SimplyShopMVC.Application.Mapping;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,25 +8,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimplyShopMVC.Domain.Model
+namespace SimplyShopMVC.Application.ViewModels.Item
 {
-    // Tabela przechowuje informacje o stanach przedmiotu, cenie oraz czasie wysyłki w danym magazynie
-    public class ItemWarehouse
+    public class ItemWarehouseForListVm : IMapFrom<SimplyShopMVC.Domain.Model.ItemWarehouse>
     {
         public int Id { get; set; }
         public int WarehouseId { get; set; }
         public int ItemId { get; set; }
-        public string WName { get; set; }
-        public string? WDescription { get; set; }
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
+        [DataType(DataType.Currency)]
         public decimal? NetPurchasePrice { get; set; }
         public int VatRate { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
+        [DataType(DataType.Currency)]
         public decimal FinalPriceA { get; set; }
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<ItemWarehouseForListVm, SimplyShopMVC.Domain.Model.ItemWarehouse>().ReverseMap();
 
-        public virtual Item Item { get; set; }
-        public virtual Warehouse Warehouse { get; set; }
-
+        }
     }
+
 }
