@@ -9,6 +9,46 @@
 <h4>AddItemWarehouseVm</h4>
 <hr />
 <div class="row">
+    <form asp-action="AddItemWarehouse" asp-controller="Shop" method="get">
+        <label asp-for="searchItem">Wpisz nazwę szukanego towaru</label>
+        <input type="text" asp-for="searchItem" />
+        <input type="submit" value="szukaj" class="btn btn-primary" />
+    </form>
+</div>
+@if (Model.items != null)
+{
+     <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Id
+                    </th>
+                    <th>
+                        Nazwa
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.items)
+            {
+                        <tr>
+                            <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                <span class="">@Html.ActionLink("UpdateArticle", "UpdateArticle", new {id=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.Id})
+                            </td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+<div class="row">
     <div class="col-md-4">
         <form asp-action="AddItemWarehouse">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>

@@ -149,7 +149,13 @@ namespace SimplyShopMVC.Application.Services
 
         public AddItemWarehouseVm AddItemWarehouse(AddItemWarehouseVm item)
         {
-            throw new NotImplementedException();
+           if (item.searchItem != null) // dodać szukanie po ean !!!
+            {
+                var resultItem = _itemRepo.GetAllItems().Where(i => i.Name.Contains(item.searchItem))
+                    .ProjectTo<ItemForListVm>(_mapper.ConfigurationProvider).Take(20).ToList();
+                item.items = resultItem;
+            }
+           return item;
         }
     }
 }

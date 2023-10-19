@@ -12,5 +12,6 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public List<WarehouseForListVm> warehouses { get; set; }
         public List<ItemForListVm> items { get; set; }
         public string searchItem { get; set; }
+        public int selectedWarehouseId { get; set; }
     }
 }
