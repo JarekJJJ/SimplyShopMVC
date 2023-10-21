@@ -170,6 +170,11 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.SaveChanges();
             return itemWarehouse.Id;
         }
+        public IQueryable<ItemWarehouse> GetAllItemWarehouses()
+        {
+            var result = _context.ItemWarehouses;
+            return result;
+        }
 
         public IQueryable<Warehouse> GetAllWarehouses()
         {

@@ -26,17 +26,29 @@
                     <th>
                         Nazwa
                     </th>
+                    <th>
+                        Cena
+                    </th>
                 </tr>
             </thead>
             <tbody>
+                @{
+               
+                }
             @foreach (var item in Model.items)
             {
-                        <tr>
+
+                var iwar = Model.itemWarehouses.FirstOrDefault(i => i.ItemId == item.Id);
+
+                <tr>
                             <td>
                         @Html.DisplayFor(modelItem => item.Id)
                             </td>
                             <td>
                         @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => iwar.FinalPriceA)
                             </td>
                             <td>
                                 <span class="">@Html.ActionLink("UpdateArticle", "UpdateArticle", new {id=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
@@ -51,8 +63,7 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="AddItemWarehouse">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="itemWarehouse.ItemId" />
+           
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

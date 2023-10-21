@@ -14,7 +14,7 @@
     <thead>
         <tr>
             <th>
-               Name
+                Name
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.selectedWarehouseId)
@@ -25,25 +25,33 @@
             <th>
                 Kod Ean
             </th>
+            <th>
+                Cena
+            </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.items) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
+        @foreach (var item in Model.items)
+        {
+            var iwar = Model.itemWarehouses?.FirstOrDefault(i => i.ItemId == item.Id);
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
                 <td>@Html.DisplayFor(modelItem => item.ItemSymbol)</td>
                 <td>@Html.DisplayFor(modelItem => item.EanCode)</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+                <td>
+                    @(iwar != null ? Html.DisplayFor(modelItem => iwar.FinalPriceA) : Html.Raw("brak towaru"))
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
