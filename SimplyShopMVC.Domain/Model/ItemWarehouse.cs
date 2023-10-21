@@ -14,8 +14,6 @@ namespace SimplyShopMVC.Domain.Model
         public int Id { get; set; }
         public int WarehouseId { get; set; }
         public int ItemId { get; set; }
-        public string WName { get; set; }
-        public string? WDescription { get; set; }
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? NetPurchasePrice { get; set; }

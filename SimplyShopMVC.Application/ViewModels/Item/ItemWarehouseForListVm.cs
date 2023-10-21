@@ -22,7 +22,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public int VatRate { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         [DataType(DataType.Currency)]
-        public decimal FinalPriceA { get; set; }
+        public decimal FinalPriceA { get; set; } //Dodać B i C
         public void Mapping(Profile profile)
         {
             profile.CreateMap<ItemWarehouseForListVm, SimplyShopMVC.Domain.Model.ItemWarehouse>().ReverseMap();

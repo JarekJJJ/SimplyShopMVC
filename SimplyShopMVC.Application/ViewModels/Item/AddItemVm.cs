@@ -40,6 +40,11 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public int? mainCategoryId { get; set; }
         //p.3 Zdjęcia
         public List<IFormFile>? Image { get; set; }
+        // p.4 Przyjęcie towaru
+        public ItemWarehouseForListVm? ItemWarehouse { get; set; }
+        public List<WarehouseForListVm> warehouses { get; set; }
+        public int? selectedWarehouseId { get; set; }
+
 
         public void Mapping(Profile profile)
         {
@@ -65,6 +70,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
             {
                 RuleFor(x => x.Id).NotNull();
                 RuleFor(x => x.Name).MinimumLength(5).NotEmpty();
+                    
             }
         }
     }

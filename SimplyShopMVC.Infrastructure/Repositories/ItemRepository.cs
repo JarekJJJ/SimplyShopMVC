@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SimplyShopMVC.Infrastructure.Repositories
 {
-    public class ItemRepository: IItemRepository
+    public class ItemRepository : IItemRepository
     {
         private readonly Context _context;
         public ItemRepository(Context context)
@@ -41,7 +41,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             var item = _context.Items.FirstOrDefault(i => i.Id == id);
 
             return item;
-            
+
         }
         public IQueryable<Item> GetAllItems()
         {
@@ -51,7 +51,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public void UpdateItem(Item item)
         {
-            var result = _context.Items.FirstOrDefault(c=>c.Id== item.Id);
+            var result = _context.Items.FirstOrDefault(c => c.Id == item.Id);
             if (result != null)
             {
                 _context.Items.Update(item);
@@ -80,7 +80,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public int AddItemTag(ItemTag itemTag)
         {
-           _context.ItemTags.Add(itemTag);
+            _context.ItemTags.Add(itemTag);
             _context.SaveChanges();
             return itemTag.Id;
         }
@@ -110,26 +110,26 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public IQueryable<Category> GetAllCategories()
         {
-           var categories =  _context.Categories;
+            var categories = _context.Categories;
             return categories;
         }
 
         public int AddCategory(Category category)
         {
-           _context.Categories.Add(category);
+            _context.Categories.Add(category);
             _context.SaveChanges();
             return category.Id;
         }
 
         public Category GetCategoryById(int id)
         {
-           var result = _context.Categories.FirstOrDefault(c => c.Id == id);
+            var result = _context.Categories.FirstOrDefault(c => c.Id == id);
             return result;
         }
 
         public void UpdateCategory(Category category)
         {
-            var result = _context.Categories.FirstOrDefault(c=>c.Id == category.Id);
+            var result = _context.Categories.FirstOrDefault(c => c.Id == category.Id);
             if (result != null)
             {
                 _context.Categories.Update(category);
@@ -139,7 +139,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public void DeleteCategory(int categoryId)
         {
-           var result = _context.Categories.FirstOrDefault(c=>c.Id== categoryId);
+            var result = _context.Categories.FirstOrDefault(c => c.Id == categoryId);
             if (result != null)
             {
                 _context.Categories.Remove(result);
@@ -149,19 +149,32 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public int AddWarehouse(Warehouse warehouse)
         {
-           _context.Warehouses.Add(warehouse);
+            _context.Warehouses.Add(warehouse);
             _context.SaveChanges();
             return warehouse.Id;
         }
 
         public void DeleteWarehouse(int warehouseId)
         {
-            var result = _context.Warehouses.FirstOrDefault(w=>w.Id== warehouseId);
+            var result = _context.Warehouses.FirstOrDefault(w => w.Id == warehouseId);
             if (result != null)
             {
                 _context.Warehouses.Remove(result);
                 _context.SaveChanges();
             }
+        }
+
+        public int AddItemWarehouse(ItemWarehouse itemWarehouse)
+        {
+            _context.ItemWarehouses.Add(itemWarehouse);
+            _context.SaveChanges();
+            return itemWarehouse.Id;
+        }
+
+        public IQueryable<Warehouse> GetAllWarehouses()
+        {
+            var result = _context.Warehouses;
+            return result;
         }
     }
 }
