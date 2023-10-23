@@ -12,13 +12,15 @@ namespace SimplyShopMVC.Application.Interfaces
     public interface IItemService
     {
         AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder);
-        void UpdateItem(UpdateItemVm item, List<string> selectedImage);      
+        int UpdateItem(AddItemVm item);      
         void DeleteItem(int id);
         int AddItemTag(AddItemVm item);
         int AddCategory(AddItemVm item);
         UpdateItemVm GetItemToUpdate(int itemId);
         AddItemWarehouseVm AddItemWarehouse(AddItemWarehouseVm item);
         AddItemWarehouseVm ListItemToUpdate(string searchItem);
+
+        AddItemVm AddItemToUpdate(int selectedItem);
         //ItemDetailVm GetItemDetails(int itemId);
         //ListItemForListVm GetAllItemsByTagId(int tagId);
         //ListItemForListVm GetAllItemsForList();

@@ -50,13 +50,9 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         }
 
         public void UpdateItem(Item item)
-        {
-            var result = _context.Items.FirstOrDefault(c => c.Id == item.Id);
-            if (result != null)
-            {
-                _context.Items.Update(item);
-                _context.SaveChanges();
-            }
+        {        
+               _context.Items.Update(item);
+                _context.SaveChanges();          
 
         }
 

@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using SimplyShopMVC.Application.Mapping;
+using SimplyShopMVC.Application.ViewModels.Article;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -31,15 +32,20 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public string TagDescription { get; set; }
         // p.2 Dodawanie i obsługa kategorii w menu nowego produktu
         public List<CategoryForListVm>? Categories { get; set; }
+        public CategoryForListVm? Category { get; set; }
         public int selectedCategory { get; set; }
-        public int categoryId { get; set; }
-        public string categoryName { get; set; }
-        public string categoryDescription { get; set; }
-        public bool isActiveCategory { get; set; }
-        public bool isMainCategory { get; set; }
-        public int? mainCategoryId { get; set; }
+        //public int categoryId { get; set; }
+        //public string categoryName { get; set; }
+        //public string categoryDescription { get; set; }
+        //public bool isActiveCategory { get; set; }
+        //public bool isMainCategory { get; set; }
+        //public int? mainCategoryId { get; set; }
+
         //p.3 Zdjęcia
         public List<IFormFile>? Image { get; set; }
+        public List<PhotoItemVm>? ListImages { get; set; }
+        public List<string>? SelectedImage { get; set; }
+
         // p.4 Przyjęcie towaru
         public ItemWarehouseForListVm? ItemWarehouse { get; set; }
         public List<WarehouseForListVm> warehouses { get; set; }
@@ -56,12 +62,13 @@ namespace SimplyShopMVC.Application.ViewModels.Item
                             .ForMember(s => s.TagDescription, opt => opt.Ignore())
                             .ForMember(s => s.SelectedTags, opt => opt.Ignore())
                             .ForMember(s => s.selectedCategory, opt => opt.Ignore())
-                            .ForMember(s => s.categoryId, opt => opt.Ignore())
-                            .ForMember(s => s.categoryDescription, opt => opt.Ignore())
-                            .ForMember(s => s.categoryName, opt => opt.Ignore())
-                            .ForMember(s => s.isMainCategory, opt => opt.Ignore())
-                            .ForMember(s => s.isActiveCategory, opt => opt.Ignore())
-                            .ForMember(s => s.mainCategoryId, opt => opt.Ignore())
+                            .ForMember(s=>s.SelectedImage, opt => opt.Ignore())
+                            //.ForMember(s => s.categoryId, opt => opt.Ignore())
+                            //.ForMember(s => s.categoryDescription, opt => opt.Ignore())
+                            //.ForMember(s => s.categoryName, opt => opt.Ignore())
+                            //.ForMember(s => s.isMainCategory, opt => opt.Ignore())
+                            //.ForMember(s => s.isActiveCategory, opt => opt.Ignore())
+                            //.ForMember(s => s.mainCategoryId, opt => opt.Ignore())
                              .ForMember(s => s.Image, opt => opt.Ignore());
         }
         public class AddItemValidation : AbstractValidator<AddItemVm>

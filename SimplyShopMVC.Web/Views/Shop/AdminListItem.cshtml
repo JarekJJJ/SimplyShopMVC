@@ -47,7 +47,7 @@
                     @(iwar != null ? Html.DisplayFor(modelItem => iwar.FinalPriceA) : Html.Raw("brak towaru"))
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    <span class="">@Html.ActionLink("Update","ItemUpdate", new {selectedItem=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
                     @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                     @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
                 </td>

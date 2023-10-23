@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Hosting;
+using SimplyShopMVC.Application.Helpers;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Application.ViewModels.Item;
@@ -18,14 +19,16 @@ namespace SimplyShopMVC.Application.Services
     {
         private readonly IItemRepository _itemRepo;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _webHost;
 
-        public ItemService(IItemRepository itemRepo, IMapper mapper)
+        public ItemService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost)
         {
             _itemRepo = itemRepo;
             _mapper = mapper;
+            _webHost = webHost;
         }
 
-        public AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder) //Dodać automatyczny symbol !!!
+        public AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder)
         {
             var mItem = _mapper.Map<Item>(item);
             if (mItem.Name != null)
@@ -124,22 +127,21 @@ namespace SimplyShopMVC.Application.Services
         }
         public int AddCategory(AddItemVm item)
         {
-            if (item.categoryName != null)
-            {
-                var category = new CategoryForListVm()
-                {
-                    Id = item.CategoryId,
-                    Name = item.categoryName,
-                    Description = item.categoryDescription,
-                    IsActive = item.isActiveCategory,
-                    IsMainCategory = item.isMainCategory,
-                    MainCategoryId = item.mainCategoryId
-                };
-                var categoryMap = _mapper.Map<Category>(category);
+            var categoryMap = _mapper.Map<Category>(item.Category);
+            //if (item.Category.Name != null)
+            //{
+            //    var category = new CategoryForListVm()
+            //    {
+            //        Id = item.CategoryId,
+            //        Name = item.categoryName,
+            //        Description = item.categoryDescription,
+            //        IsActive = item.isActiveCategory,
+            //        IsMainCategory = item.isMainCategory,
+            //        MainCategoryId = item.mainCategoryId
+            //    };
+               
                 var id = _itemRepo.AddCategory(categoryMap);
-                return id;
-            }
-            return 0;
+                return id;         
         }
 
         public void DeleteItem(int id)
@@ -152,10 +154,7 @@ namespace SimplyShopMVC.Application.Services
             throw new NotImplementedException();
         }
 
-        public void UpdateItem(UpdateItemVm item, List<string> selectedImage)
-        {
-            throw new NotImplementedException();
-        }
+       
         public void AddTagsToItem(List<int> tags, int itemId)
         {
             _itemRepo.DeleteConnectionItemTags(itemId);
@@ -193,6 +192,100 @@ namespace SimplyShopMVC.Application.Services
                 item.itemWarehouses = resultItemWare.ToList();
             }
             return item;
+        }
+
+        public AddItemVm AddItemToUpdate(int selectedItem)
+        {
+            var item = _mapper.Map<AddItemVm>(_itemRepo.GetItemById(selectedItem));
+            var newItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == selectedItem);
+            if (newItemWare != null)
+            {
+                item.ItemWarehouse = _mapper.Map<ItemWarehouseForListVm>(newItemWare);
+            }
+            item.ItemTags = _itemRepo.GetAllItemTags()
+                .ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+            var listItemTags = _itemRepo.GetConnectItemTags(item.Id).ToList();
+            item.SelectedTags = new List<int>();
+            foreach ( var itemTag in listItemTags ) //Lista przypisanych tagów to lista intów dlatego trzeba taką przygotować do widoku. 
+            {
+                item.SelectedTags.Add(itemTag.ItemTagId);
+            }
+            item.warehouses=_itemRepo.GetAllWarehouses()
+                .ProjectTo<WarehouseForListVm>( _mapper.ConfigurationProvider).ToList();
+            var _pathImage = $"{_webHost.WebRootPath}\\media\\itemimg\\{item.ImageFolder}\\";
+            var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+            var listImage = new List<PhotoItemVm>();
+            int photoId = 0;
+            foreach (var imageUrl in imageToList)
+            {
+                var photoDetail = new PhotoItemVm();
+                photoDetail.Id = photoId;
+                photoId++;
+                photoDetail.Name = imageUrl;
+                var _imgFullUrl = $"/media/itemimg/{item.ImageFolder}/{imageUrl}";
+                photoDetail.ImageUrl = _imgFullUrl;
+                photoDetail.IsSelected = false;
+                listImage.Add(photoDetail);
+            }
+            item.ListImages= listImage;        
+            //articleVm.SelectedTags = GetAllSelectedTagsForList(articleId);
+            item.Categories = _itemRepo.GetAllCategories()
+                .ProjectTo<CategoryForListVm>( _mapper.ConfigurationProvider).ToList();
+
+            return item;
+        }
+        public int UpdateItem(AddItemVm model)
+        {
+            var _item = _mapper.Map<Item>(model);
+            _item.CategoryId = model.selectedCategory;
+            _itemRepo.UpdateItem(_item);
+            var itemWare = _mapper.Map<ItemWarehouse>(model.ItemWarehouse);
+            itemWare.WarehouseId = (int)model.selectedWarehouseId;
+            itemWare.ItemId = model.Id;
+            _itemRepo.AddItemWarehouse(itemWare);
+            string folderName;
+            if(model.ImageFolder!= null)
+            {
+                folderName = _item.ImageFolder;
+            }
+            else
+            {
+                _item.ImageFolder = _item.ItemSymbol;
+                folderName = _item.ImageFolder;
+            }         
+            string newFolderPath = Path.Combine(_webHost.WebRootPath, "media\\itemimg", folderName);
+            try
+            {
+                Directory.CreateDirectory(newFolderPath);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+            if (model.Image != null)
+            {
+                foreach (var image in model.Image)
+                {
+                    string fileName = $"{image.FileName}";
+                    string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                    using (FileStream fileStream = System.IO.File.Create(filePath))
+                    {
+                        image.CopyTo(fileStream);
+                        fileStream.Flush();
+                    }
+                }
+            }
+            if (model.SelectedImage != null)
+            {
+                foreach (var _image in model.SelectedImage)
+                {
+                    var result = ImageHelper.DeleteImage(_image, newFolderPath);
+                }
+            }
+            AddTagsToItem(model.SelectedTags, model.Id);
+            return _item.Id;
         }
     }
 }

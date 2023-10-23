@@ -50,7 +50,7 @@ namespace SimplyShopMVC.Web.Controllers
                var newItemPost =  _itemService.AddItem(vm, webHostFolder);
                 return RedirectToAction ("AddItem");
             }
-            if(model.categoryName!=null)
+            if(model.Category.Name!=null)
             {
                 var id = _itemService.AddCategory(model);
                 AddItemVm vm = new AddItemVm();
@@ -73,5 +73,33 @@ namespace SimplyShopMVC.Web.Controllers
             var newItemW = _itemService.ListItemToUpdate(searchItem);
             return View(newItemW);
         }
+        [HttpGet]
+        public IActionResult ItemUpdate(int selectedItem)
+        {
+            var itemToUpdate = _itemService.AddItemToUpdate(selectedItem);
+            return View(itemToUpdate);
+        }
+        [HttpPost]
+        public IActionResult ItemUpdate(AddItemVm model, [FromServices] IWebHostEnvironment webHostFolder)
+        {
+            ValidationResult result =  _itemValidator.Validate(model);
+            if (result.IsValid &&model.TagName == null && model.Category==null)
+            {
+                var id = _itemService.UpdateItem(model);
+                return RedirectToAction("AdminListItem");
+            }
+            if (model.TagName != null)
+            {
+                var id = _itemService.AddItemTag(model);            
+                return RedirectToAction("ItemUpdate",new {selectedItem=model.Id});
+            }
+            if (model.Category.Name != null)
+            {
+                var id = _itemService.AddCategory(model);
+                return RedirectToAction("ItemUpdate", new { selectedItem = model.Id });
+            }
+            return RedirectToAction("AdminListItem");
+        }
+
     }
 }

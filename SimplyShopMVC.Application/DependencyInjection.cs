@@ -10,6 +10,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using SimplyShopMVC.Application.ViewModels.Article;
+using SimplyShopMVC.Application.ViewModels.Item;
+using static SimplyShopMVC.Application.ViewModels.Item.AddItemVm;
 
 namespace SimplyShopMVC.Application
 {
@@ -20,6 +22,8 @@ namespace SimplyShopMVC.Application
             // FluentValidation
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<NewArticleValidation>();
+            services.AddValidatorsFromAssemblyContaining<AddItemValidation>();
+
             //services
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IItemService, ItemService>();

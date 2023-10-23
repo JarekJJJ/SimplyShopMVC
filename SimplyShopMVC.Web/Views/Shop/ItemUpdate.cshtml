@@ -3,11 +3,12 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    ViewData["Title"] = "AddItem";
+    ViewData["Title"] = "UpdateItem";
 }
+<h2> Edycja towaru.</h2>
 <div class="row bg-light rounded m-2 pb-4">
 
-    <form asp-action="AddItem" class="row g-3" enctype="multipart/form-data">
+    <form asp-action="ItemUpdate" method="post" class="row g-3" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="TagId" />
         <div class="col-md-4">
@@ -20,6 +21,7 @@
             <input asp-for="TagDescription" class="form-control" />
             <span asp-validation-for="TagDescription" class="text-danger"></span>
         </div>
+        <input asp-for="Id" value="@Model.Id" type="hidden" class="form-control" />
         <div class="col-md-2">
             <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
         </div>
@@ -29,9 +31,9 @@
 
 <div class="row bg-warning-subtle rounded m-2 pb-4">
 
-    <form asp-action="AddItem" class="row g-3" enctype="multipart/form-data">
+    <form asp-action="ItemUpdate" method="post" class="row g-3" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Category.Name" />
+        <input type="hidden" asp-for="Category.Id" />
         <div class="col-md-5">
             <label asp-for="Category.MainCategoryId" class="control-label">Kategoria Główna - </label>
             <span asp-validation-for="Category.MainCategoryId" class="text-danger"></span>
@@ -39,7 +41,7 @@
                 <option value="0">Wybierz kategorię macierzystą</option>
                 @foreach (var options in Model.Categories)
                 {
-                    <option value="@options.Id">@options.Name</option>
+                        <option value="@options.Id">@options.Name</option>
                 }
             </select>
         </div>
@@ -62,6 +64,7 @@
             <label class="form-check-label">
                 <input class="form-check-input" asp-for="Category.IsMainCategory" /> @Html.DisplayNameFor(model => model.Category.IsMainCategory)
             </label>
+             <input asp-for="Id" value="@Model.Id" type="hidden" class="form-control" />
         </div>      
             <div class="col-md-2">
                 <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
@@ -71,35 +74,36 @@
 </div>
 
 <div class="row">
-    <form asp-action="AddItem" class="row g-3" enctype="multipart/form-data">
+    <form asp-action="ItemUpdate" method="post" class="row g-3" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
         <div class="col-md-6">
             <p class="mt-1 mb-0">Wybierz kategorię towaru: </p>
             <select class="form-select mb-2" id="selectedCategory" name="selectedCategory">
-                <option value="0">Wybierz kategorię</option>
+                
                 @if (Model.Categories != null)
                 {
-                    @foreach (var cat in Model.Categories)
+                    @foreach (var options in Model.Categories)
                     {
-                        <option value="@cat.Id" name="@cat.Name">@cat.Name</option>
+                         <option value="@options.Id" name="@options.Name" selected="@(Model.CategoryId !=null && Model.CategoryId == options.Id ? "selected": null)">@options.Name</option>
                     }
                 }              
             </select>
             <span asp-validation-for="selectedCategory" class="text-danger"></span>
-             
+
             <label asp-for="Image" class="form-label">Wybierz zdjęcie główne</label>
             <input asp-for="Image" class="form-control" type="file" name="Image" id="Image" multiple>
-            
+
         </div>
         <div class="col-md-6">
             <p class="mt-1 mb-0">Wybierz Tag towaru: </p>
             <select class="form-select" id="SelectedTags" name="SelectedTags" multiple>
                 @if (Model.ItemTags != null)
-                {
+                {                  
                     @foreach (var tags in Model.ItemTags)
                     {
-                        <option value="@tags.Id" name="@tags.Name">@tags.Name</option>
+                        var sTag = Model.SelectedTags.FirstOrDefault(t => t == tags.Id);
+                        <option value="@tags.Id" name="@tags.Name" selected="@(Model.SelectedTags !=null && tags.Id == sTag ? "selected": null)">@tags.Name</option>
                     }
                 }             
             </select>
@@ -126,8 +130,16 @@
         <div class="col-md-4">
         <input class="form-check-input h4" type="checkbox" asp-for="IsActive">
             <label class="form-check-label h4" for="flexCheckDefault">Towar aktywny.</label>
-           
+
         </div>
+         <div class="col-md-4">
+            <select class="form-select" id="SelectedImage" name="SelectedImage" multiple>
+                    @foreach (var images in Model.ListImages)
+                    {
+                        <option value="@images.Name" name="SelectedImage">@images.Name</option>
+                    }
+                </select>
+            </div>
         <div class="col-md-12">
             <label asp-for="Description" class="control-label">Dodaj pełny opis produktu</label>
             <textarea asp-for="Description" id="mytextarea" class="shadow-sm rounded">Wpisz tekst</textarea>
@@ -137,13 +149,13 @@
             <div class="col-md-3">
                 <label asp-for="selectedWarehouseId" class="form-label">Wybierz magazyn dostawy:</label>
             <select class="form-select" asp-for="selectedWarehouseId">
-                @if (Model.warehouses != null)
-                {
-                    @foreach (var result in Model.warehouses)
+                    @if (Model.warehouses != null)
                     {
-                        <option value="@result.Id" name="@result.Name">@result.Name</option>
+                        @foreach (var result in Model.warehouses)
+                        {
+                                <option value="@result.Id" name="@result.Name">@result.Name</option>
+                        }
                     }
-                }
             </select>
             </div>
             <div class="col-md-3">
@@ -164,4 +176,3 @@
         </div>
     </form>
 </div>
-
