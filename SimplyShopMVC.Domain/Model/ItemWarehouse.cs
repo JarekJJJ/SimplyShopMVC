@@ -17,12 +17,13 @@ namespace SimplyShopMVC.Domain.Model
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? NetPurchasePrice { get; set; }
-        public int VatRate { get; set; }
+        public int VatRateId { get; set; } //zapisuje się id stawki z modelu VatRate
         [Column(TypeName = "decimal(18, 2)")]
         public decimal FinalPriceA { get; set; }
 
         public virtual Item Item { get; set; }
         public virtual Warehouse Warehouse { get; set; }
+        public virtual VatRate VatRate { get; set; }
 
     }
 }

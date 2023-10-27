@@ -62,10 +62,23 @@ namespace SimplyShopMVC.Web.Controllers
 
         }
         [HttpGet]
-        public IActionResult AddItemWarehouse(string searchItem)
+        public IActionResult AddItemWarehouse(int itemId)
         {
-            return View();
+            var listWarehouseItem = _itemService.AddToUpdateItemWarehouse(itemId);
+            return View(listWarehouseItem);
         }
+        [HttpPost]
+        public IActionResult AddItemWarehouse(AddItemWarehouseVm model)
+        {
+            _itemService.AddItemWarehouse(model);
+            return RedirectToAction("AddItemWarehouse");
+        }
+        public IActionResult ListItemWarehouse(string searchItem)
+        {
+            var newItemW = _itemService.ListItemToUpdate(searchItem);
+            return View(newItemW);
+        }
+          
         [HttpGet]
         public IActionResult AdminListItem(string searchItem)
         {

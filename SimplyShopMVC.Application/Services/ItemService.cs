@@ -28,7 +28,7 @@ namespace SimplyShopMVC.Application.Services
             _webHost = webHost;
         }
 
-        public AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder)
+        public AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder) // Do wywalenia AddItemWarehouse !
         {
             var mItem = _mapper.Map<Item>(item);
             if (mItem.Name != null)
@@ -87,23 +87,23 @@ namespace SimplyShopMVC.Application.Services
                 listCategory.Add(category);
             }
             item.Categories = listCategory;
-            if (item.selectedWarehouseId != null && item.ItemWarehouse.FinalPriceA != null && item.ItemWarehouse.Quantity != null)
-            {
-               // var wItem = _mapper.Map<ItemWarehouse>(item.ItemWarehouse);
-               ItemWarehouse wItem = new ItemWarehouse();
-               
-                wItem.WarehouseId = (int)item.selectedWarehouseId;
-                wItem.ItemId = (int)mItem.Id;
-                wItem.VatRate = 23; // Dodać model oraz Vm ze stawkami (A-23%, B-8% ITD...)
-                wItem.FinalPriceA = item.ItemWarehouse.FinalPriceA;
-                wItem.Quantity = item.ItemWarehouse.Quantity;
-                wItem.NetPurchasePrice = item.ItemWarehouse.NetPurchasePrice;
-                _itemRepo.AddItemWarehouse(wItem);
-            }
-            List<Warehouse> warehouses = new List<Warehouse>();
-            var listWarehouse = _itemRepo.GetAllWarehouses()
-                .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
-            item.warehouses = listWarehouse;
+            //if (item.selectedWarehouseId != null && item.ItemWarehouse.FinalPriceA != null && item.ItemWarehouse.Quantity != null)
+            //{
+            //    // var wItem = _mapper.Map<ItemWarehouse>(item.ItemWarehouse);
+            //    ItemWarehouse wItem = new ItemWarehouse();
+
+            //    wItem.WarehouseId = (int)item.selectedWarehouseId;
+            //    wItem.ItemId = (int)mItem.Id;
+            //    //wItem.VatRate = 23; // Dodać model oraz Vm ze stawkami (A-23%, B-8% ITD...)
+            //    wItem.FinalPriceA = item.ItemWarehouse.FinalPriceA;
+            //    wItem.Quantity = item.ItemWarehouse.Quantity;
+            //    wItem.NetPurchasePrice = item.ItemWarehouse.NetPurchasePrice;
+            //    _itemRepo.AddItemWarehouse(wItem);
+            //}
+            //List<Warehouse> warehouses = new List<Warehouse>();
+            //var listWarehouse = _itemRepo.GetAllWarehouses()
+            //    .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            //item.warehouses = listWarehouse;
 
             return item;
         }
@@ -139,9 +139,9 @@ namespace SimplyShopMVC.Application.Services
             //        IsMainCategory = item.isMainCategory,
             //        MainCategoryId = item.mainCategoryId
             //    };
-               
-                var id = _itemRepo.AddCategory(categoryMap);
-                return id;         
+
+            var id = _itemRepo.AddCategory(categoryMap);
+            return id;
         }
 
         public void DeleteItem(int id)
@@ -154,7 +154,7 @@ namespace SimplyShopMVC.Application.Services
             throw new NotImplementedException();
         }
 
-       
+
         public void AddTagsToItem(List<int> tags, int itemId)
         {
             _itemRepo.DeleteConnectionItemTags(itemId);
@@ -165,20 +165,45 @@ namespace SimplyShopMVC.Application.Services
             }
         }
 
-        public AddItemWarehouseVm AddItemWarehouse(AddItemWarehouseVm item)
+        public AddItemWarehouseVm AddToUpdateItemWarehouse(int itemId)
         {
-            if (item.searchItem != null) // dodać szukanie po ean !!!
-            {
+            var listItemWare = _itemRepo.GetAllItemWarehouses().Where(i => i.ItemId == itemId)
+                 .ProjectTo<ItemWarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            var listWarehouse = _itemRepo.GetAllWarehouses()
+                .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            var listVatRate = _itemRepo.GetAllVatRate()
+                .ProjectTo<VatRateForListVm>(_mapper.ConfigurationProvider).ToList();
 
+            AddItemWarehouseVm itemWarehouseVm = new AddItemWarehouseVm();
+            itemWarehouseVm.itemWarehouses = listItemWare;
+            itemWarehouseVm.warehouses = listWarehouse;
+            itemWarehouseVm.vatRate = listVatRate;
+            itemWarehouseVm.itemId= itemId;
+            return itemWarehouseVm;
+        }
+        public void AddItemWarehouse(AddItemWarehouseVm model)
+        {
+            var resultIW = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == model.itemWarehouse.ItemId || i.WarehouseId == model.itemWarehouse.WarehouseId);
+            if (resultIW != null)
+            {
+                var resultIWmapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
+                _itemRepo.UpdateItemWarehouse(resultIWmapped);
             }
-            return item;
+            else
+            {
+                var modelMapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
+                _itemRepo.AddItemWarehouse(modelMapped);
+            }
+            
+            
+           
         }
         public AddItemWarehouseVm ListItemToUpdate(string searchItem)
         {
             AddItemWarehouseVm item = new AddItemWarehouseVm();
             if (searchItem != null)
             {
-                var resultItem = _itemRepo.GetAllItems().Where(i => i.Name.Contains(searchItem))
+                var resultItem = _itemRepo.GetAllItems().Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem))
                        .ProjectTo<ItemForListVm>(_mapper.ConfigurationProvider).Take(20);
                 item.items = resultItem.OrderByDescending(i => i.Id).ToList();
             }
@@ -198,20 +223,15 @@ namespace SimplyShopMVC.Application.Services
         {
             var item = _mapper.Map<AddItemVm>(_itemRepo.GetItemById(selectedItem));
             var newItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == selectedItem);
-            if (newItemWare != null)
-            {
-                item.ItemWarehouse = _mapper.Map<ItemWarehouseForListVm>(newItemWare);
-            }
             item.ItemTags = _itemRepo.GetAllItemTags()
                 .ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
             var listItemTags = _itemRepo.GetConnectItemTags(item.Id).ToList();
             item.SelectedTags = new List<int>();
-            foreach ( var itemTag in listItemTags ) //Lista przypisanych tagów to lista intów dlatego trzeba taką przygotować do widoku. 
+            foreach (var itemTag in listItemTags) //Lista przypisanych tagów to lista intów dlatego trzeba taką przygotować do widoku. 
             {
                 item.SelectedTags.Add(itemTag.ItemTagId);
             }
-            item.warehouses=_itemRepo.GetAllWarehouses()
-                .ProjectTo<WarehouseForListVm>( _mapper.ConfigurationProvider).ToList();
+
             var _pathImage = $"{_webHost.WebRootPath}\\media\\itemimg\\{item.ImageFolder}\\";
             var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
             var listImage = new List<PhotoItemVm>();
@@ -227,10 +247,10 @@ namespace SimplyShopMVC.Application.Services
                 photoDetail.IsSelected = false;
                 listImage.Add(photoDetail);
             }
-            item.ListImages= listImage;        
+            item.ListImages = listImage;
             //articleVm.SelectedTags = GetAllSelectedTagsForList(articleId);
             item.Categories = _itemRepo.GetAllCategories()
-                .ProjectTo<CategoryForListVm>( _mapper.ConfigurationProvider).ToList();
+                .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
 
             return item;
         }
@@ -239,12 +259,8 @@ namespace SimplyShopMVC.Application.Services
             var _item = _mapper.Map<Item>(model);
             _item.CategoryId = model.selectedCategory;
             _itemRepo.UpdateItem(_item);
-            var itemWare = _mapper.Map<ItemWarehouse>(model.ItemWarehouse);
-            itemWare.WarehouseId = (int)model.selectedWarehouseId;
-            itemWare.ItemId = model.Id;
-            _itemRepo.AddItemWarehouse(itemWare);
             string folderName;
-            if(model.ImageFolder!= null)
+            if (model.ImageFolder != null)
             {
                 folderName = _item.ImageFolder;
             }
@@ -252,7 +268,7 @@ namespace SimplyShopMVC.Application.Services
             {
                 _item.ImageFolder = _item.ItemSymbol;
                 folderName = _item.ImageFolder;
-            }         
+            }
             string newFolderPath = Path.Combine(_webHost.WebRootPath, "media\\itemimg", folderName);
             try
             {
@@ -263,7 +279,7 @@ namespace SimplyShopMVC.Application.Services
 
                 throw;
             }
-           
+
             if (model.Image != null)
             {
                 foreach (var image in model.Image)
@@ -287,5 +303,7 @@ namespace SimplyShopMVC.Application.Services
             AddTagsToItem(model.SelectedTags, model.Id);
             return _item.Id;
         }
+
+
     }
 }

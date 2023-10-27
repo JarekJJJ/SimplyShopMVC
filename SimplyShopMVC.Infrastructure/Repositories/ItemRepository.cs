@@ -1,4 +1,5 @@
-﻿using SimplyShopMVC.Domain.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
 using System;
 using System.Collections.Generic;
@@ -175,6 +176,23 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         public IQueryable<Warehouse> GetAllWarehouses()
         {
             var result = _context.Warehouses;
+            return result;
+        }
+
+        public void UpdateItemWarehouse(ItemWarehouse itemWarehouse)
+        {
+            var itemToUpdate = _context.ItemWarehouses.FirstOrDefault(i=>i.ItemId==itemWarehouse.ItemId || i.WarehouseId==itemWarehouse.WarehouseId);
+            if (itemToUpdate != null)
+            {
+                itemWarehouse.Id = itemToUpdate.Id;
+                _context.Entry(itemToUpdate).State = EntityState.Detached;
+                _context.Update(itemWarehouse);
+                _context.SaveChanges();
+            }                 
+        }
+        public IQueryable<VatRate> GetAllVatRate()
+        {
+            var result = _context.VatRates;
             return result;
         }
     }

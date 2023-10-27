@@ -20,6 +20,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<ItemTag> ItemTags { get; set; }
         public DbSet<ConnectItemTag> ConnectItemTag { get; set; }
+        public DbSet<VatRate> VatRates { get; set; }
 
         public Context(DbContextOptions options) : base(options)
         {

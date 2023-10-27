@@ -1,0 +1,62 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Item.AddItemWarehouseVm
+@{
+    ViewData["Title"] = "ListItemWarehouse";
+}
+
+
+<h1>AdminListItem</h1>
+<div class="row">
+    <form asp-action="ListItemWarehouse" asp-controller="Shop" method="get">
+        <label asp-for="searchItem">Wpisz nazwę szukanego towaru</label>
+        <input type="text" asp-for="searchItem" />
+
+        <input type="submit" value="szukaj" class="btn btn-primary" />
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.selectedWarehouseId)
+            </th>
+            <th>
+                Symbol towaru
+            </th>
+            <th>
+                Kod Ean
+            </th>
+            <th>
+                Cena
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.items)
+        {
+            var iwar = Model.itemWarehouses?.FirstOrDefault(i => i.ItemId == item.Id);
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.ItemSymbol)</td>
+                <td>@Html.DisplayFor(modelItem => item.EanCode)</td>
+                <td>
+                    @(iwar != null ? Html.DisplayFor(modelItem => iwar.FinalPriceA) : Html.Raw("brak towaru"))
+                </td>
+                <td>
+                    <span class="">@Html.ActionLink("Update","AddItemWarehouse", new {itemId=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

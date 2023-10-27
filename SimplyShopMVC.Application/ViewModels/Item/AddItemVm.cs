@@ -47,9 +47,9 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public List<string>? SelectedImage { get; set; }
 
         // p.4 Przyjęcie towaru
-        public ItemWarehouseForListVm? ItemWarehouse { get; set; }
-        public List<WarehouseForListVm> warehouses { get; set; }
-        public int? selectedWarehouseId { get; set; }
+        //public ItemWarehouseForListVm? ItemWarehouse { get; set; }
+        //public List<WarehouseForListVm> warehouses { get; set; }
+        //public int? selectedWarehouseId { get; set; }
 
 
         public void Mapping(Profile profile)

@@ -19,7 +19,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         [Column(TypeName = "decimal(18, 2)")]
         [DataType(DataType.Currency)]
         public decimal? NetPurchasePrice { get; set; }
-        public int VatRate { get; set; }
+        public int VatRateId { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         [DataType(DataType.Currency)]
         public decimal FinalPriceA { get; set; } //Dodać B i C

@@ -6,72 +6,103 @@
 
 <h1>AddItemWarehouse</h1>
 
-<h4>AddItemWarehouseVm</h4>
-<hr />
-<div class="row">
-    <form asp-action="AddItemWarehouse" asp-controller="Shop" method="get">
-        <label asp-for="searchItem">Wpisz nazwę szukanego towaru</label>
-        <input type="text" asp-for="searchItem" />
-        <input type="submit" value="szukaj" class="btn btn-primary" />
-    </form>
-</div>
-@if (Model.items != null)
+@foreach (var warehouse in Model.warehouses)
 {
-     <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        Id
-                    </th>
-                    <th>
-                        Nazwa
-                    </th>
-                    <th>
-                        Cena
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-               
-                }
-            @foreach (var item in Model.items)
-            {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Id Magazynu:  @warehouse.Id
+                </th>
+                <th>
+                    Nazwa Magazynu: @warehouse.Name
+                </th>
+                <th>
+                    Opis Magazynu: @warehouse.Description
+                </th>
+                <th>
+                    Czas Dostawy: @warehouse.DeliveryTime
+                </th>
+                <th>
+                    Aktywny?:  @(warehouse.IsActive == true ? @Html.Raw("Tak") : @Html.Raw("Nie"))
+                </th>
+            </tr>
+        </thead>
+    </table>
+    var listItemW = Model.itemWarehouses.Where(i => i.WarehouseId == warehouse.Id);
 
-                var iwar = Model.itemWarehouses.FirstOrDefault(i => i.ItemId == item.Id);
+    @foreach (var itemWare in listItemW)
+    {
+        <div class="row">
+            <form asp-action="AddItemWarehouse" method="post" class="row g-3" enctype="multipart/form-data">
+                <input type="hidden" asp-for="itemWarehouse.ItemId" value="@Model.itemId" />
+                <input type="hidden" asp-for="itemWarehouse.WarehouseId" value="@warehouse.Id" />
+                <div class="col-md-2">
+                    <label asp-for="itemWarehouse.Quantity" class="form-label">Podaj ilość:</label>
+                    <input type="number" class="form-control shadow-sm rounded" value="@itemWare.Quantity" asp-for="itemWarehouse.Quantity">
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="itemWarehouse.NetPurchasePrice" class="form-label">cena zakupu netto</label>
+                    <input type="text" class="form-control shadow-sm rounded" value="@itemWare.NetPurchasePrice" asp-for="itemWarehouse.NetPurchasePrice">
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="itemWarehouse.VatRateId" class="form-label">Wybierz stawkę VAT</label>
+                    <select class="form-select" asp-for="itemWarehouse.VatRateId">
 
-                <tr>
-                            <td>
-                        @Html.DisplayFor(modelItem => item.Id)
-                            </td>
-                            <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => iwar.FinalPriceA)
-                            </td>
-                            <td>
-                                <span class="">@Html.ActionLink("UpdateArticle", "UpdateArticle", new {id=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
-                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Delete", "Delete", new { id=item.Id})
-                            </td>
-                        </tr>
-            }
-            </tbody>
-        </table>
-}
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="AddItemWarehouse">
-           
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                        @foreach (var vatlist in Model.vatRate)
+                        {
+                            <option value="@vatlist.Id" name="@vatlist.Name" selected="@(vatlist.Id==1 ? "selected" : null)">@vatlist.Name - @vatlist.Value</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="itemWarehouse.FinalPriceA" class="form-label">cena sprzedaży netto</label>
+                    <input type="text" class="form-control shadow-sm rounded" value="@itemWare.FinalPriceA" asp-for="itemWarehouse.FinalPriceA">
+                </div>
+
+                <div class="col-md-2">
+                    <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+                </div>
+            </form>
+        </div>
+    }
+
+    <div class="row">
+        <form asp-action="AddItemWarehouse" method="post" class="row g-3" enctype="multipart/form-data">
+            <input type="hidden" asp-for="itemWarehouse.Id" />
+            <input type="hidden" asp-for="itemWarehouse.ItemId" value="@Model.itemId" />
+            <input type="hidden" asp-for="itemWarehouse.WarehouseId" value="@warehouse.Id" />
+            <div class="col-md-2">
+                <label asp-for="itemWarehouse.Quantity" class="form-label">Podaj ilość:</label>
+                <input type="number" class="form-control shadow-sm rounded" value="" asp-for="itemWarehouse.Quantity">
+            </div>
+            <div class="col-md-3">
+                <label asp-for="itemWarehouse.NetPurchasePrice" class="form-label">cena zakupu netto</label>
+                <input type="text" class="form-control shadow-sm rounded" value="" asp-for="itemWarehouse.NetPurchasePrice">
+            </div>
+            <div class="col-md-2">
+                <label asp-for="itemWarehouse.VatRateId" class="form-label">Wybierz stawkę VAT</label>
+                <select class="form-select" asp-for="itemWarehouse.VatRateId">
+
+                    @foreach (var vatlist in Model.vatRate)
+                    {
+                        <option value="@vatlist.Id" name="@vatlist.Name" selected="@(vatlist.Id==1 ? "selected" : null)">@vatlist.Name - @vatlist.Value</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="itemWarehouse.FinalPriceA" class="form-label">cena sprzedaży netto</label>
+                <input type="text" class="form-control shadow-sm rounded" value="" asp-for="itemWarehouse.FinalPriceA">
+            </div>
+
+            <div class="col-md-2">
+                <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
             </div>
         </form>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
+
+
+
+}
