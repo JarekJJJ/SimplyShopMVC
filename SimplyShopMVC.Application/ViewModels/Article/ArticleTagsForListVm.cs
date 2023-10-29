@@ -16,8 +16,7 @@ namespace SimplyShopMVC.Application.ViewModels.Article
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<ArticleTagsForListVm, SimplyShopMVC.Domain.Model.ArticleTag>().ReverseMap();
-                
+            profile.CreateMap<ArticleTagsForListVm, SimplyShopMVC.Domain.Model.ArticleTag>().ReverseMap();               
         }
     }
 }

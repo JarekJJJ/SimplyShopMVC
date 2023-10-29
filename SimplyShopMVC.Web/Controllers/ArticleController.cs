@@ -110,6 +110,23 @@ namespace SimplyShopMVC.Web.Controllers
 
             return View("ListArticle", articles);
         }
+        public IActionResult ListArticleTagToUpdate(string? searchTag)
+        {
+            var articleTags = _articleService.ListArticleTagToUpdate(searchTag);
+            return View(articleTags);
+        }
+        [HttpGet]
+        public IActionResult UpdateArticleTag(int articleTagId)
+        {
+            var articleTag = _articleService.GetArticleTagToUpdate(articleTagId);
+            return View(articleTag);
+        }
+        [HttpPost]
+        public IActionResult UpdateArticleTag(UpdateArticleTagVm articleTag, int options)
+        {
+            _articleService.UpdateArticleTag(articleTag, options);
+            return RedirectToAction("ListArticleTagToUpdate");
+        }
     }
 }
 

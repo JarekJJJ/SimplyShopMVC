@@ -19,5 +19,9 @@ namespace SimplyShopMVC.Application.Interfaces
         void UpdateArticle(UpdateArticleVm article, [FromServices] IHostingEnvironment oHostingEnvironment, List<string> selectedImage);
         void DeleteArticle(int id);
         int AddTag(NewArticleVm model);
+        UpdateArticleTagVm ListArticleTagToUpdate(string? searchTag);
+        UpdateArticleTagVm GetArticleTagToUpdate(int tagId);
+
+        void UpdateArticleTag(UpdateArticleTagVm articleTag, int options);
     }
 }

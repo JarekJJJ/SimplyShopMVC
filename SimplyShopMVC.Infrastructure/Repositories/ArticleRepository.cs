@@ -46,8 +46,23 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         public void DeleteArticle(int articleid)
         {
             var article = _context.Articles.Find(articleid);
-            _context.Articles.Remove(article);
-            _context.SaveChanges();
+            if(article != null)
+            {
+                _context.Articles.Remove(article);
+                _context.SaveChanges();
+            }
+        
+        }
+
+        public void DeleteArticleTag(int articleTagId)
+        {
+            var articleTag = _context.ArticleTags.Find(articleTagId);
+            if (articleTag != null)
+            {
+                _context.ArticleTags.Remove(articleTag);
+                _context.SaveChanges();
+            }
+            
         }
 
         public void DeleteConnectionArticleTags(int articleId)
@@ -99,6 +114,16 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             _context.Articles.Update(article);
             _context.SaveChanges();
+        }
+
+        public void UpdateArticleTag(ArticleTag articleTag)
+        {
+            //var result = _context.ArticleTags.Find(articleTag.Id);
+            //if (result != null)
+            //{
+                _context.ArticleTags.Update(articleTag);
+                _context.SaveChanges();
+            //}
         }
     }
 }

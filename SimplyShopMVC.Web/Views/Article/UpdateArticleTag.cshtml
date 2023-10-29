@@ -1,0 +1,35 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Article.UpdateArticleTagVm
+
+@{
+    ViewData["Title"] = "UpdateArticleTag";
+}
+
+
+<h1>Update ArticleTag</h1>
+
+<div class="row">
+    <form asp-action="UpdateArticleTag" method="post" class="row g-3" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Tag.Id" />
+        <input type="hidden" name="options" value="1" />
+        <div class="col-md-3">
+            <label asp-for="Tag.Name" class="form-label">Nazwa Tagu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="Tag.Name">
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Tag.Description" class="form-label">Opis Tagu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="Tag.Description">
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Popraw" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+    <div class="col-md-2">
+        <form asp-action="UpdateArticleTag" method="post" class="row g-3" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Tag.Id" />
+            <input type="hidden" name="options" value="2" />
+            <input type="hidden" class="form-control shadow-sm rounded" asp-for="Tag.Name">
+            <input type="hidden" class="form-control shadow-sm rounded" asp-for="Tag.Description">
+            <input type="submit" value="Usuń" class="btn btn-primary mt-4" />
+        </form>
+    </div>
+</div>

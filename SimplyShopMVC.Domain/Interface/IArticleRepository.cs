@@ -24,5 +24,7 @@ namespace SimplyShopMVC.Domain.Interface
         int AddArticle(Article article);
         void AddConnectionArticleTags(int articleId ,ArticleTag tags);
         void DeleteConnectionArticleTags(int articleId);
+        void UpdateArticleTag(ArticleTag articleTag);
+        void DeleteArticleTag(int articleTagId);
     }
 }

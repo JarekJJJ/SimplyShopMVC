@@ -36,7 +36,7 @@ namespace SimplyShopMVC.Application.Services
             if (article.Title != null) // przy dodawaniu artykułu - validation nie pozwoli dodać artykułu bez tytułu dlatego można sprawdzić jaki formularz jest wysyłany czy add article czy add tag
             {
                 List<ArticleTag> tags = new List<ArticleTag>();
-                var id = _articleRepo.AddArticle(art);                
+                var id = _articleRepo.AddArticle(art);
                 var folderName = art.Id.ToString();
                 string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
                 Directory.CreateDirectory(newFolderPath);
@@ -127,7 +127,7 @@ namespace SimplyShopMVC.Application.Services
             var articlesList = new ListArticleForListVm()
             {
                 Articles = articles,
-                Tags = GetAllTagsToList(),
+                Tags = GetAllTagsToList(0),
                 Count = articles.Count
             };
 
@@ -151,16 +151,16 @@ namespace SimplyShopMVC.Application.Services
 
                     article.artTags = GetAllSelectedTagsForList(article.Id);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
 
                 }
-               
+
             }
             var articlesList = new ListArticleForListVm()
             {
                 Articles = articles,
-                Tags = GetAllTagsToList(),
+                Tags = GetAllTagsToList(0),
                 Count = articles.Count
             };
             return articlesList;
@@ -196,7 +196,7 @@ namespace SimplyShopMVC.Application.Services
                 photoDetail.IsSelected = false;
                 listImage.Add(photoDetail);
             }
-            articleVm.Tags = GetAllTagsToList();
+            articleVm.Tags = GetAllTagsToList(0);
             articleVm.SelectedTags = GetAllSelectedTagsForList(articleId);
             articleVm.ListImages = listImage;
             return articleVm;
@@ -231,15 +231,28 @@ namespace SimplyShopMVC.Application.Services
             }
             AddTagsToArticle(model.NewSelectedTags, model.Id);
         }
-        public List<ArticleTagsForListVm> GetAllTagsToList()
+        public List<ArticleTagsForListVm> GetAllTagsToList(int? numberTags)
         {
             List<ArticleTagsForListVm> listTags = new List<ArticleTagsForListVm>();
+            if (numberTags == null || numberTags == 0)
+            {
+                var allTags = _articleRepo.GetAllArticleTags()
+             .ProjectTo<ArticleTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+                foreach (var tag in allTags)
+                {
+                    listTags.Add(tag);
+                }
+                return listTags;
+            }
             var tags = _articleRepo.GetAllArticleTags()
-                .ProjectTo<ArticleTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+            .ProjectTo<ArticleTagsForListVm>(_mapper.ConfigurationProvider).ToList().Take((int)numberTags);
             foreach (var tag in tags)
             {
                 listTags.Add(tag);
             }
+
+
+
             return listTags;
         }
         public List<ArticleTagsForListVm> GetAllSelectedTagsForList(int articleId)
@@ -260,6 +273,50 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
             return innerList;
+        }
+
+        public UpdateArticleTagVm ListArticleTagToUpdate(string? searchTag)
+        {
+            UpdateArticleTagVm updateArticleTagVm = new UpdateArticleTagVm();
+            updateArticleTagVm.Count = new List<CountArticleVm>();
+           
+            if (searchTag == null)
+            {
+                updateArticleTagVm.TagList = GetAllTagsToList(20);
+                foreach(var tags in updateArticleTagVm.TagList)
+                {
+                    CountArticleVm countArticle = new CountArticleVm();
+                    var count = _articleRepo.GetArticlesByTagId(tags.Id).Count();                   
+                    countArticle.count = count;
+                    countArticle.articleTagId = tags.Id;
+
+                    updateArticleTagVm.Count.Add(countArticle);
+                }
+                return updateArticleTagVm;
+            }
+
+            updateArticleTagVm.TagList = GetAllTagsToList(0).Where(t => t.Name.Contains(searchTag)).ToList();
+            return updateArticleTagVm;
+
+        }
+
+        public void UpdateArticleTag(UpdateArticleTagVm articleTag, int options)
+        {
+            if (articleTag != null && options ==1)
+            {
+                var mapArticleTag = _mapper.Map<ArticleTag>(articleTag.Tag);
+                _articleRepo.UpdateArticleTag(mapArticleTag);
+            }
+        }
+
+        public UpdateArticleTagVm GetArticleTagToUpdate(int tagId)
+        {
+            UpdateArticleTagVm updateArticleTagVm = new UpdateArticleTagVm();
+            var result = _articleRepo.GetArticleTagByTagId(tagId);
+            var tagMap = _mapper.Map<ArticleTagsForListVm>(result);
+            updateArticleTagVm.Tag = tagMap;
+            return updateArticleTagVm;
+
         }
     }
 }

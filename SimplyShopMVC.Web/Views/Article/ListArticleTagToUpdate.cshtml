@@ -1,0 +1,49 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Article.UpdateArticleTagVm
+
+@{
+    ViewData["Title"] = "ListArticleTag";
+}
+
+
+<h1>Lista dostępnych ArticleTag</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Nazwa
+            </th>
+            <th>
+                Opis
+            </th>
+            <th>
+                Liczba artykułów
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.TagList)
+        {
+            var countArticle = Model.Count.FirstOrDefault(i => i.articleTagId == item.Id);
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@(countArticle == null ? Html.Raw("0") : countArticle.count)</td>               
+                <td>
+                    <span class="">@Html.ActionLink("Update","UpdateArticleTag", new {articleTagId=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
