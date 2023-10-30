@@ -22,6 +22,8 @@ namespace SimplyShopMVC.Domain.Interface
         int AddItemTag(ItemTag itemTag);
         ItemTag GetItemTagByTagId(int tagId);
         void AddConnectionItemTags(int itemId, ItemTag tags);
+        void UpdateItemTag(ItemTag itemTag);
+        void DeleteItemTag(int itemTagId);
         void DeleteConnectionItemTags(int itemId);
         // Kategorie
         IQueryable<Category> GetAllCategories();

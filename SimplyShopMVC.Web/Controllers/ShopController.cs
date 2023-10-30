@@ -113,6 +113,23 @@ namespace SimplyShopMVC.Web.Controllers
             }
             return RedirectToAction("AdminListItem");
         }
+        public IActionResult ListItemTagToUpdate(string? searchTag)
+        {
+            var itemTags = _itemService.ListItemTagToUpdate(searchTag);
+            return View(itemTags);
+        }
+        [HttpGet]
+        public IActionResult UpdateItemTag(int itemTagId)
+        {
+            var itemTag = _itemService.GetItemTagToUpdate(itemTagId);
+            return View(itemTag);
+        }
+        [HttpPost]
+        public IActionResult UpdateItemTag(UpdateItemTagVm model, int options)
+        {
+            _itemService.UpdateItemTag(model, options);
+            return RedirectToAction("ListItemTagToUpdate");
+        }
 
     }
 }

@@ -97,12 +97,26 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.ConnectItemTag.Add(con);
             _context.SaveChanges();
         }
+        public void UpdateItemTag(ItemTag itemTag)
+        {
+           _context.ItemTags.Update(itemTag);
+            _context.SaveChanges();
+        }
 
         public void DeleteConnectionItemTags(int itemId)
         {
             var result = _context.ConnectItemTag.Where(a => a.ItemId == itemId);
             _context.ConnectItemTag.RemoveRange(result);
             _context.SaveChanges();
+        }
+        public void DeleteItemTag(int itemTagId)
+        {
+            var result = _context.ItemTags.Find(itemTagId);
+            if(result!=null)
+            {
+                _context.ItemTags.Remove(result);
+                _context.SaveChanges();
+            }
         }
 
         public IQueryable<Category> GetAllCategories()
@@ -194,6 +208,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             var result = _context.VatRates;
             return result;
-        }
+        }    
     }
 }

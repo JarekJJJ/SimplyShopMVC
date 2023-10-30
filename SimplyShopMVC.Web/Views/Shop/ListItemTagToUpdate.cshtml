@@ -1,13 +1,13 @@
-﻿@model SimplyShopMVC.Application.ViewModels.Article.UpdateArticleTagVm
+﻿@model SimplyShopMVC.Application.ViewModels.Item.UpdateItemTagVm
 
 @{
-    ViewData["Title"] = "ListArticleTag";
+    ViewData["Title"] = "ListItemTag";
 }
 
 
-<h1>Lista dostępnych ArticleTag</h1>
+<h1>Lista dostępnych ItemTag</h1>
 <div class="row">
-    <form asp-action="ListArticleTagToUpdate" asp-controller="Article" method="get">
+    <form asp-action="ListItemTagToUpdate" asp-controller="Shop" method="get">
         <label asp-for="searchTag">Wpisz nazwę szukanego Tagu</label>
         <input type="text" asp-for="searchTag" />
 
@@ -28,14 +28,14 @@
                 Opis
             </th>
             <th>
-                Liczba artykułów
+                Liczba towarów
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.TagList)
+        @foreach (var item in Model.itemTags)
         {
-            var countArticle = Model.Count.FirstOrDefault(i => i.articleTagId == item.Id);
+            var countItem = Model.countTag.FirstOrDefault(i => i.itemTagId == item.Id);
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Id)
@@ -44,9 +44,9 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>@(countArticle == null ? Html.Raw("0") : countArticle.count)</td>
+                <td>@(countItem == null ? Html.Raw("0") : countItem.countItem)</td>
                 <td>
-                    <span class="">@Html.ActionLink("Update","UpdateArticleTag", new {articleTagId=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span>
+                    <span class="">@Html.ActionLink("Update","UpdateItemTag", new {ItemTagId=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span>
                     @* @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
                 </td>
@@ -56,20 +56,21 @@
 </table>
 <div class="row">
     <p class="align-center">Dodan nowy Tag: </p>
-    <form asp-action="UpdateArticleTag" method="post" class="row g-3" enctype="multipart/form-data">
-        <input type="hidden" asp-for="Tag.Id" />
+    <form asp-action="UpdateItemTag" method="post" class="row g-3" enctype="multipart/form-data">
+        <input type="hidden" asp-for="itemTag.Id" />
         <input type="hidden" name="options" value="3" />
         <div class="col-md-3">
-            <label asp-for="Tag.Name" class="form-label">Nazwa Tagu</label>
-            <input type="text" class="form-control shadow-sm rounded" asp-for="Tag.Name">
+            <label asp-for="itemTag.Name" class="form-label">Nazwa Tagu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="itemTag.Name">
         </div>
         <div class="col-md-3">
-            <label asp-for="Tag.Description" class="form-label">Opis Tagu</label>
-            <input type="text" class="form-control shadow-sm rounded" asp-for="Tag.Description">
+            <label asp-for="itemTag.Description" class="form-label">Opis Tagu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="itemTag.Description">
         </div>
         <div class="col-md-2">
             <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
         </div>
     </form>
 </div>
+
 

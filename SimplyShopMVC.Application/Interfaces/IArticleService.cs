@@ -21,7 +21,6 @@ namespace SimplyShopMVC.Application.Interfaces
         int AddTag(NewArticleVm model);
         UpdateArticleTagVm ListArticleTagToUpdate(string? searchTag);
         UpdateArticleTagVm GetArticleTagToUpdate(int tagId);
-
         void UpdateArticleTag(UpdateArticleTagVm articleTag, int options);
     }
 }

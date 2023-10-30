@@ -279,14 +279,14 @@ namespace SimplyShopMVC.Application.Services
         {
             UpdateArticleTagVm updateArticleTagVm = new UpdateArticleTagVm();
             updateArticleTagVm.Count = new List<CountArticleVm>();
-           
+
             if (searchTag == null)
             {
                 updateArticleTagVm.TagList = GetAllTagsToList(20);
-                foreach(var tags in updateArticleTagVm.TagList)
+                foreach (var tags in updateArticleTagVm.TagList)
                 {
                     CountArticleVm countArticle = new CountArticleVm();
-                    var count = _articleRepo.GetArticlesByTagId(tags.Id).Count();                   
+                    var count = _articleRepo.GetArticlesByTagId(tags.Id).Count();
                     countArticle.count = count;
                     countArticle.articleTagId = tags.Id;
 
@@ -302,10 +302,20 @@ namespace SimplyShopMVC.Application.Services
 
         public void UpdateArticleTag(UpdateArticleTagVm articleTag, int options)
         {
-            if (articleTag != null && options ==1)
+            if (articleTag != null && options == 1)
             {
                 var mapArticleTag = _mapper.Map<ArticleTag>(articleTag.Tag);
                 _articleRepo.UpdateArticleTag(mapArticleTag);
+            }
+            if (articleTag != null && options == 2)
+            {
+                //var mapArticleTag = _mapper.Map<ArticleTag>(articleTag.Tag);
+                _articleRepo.DeleteArticleTag(articleTag.Tag.Id);
+            }
+            if (articleTag != null && options == 3)
+            {
+                var mapArticleTag = _mapper.Map<ArticleTag>(articleTag.Tag);
+                _articleRepo.AddArticleTag(mapArticleTag);
             }
         }
 

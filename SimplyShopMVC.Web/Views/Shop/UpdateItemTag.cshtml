@@ -1,0 +1,36 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Item.UpdateItemTagVm
+
+@{
+    ViewData["Title"] = "UpdateItemTag";
+}
+
+
+<h1>Update ItemTag</h1>
+
+<div class="row">
+    <form asp-action="UpdateItemTag" method="post" class="row g-3" enctype="multipart/form-data">
+        <input type="hidden" asp-for="itemTag.Id" />
+        <input type="hidden" name="options" value="1" />
+        <div class="col-md-3">
+            <label asp-for="itemTag.Name" class="form-label">Nazwa Tagu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="itemTag.Name">
+        </div>
+        <div class="col-md-3">
+            <label asp-for="itemTag.Description" class="form-label">Opis Tagu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="itemTag.Description">
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Popraw" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+    <div class="col-md-2">
+        <form asp-action="UpdateItemTag" method="post" class="row g-3" enctype="multipart/form-data">
+            <input type="hidden" asp-for="itemTag.Id" />
+            <input type="hidden" name="options" value="2" />
+            <input type="hidden" class="form-control shadow-sm rounded" asp-for="itemTag.Name">
+            <input type="hidden" class="form-control shadow-sm rounded" asp-for="itemTag.Description">
+            <input type="submit" value="Usuń" class="btn btn-primary mt-4" />
+        </form>
+    </div>
+</div>
+

@@ -178,7 +178,7 @@ namespace SimplyShopMVC.Application.Services
             itemWarehouseVm.itemWarehouses = listItemWare;
             itemWarehouseVm.warehouses = listWarehouse;
             itemWarehouseVm.vatRate = listVatRate;
-            itemWarehouseVm.itemId= itemId;
+            itemWarehouseVm.itemId = itemId;
             return itemWarehouseVm;
         }
         public void AddItemWarehouse(AddItemWarehouseVm model)
@@ -194,9 +194,9 @@ namespace SimplyShopMVC.Application.Services
                 var modelMapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
                 _itemRepo.AddItemWarehouse(modelMapped);
             }
-            
-            
-           
+
+
+
         }
         public AddItemWarehouseVm ListItemToUpdate(string searchItem)
         {
@@ -304,6 +304,57 @@ namespace SimplyShopMVC.Application.Services
             return _item.Id;
         }
 
+        public UpdateItemTagVm ListItemTagToUpdate(string? searchTag)
+        {
+            UpdateItemTagVm updateItemTagVm = new UpdateItemTagVm();
+            updateItemTagVm.countTag = new List<CountItemTagVm>();
 
+            if (searchTag == null)
+            {
+                var listItemTags = _itemRepo.GetAllItemTags().ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).Take(20).ToList();
+                updateItemTagVm.itemTags = listItemTags;
+                foreach (var tags in updateItemTagVm.itemTags)
+                {
+                    CountItemTagVm countTag = new CountItemTagVm();
+                    var count = _itemRepo.GetItemsByTagId(tags.Id).Count();
+                    countTag.countItem = count;
+                    countTag.itemTagId = tags.Id;
+
+                    updateItemTagVm.countTag.Add(countTag);
+                }
+                return updateItemTagVm;
+            }
+
+            updateItemTagVm.itemTags = _itemRepo.GetAllItemTags().Where(t => t.Name.Contains(searchTag))
+                .ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+            return updateItemTagVm;
+        }
+
+        public UpdateItemTagVm GetItemTagToUpdate(int tagId)
+        {
+            UpdateItemTagVm updateItemTag = new UpdateItemTagVm();
+            var result = _itemRepo.GetItemTagByTagId(tagId);
+            var tagMap = _mapper.Map<ItemTagsForListVm>(result);
+            updateItemTag.itemTag = tagMap;
+            return updateItemTag;
+        }
+
+        public void UpdateItemTag(UpdateItemTagVm itemTag, int options)
+        {
+            if (itemTag != null && options == 1)
+            {
+                var mapItemTag = _mapper.Map<ItemTag>(itemTag.itemTag);
+                _itemRepo.UpdateItemTag(mapItemTag);
+            }
+            if (itemTag != null && options == 2)
+            {
+                _itemRepo.DeleteItemTag(itemTag.itemTag.Id);
+            }
+            if (itemTag != null && options == 3)
+            {
+                var mapItemTag = _mapper.Map<ItemTag>(itemTag.itemTag);
+                _itemRepo.AddItemTag(mapItemTag);
+            }
+        }
     }
 }
