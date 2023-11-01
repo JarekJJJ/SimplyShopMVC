@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 using SimplyShopMVC.Application.Helpers;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
@@ -78,7 +79,6 @@ namespace SimplyShopMVC.Application.Services
                 listTags.Add(tag);
             }
             item.ItemTags = listTags;
-
             List<CategoryForListVm> listCategory = new List<CategoryForListVm>();
             var allCategories = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
@@ -87,24 +87,6 @@ namespace SimplyShopMVC.Application.Services
                 listCategory.Add(category);
             }
             item.Categories = listCategory;
-            //if (item.selectedWarehouseId != null && item.ItemWarehouse.FinalPriceA != null && item.ItemWarehouse.Quantity != null)
-            //{
-            //    // var wItem = _mapper.Map<ItemWarehouse>(item.ItemWarehouse);
-            //    ItemWarehouse wItem = new ItemWarehouse();
-
-            //    wItem.WarehouseId = (int)item.selectedWarehouseId;
-            //    wItem.ItemId = (int)mItem.Id;
-            //    //wItem.VatRate = 23; // Dodać model oraz Vm ze stawkami (A-23%, B-8% ITD...)
-            //    wItem.FinalPriceA = item.ItemWarehouse.FinalPriceA;
-            //    wItem.Quantity = item.ItemWarehouse.Quantity;
-            //    wItem.NetPurchasePrice = item.ItemWarehouse.NetPurchasePrice;
-            //    _itemRepo.AddItemWarehouse(wItem);
-            //}
-            //List<Warehouse> warehouses = new List<Warehouse>();
-            //var listWarehouse = _itemRepo.GetAllWarehouses()
-            //    .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
-            //item.warehouses = listWarehouse;
-
             return item;
         }
 
@@ -124,24 +106,6 @@ namespace SimplyShopMVC.Application.Services
                 return id;
             }
             return 0;
-        }
-        public int AddCategory(AddItemVm item)
-        {
-            var categoryMap = _mapper.Map<Category>(item.Category);
-            //if (item.Category.Name != null)
-            //{
-            //    var category = new CategoryForListVm()
-            //    {
-            //        Id = item.CategoryId,
-            //        Name = item.categoryName,
-            //        Description = item.categoryDescription,
-            //        IsActive = item.isActiveCategory,
-            //        IsMainCategory = item.isMainCategory,
-            //        MainCategoryId = item.mainCategoryId
-            //    };
-
-            var id = _itemRepo.AddCategory(categoryMap);
-            return id;
         }
 
         public void DeleteItem(int id)
@@ -194,9 +158,6 @@ namespace SimplyShopMVC.Application.Services
                 var modelMapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
                 _itemRepo.AddItemWarehouse(modelMapped);
             }
-
-
-
         }
         public AddItemWarehouseVm ListItemToUpdate(string searchItem)
         {
@@ -248,7 +209,6 @@ namespace SimplyShopMVC.Application.Services
                 listImage.Add(photoDetail);
             }
             item.ListImages = listImage;
-            //articleVm.SelectedTags = GetAllSelectedTagsForList(articleId);
             item.Categories = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
 
@@ -354,6 +314,70 @@ namespace SimplyShopMVC.Application.Services
             {
                 var mapItemTag = _mapper.Map<ItemTag>(itemTag.itemTag);
                 _itemRepo.AddItemTag(mapItemTag);
+            }
+        }
+        public int AddCategory(AddItemVm item)
+        {
+            var categoryMap = _mapper.Map<Category>(item.Category);
+            var id = _itemRepo.AddCategory(categoryMap);
+            return id;
+        }
+
+        public UpdateCategoryVm ListCategoryToUpdate(string? searchCategory)
+        {
+            UpdateCategoryVm updateCategoryVm = new UpdateCategoryVm();
+            updateCategoryVm.countCategory = new List<CountCategoryVm>();
+
+            if (searchCategory == null)
+            {
+                var listCategory = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).Take(20).ToList();
+                updateCategoryVm.listCategory = listCategory;
+                foreach (var category in updateCategoryVm.listCategory)
+                {
+                    CountCategoryVm countCategory = new CountCategoryVm();
+                    var count = _itemRepo.GetItemsByCategoryId(category.Id).Count();
+                    countCategory.countItem = count;
+                    countCategory.categoryId = category.Id;
+
+                    updateCategoryVm.countCategory.Add(countCategory);
+                }
+                return updateCategoryVm;
+            }
+
+            updateCategoryVm.listCategory = _itemRepo.GetAllCategories().Where(t => t.Name.Contains(searchCategory))
+                .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            return updateCategoryVm;
+        }
+
+        public UpdateCategoryVm GetCategoryToUpdate(int categoryId)
+        {
+            UpdateCategoryVm updateCategory = new UpdateCategoryVm();
+            var result = _itemRepo.GetCategoryById(categoryId);
+            var categoryMap = _mapper.Map<CategoryForListVm>(result);
+            updateCategory.category = categoryMap;
+            return updateCategory;
+        }
+
+        public void DeleteCategory(int categoryId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateCategory(UpdateCategoryVm category, int options)
+        {
+            if (category != null && options == 1)
+            {
+                var mapCategory = _mapper.Map<Category>(category.category);
+                _itemRepo.UpdateCategory(mapCategory);
+            }
+            if (category != null && options == 2)
+            {
+                _itemRepo.DeleteCategory(category.category.Id);
+            }
+            if (category != null && options == 3)
+            {
+                var mapCategory = _mapper.Map<Category>(category.category);
+                _itemRepo.AddCategory(mapCategory);
             }
         }
     }

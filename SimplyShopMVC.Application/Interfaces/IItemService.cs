@@ -14,7 +14,6 @@ namespace SimplyShopMVC.Application.Interfaces
         AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder);
         int UpdateItem(AddItemVm item);
         void DeleteItem(int id);
-        int AddCategory(AddItemVm item);
         UpdateItemVm GetItemToUpdate(int itemId);
         void AddItemWarehouse(AddItemWarehouseVm model);
         AddItemWarehouseVm ListItemToUpdate(string searchItem);
@@ -25,6 +24,12 @@ namespace SimplyShopMVC.Application.Interfaces
         UpdateItemTagVm GetItemTagToUpdate(int tagId);
         void UpdateItemTag(UpdateItemTagVm itemTag, int options);
         int AddItemTag(AddItemVm item);
+        //Category
+        int AddCategory(AddItemVm item);
+        UpdateCategoryVm ListCategoryToUpdate(string? searchCategory);
+        UpdateCategoryVm GetCategoryToUpdate(int categoryId);
+        void DeleteCategory(int categoryId);
+        void UpdateCategory(UpdateCategoryVm category);
 
         //ItemDetailVm GetItemDetails(int itemId);
         //ListItemForListVm GetAllItemsByTagId(int tagId);
