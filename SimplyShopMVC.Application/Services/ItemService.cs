@@ -379,6 +379,6 @@ namespace SimplyShopMVC.Application.Services
                 var mapCategory = _mapper.Map<Category>(category.category);
                 _itemRepo.AddCategory(mapCategory);
             }
-        }
+        }      
     }
 }

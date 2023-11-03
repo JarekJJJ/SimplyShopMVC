@@ -29,7 +29,7 @@ namespace SimplyShopMVC.Application.Interfaces
         UpdateCategoryVm ListCategoryToUpdate(string? searchCategory);
         UpdateCategoryVm GetCategoryToUpdate(int categoryId);
         void DeleteCategory(int categoryId);
-        void UpdateCategory(UpdateCategoryVm category);
+        void UpdateCategory(UpdateCategoryVm category, int options);
 
         //ItemDetailVm GetItemDetails(int itemId);
         //ListItemForListVm GetAllItemsByTagId(int tagId);

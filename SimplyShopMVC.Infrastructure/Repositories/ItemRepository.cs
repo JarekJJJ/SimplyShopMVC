@@ -54,7 +54,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {        
                _context.Items.Update(item);
                 _context.SaveChanges();          
-
         }
 
         public IQueryable<ItemTag> GetAllItemTags()
@@ -139,13 +138,10 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         }
 
         public void UpdateCategory(Category category)
-        {
-            var result = _context.Categories.FirstOrDefault(c => c.Id == category.Id);
-            if (result != null)
-            {
+        {         
                 _context.Categories.Update(category);
                 _context.SaveChanges();
-            }
+
         }
 
         public void DeleteCategory(int categoryId)

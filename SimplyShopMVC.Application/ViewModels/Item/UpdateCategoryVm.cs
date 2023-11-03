@@ -11,5 +11,6 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public List<CategoryForListVm> listCategory { get; set; }
         public CategoryForListVm category { get; set; }
         public List<CountCategoryVm> countCategory { get; set; }
+        public string searchCategory { get; set; }
     }
 }

@@ -1,0 +1,74 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Item.UpdateCategoryVm
+
+@{
+    ViewData["Title"] = "ListCategoryToUpdate";
+}
+
+
+<h1>Lista dostępnych Category</h1>
+<div class="row">
+    <form asp-action="ListCategoryToUpdate" asp-controller="Shop" method="get">
+        <label asp-for="searchCategory">Wpisz nazwę szukanej kategorii</label>
+        <input type="text" asp-for="searchCategory" />
+
+        <input type="submit" value="szukaj" class="btn btn-primary" />
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Nazwa
+            </th>
+            <th>
+                Opis
+            </th>
+            <th>
+                Liczba towarów
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cat in Model.listCategory)
+        {
+            var countCat = Model.countCategory.FirstOrDefault(i => i.categoryId == cat.Id);
+                <tr>
+                    <td>
+                    @Html.DisplayFor(modelItem => cat.Id)
+                    </td>
+                    <td>
+                    @Html.DisplayFor(modelItem => cat.Name)
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => cat.Description)</td>
+                    <td>@(countCat == null ? Html.Raw("0") : countCat.countItem)</td>
+                    <td>
+                        <span class="">@Html.ActionLink("Update","UpdateCategory", new {CategoryId=cat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span>
+                    @* @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>
+<div class="row">
+    <p class="align-center">Dodan nowy Tag: </p>
+    <form asp-action="UpdateCategory" method="post" class="row g-3" enctype="multipart/form-data">
+        <input type="hidden" asp-for="category.Id" />
+        <input type="hidden" name="options" value="3" />
+        <div class="col-md-3">
+            <label asp-for="category.Name" class="form-label">Nazwa kategorii</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="category.Name">
+        </div>
+        <div class="col-md-3">
+            <label asp-for="category.Description" class="form-label">Opis kategorii</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="category.Description">
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+</div>

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Application.ViewModels.Item;
+using SimplyShopMVC.Domain.Model;
 using System.Data;
 
 namespace SimplyShopMVC.Web.Controllers
@@ -129,6 +130,24 @@ namespace SimplyShopMVC.Web.Controllers
         {
             _itemService.UpdateItemTag(model, options);
             return RedirectToAction("ListItemTagToUpdate");
+        }
+        // ----------- Category ----------
+        public IActionResult ListCategoryToUpdate(string? searchCategory)
+        {
+            var categoryList = _itemService.ListCategoryToUpdate(searchCategory);
+            return View(categoryList);
+        }
+        [HttpGet]
+        public IActionResult UpdateCategory(int categoryId)
+        {
+            var category = _itemService.GetCategoryToUpdate(categoryId);
+            return View(category);
+        }
+        [HttpPost]
+        public IActionResult UpdateCategory(UpdateCategoryVm model, int options)
+        {
+            _itemService.UpdateCategory(model, options);
+            return RedirectToAction("ListCategoryToUpdate");
         }
 
     }
