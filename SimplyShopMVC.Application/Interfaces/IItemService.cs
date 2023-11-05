@@ -30,6 +30,11 @@ namespace SimplyShopMVC.Application.Interfaces
         UpdateCategoryVm GetCategoryToUpdate(int categoryId);
         void DeleteCategory(int categoryId);
         void UpdateCategory(UpdateCategoryVm category, int options);
+        //Warehouse
+        int AddWarehouse(UpdateWarehouseVm model);
+        UpdateWarehouseVm ListWarehouseToUpdate(string? searchWarehouse);
+        UpdateWarehouseVm GetWarehouseToUpdate(int warehouseId);
+        void UpdateWarehouse(UpdateWarehouseVm updateWarehouse, int options);
 
         //ItemDetailVm GetItemDetails(int itemId);
         //ListItemForListVm GetAllItemsByTagId(int tagId);

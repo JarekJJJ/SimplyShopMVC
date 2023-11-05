@@ -1,0 +1,88 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Item.UpdateWarehouseVm
+
+@{
+    ViewData["Title"] = "ListWarehouseToUpdate";
+}
+
+
+<h1>Lista dostępnych Category</h1>
+<div class="row">
+    <form asp-action="ListCategoryToUpdate" asp-controller="Shop" method="get">
+        <label asp-for="searchWarehouse">Wpisz nazwę szukanego dostawcy(magazynu)</label>
+        <input type="text" asp-for="searchWarehouse" />
+
+        <input type="submit" value="szukaj" class="btn btn-primary" />
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Nazwa
+            </th>
+            <th>
+                Opis
+            </th>
+            <th>
+                Czas dostawy
+            </th>
+            <th>
+                Liczba towarów w magazynie
+            </th>
+            <th> Magazyn Aktywny </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cat in Model.listWarehouse)
+        {
+            var countCat = Model.countWarehouse.FirstOrDefault(i => i.warehouseId == cat.Id);
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => cat.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => cat.Name)
+                </td>
+                <td>@Html.DisplayFor(modelItem => cat.Description)</td>
+                <td>@Html.DisplayFor(modelItem=> cat.DeliveryTime)</td>
+                <td>@(countCat == null ? Html.Raw("0") : countCat.countItem)</td>
+                <td>@(cat.IsActive == true ? Html.Raw("Tak") : Html.Raw("Nie"))</td>
+                <td>
+                    <span class="">@Html.ActionLink("Update","UpdateWarehouse", new {warehouseId=cat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span>
+                    @* @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |*@                
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="row">
+    <p class="align-center">Dodaj nowy magazyn: </p>
+    <form asp-action="UpdateWarehouse" method="post" class="row g-3" enctype="multipart/form-data">
+        <input type="hidden" asp-for="warehouse.Id" />
+        <input type="hidden" name="options" value="3" />
+        <div class="col-md-3">
+            <label asp-for="warehouse.Name" class="form-label">Nazwa magazynu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="warehouse.Name">
+        </div>
+        <div class="col-md-3">
+            <label asp-for="warehouse.Description" class="form-label">Opis magazynu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="warehouse.Description">
+        </div>
+        <div class="col-md-1">
+            <label asp-for="warehouse.DeliveryTime" class="form-label">Czas wysyłki(dni)</label>
+            <input type="number" class="form-control shadow-sm rounded" asp-for="warehouse.DeliveryTime">
+        </div>
+        <div class="col-md-1">
+            <label class="form-check-label"> Magazyn Aktywny ?
+                <input class="form-check-input" asp-for="warehouse.IsActive" /> 
+            </label>
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+</div>

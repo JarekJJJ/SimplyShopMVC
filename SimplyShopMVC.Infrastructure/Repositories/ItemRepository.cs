@@ -160,6 +160,11 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.SaveChanges();
             return warehouse.Id;
         }
+        public void UpdateWarehouse(Warehouse warehouse)
+        {
+            _context.Warehouses.Update(warehouse);
+            _context.SaveChanges();
+        }
 
         public void DeleteWarehouse(int warehouseId)
         {

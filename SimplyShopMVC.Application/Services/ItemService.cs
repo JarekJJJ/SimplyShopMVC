@@ -379,6 +379,63 @@ namespace SimplyShopMVC.Application.Services
                 var mapCategory = _mapper.Map<Category>(category.category);
                 _itemRepo.AddCategory(mapCategory);
             }
-        }      
+        }
+
+        public int AddWarehouse(UpdateWarehouseVm model)
+        {
+            var mapedModel = _mapper.Map<Warehouse>(model.warehouse);
+            var modelId = _itemRepo.AddWarehouse(mapedModel);
+            return modelId;
+        }
+
+        public UpdateWarehouseVm ListWarehouseToUpdate(string? searchWarehouse)
+        {
+            UpdateWarehouseVm updateWarehouse = new UpdateWarehouseVm();
+            updateWarehouse.countWarehouse = new List<CountWarehouseVm>();
+            if (searchWarehouse == null)
+            {
+                var listWarehouse = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).Take(20).ToList();
+                updateWarehouse.listWarehouse = listWarehouse;
+                foreach (var warehouse in updateWarehouse.listWarehouse)
+                {
+                    CountWarehouseVm countWarehouseVm = new CountWarehouseVm();
+                    var count = _itemRepo.GetAllItemWarehouses().Where(i => i.WarehouseId == warehouse.Id).Count();
+                    countWarehouseVm.countItem = count;
+                    countWarehouseVm.warehouseId = warehouse.Id;
+                    updateWarehouse.countWarehouse.Add(countWarehouseVm);
+                }
+                return updateWarehouse;
+            }
+            updateWarehouse.listWarehouse = _itemRepo.GetAllWarehouses().Where(w => w.Name.Contains(searchWarehouse))
+                  .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).Take(20).ToList();
+            return updateWarehouse;
+        }
+
+        public UpdateWarehouseVm GetWarehouseToUpdate(int warehouseId)
+        {
+            UpdateWarehouseVm updateWarehouseVm = new UpdateWarehouseVm();
+            var result = _itemRepo.GetAllWarehouses().FirstOrDefault(w => w.Id == warehouseId);
+            var mappedResult = _mapper.Map<WarehouseForListVm>(result);
+            updateWarehouseVm.warehouse = mappedResult;
+            return updateWarehouseVm;
+        }
+
+        public void UpdateWarehouse(UpdateWarehouseVm updateWarehouse, int options)
+        {
+            if (updateWarehouse != null && options == 1)
+            {
+                var mapWarehouse = _mapper.Map<Warehouse>(updateWarehouse.warehouse);
+                _itemRepo.UpdateWarehouse(mapWarehouse);
+            }
+            if (updateWarehouse != null && options == 2)
+            {
+                _itemRepo.DeleteWarehouse(updateWarehouse.warehouse.Id);
+            }
+            if (updateWarehouse != null && options == 3)
+            {
+                var mapWarehouse = _mapper.Map<Warehouse>(updateWarehouse.warehouse);
+                _itemRepo.AddWarehouse(mapWarehouse);
+            }
+        }
     }
 }

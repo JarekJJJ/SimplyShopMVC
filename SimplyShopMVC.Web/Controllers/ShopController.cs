@@ -29,9 +29,9 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpGet]
         public IActionResult AddItem([FromServices] IWebHostEnvironment webHostFolder)
         {
-           AddItemVm vm = new AddItemVm();
+            AddItemVm vm = new AddItemVm();
             var newItem = _itemService.AddItem(vm, webHostFolder);
-            
+
             return View(newItem);
         }
         [HttpPost]
@@ -39,26 +39,26 @@ namespace SimplyShopMVC.Web.Controllers
         public async Task<IActionResult> AddItem(AddItemVm model, [FromServices] IWebHostEnvironment webHostFolder)
         {
             ValidationResult result = await _itemValidator.ValidateAsync(model);
-           if (result.IsValid)
+            if (result.IsValid)
             {
                 var id = _itemService.AddItem(model, webHostFolder);
                 return RedirectToAction("AddItem");
             }
-            if(model.TagName!=null)
+            if (model.TagName != null)
             {
                 var id = _itemService.AddItemTag(model);
                 AddItemVm vm = new AddItemVm();
-               var newItemPost =  _itemService.AddItem(vm, webHostFolder);
-                return RedirectToAction ("AddItem");
+                var newItemPost = _itemService.AddItem(vm, webHostFolder);
+                return RedirectToAction("AddItem");
             }
-            if(model.Category.Name!=null)
+            if (model.Category.Name != null)
             {
                 var id = _itemService.AddCategory(model);
                 AddItemVm vm = new AddItemVm();
                 var newItemPost = _itemService.AddItem(vm, webHostFolder);
                 return RedirectToAction("AddItem");
             }
-            
+
             return RedirectToAction("AddItem");
 
         }
@@ -79,11 +79,11 @@ namespace SimplyShopMVC.Web.Controllers
             var newItemW = _itemService.ListItemToUpdate(searchItem);
             return View(newItemW);
         }
-          
+
         [HttpGet]
         public IActionResult AdminListItem(string searchItem)
         {
-           
+
             var newItemW = _itemService.ListItemToUpdate(searchItem);
             return View(newItemW);
         }
@@ -96,16 +96,16 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpPost]
         public IActionResult ItemUpdate(AddItemVm model, [FromServices] IWebHostEnvironment webHostFolder)
         {
-            ValidationResult result =  _itemValidator.Validate(model);
-            if (result.IsValid &&model.TagName == null && model.Category==null)
+            ValidationResult result = _itemValidator.Validate(model);
+            if (result.IsValid && model.TagName == null && model.Category == null)
             {
                 var id = _itemService.UpdateItem(model);
                 return RedirectToAction("AdminListItem");
             }
             if (model.TagName != null)
             {
-                var id = _itemService.AddItemTag(model);            
-                return RedirectToAction("ItemUpdate",new {selectedItem=model.Id});
+                var id = _itemService.AddItemTag(model);
+                return RedirectToAction("ItemUpdate", new { selectedItem = model.Id });
             }
             if (model.Category.Name != null)
             {
@@ -148,6 +148,24 @@ namespace SimplyShopMVC.Web.Controllers
         {
             _itemService.UpdateCategory(model, options);
             return RedirectToAction("ListCategoryToUpdate");
+        }
+        //----------Warehouse-----------------
+        public IActionResult ListWarehouseToUpdate(string? searchWarehouse)
+        {
+            var warehouseList = _itemService.ListWarehouseToUpdate(searchWarehouse);
+            return View(warehouseList);
+        }
+        [HttpGet]
+        public IActionResult UpdateWarehouse(int warehouseId)
+        {
+            var warehouse = _itemService.GetWarehouseToUpdate(warehouseId);
+            return View(warehouse);
+        }
+        [HttpPost]
+        public IActionResult UpdateWarehouse(UpdateWarehouseVm model, int options)
+        {
+            _itemService.UpdateWarehouse(model, options);
+            return RedirectToAction("ListWarehouseToUpdate");
         }
 
     }

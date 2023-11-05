@@ -1,0 +1,46 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Item.UpdateWarehouseVm
+
+@{
+    ViewData["Title"] = "UpdateWarehouse";
+}
+
+
+<h1>Update ItemTag</h1>
+
+<div class="row">
+    <form asp-action="UpdateWarehouse" method="post" class="row g-3" enctype="multipart/form-data">
+        <input type="hidden" asp-for="warehouse.Id" />
+        <input type="hidden" name="options" value="1" />
+        <div class="col-md-3">
+            <label asp-for="warehouse.Name" class="form-label">Nazwa magazynu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="warehouse.Name">
+        </div>
+        <div class="col-md-3">
+            <label asp-for="warehouse.Description" class="form-label">Opis magazynu</label>
+            <input type="text" class="form-control shadow-sm rounded" asp-for="warehouse.Description">
+        </div>
+        <div class="col-md-1">
+            <label asp-for="warehouse.DeliveryTime" class="form-label">Czas wysyłki(dni)</label>
+            <input type="number" class="form-control shadow-sm rounded" asp-for="warehouse.DeliveryTime">
+        </div>
+        <div class="col-md-2">
+            <label class="form-check-label">
+                Czy magazyn ma być aktywny ?
+            </label>
+            <input class="form-check-input h4" asp-for="warehouse.IsActive" />
+
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Popraw" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+    <div class="col-md-2">
+        <form asp-action="UpdateWarehouse" method="post" class="row g-3" enctype="multipart/form-data">
+            <input type="hidden" asp-for="warehouse.Id" />
+            <input type="hidden" name="options" value="2" />
+            <input type="hidden" class="form-control shadow-sm rounded" asp-for="warehouse.Name">
+            <input type="hidden" class="form-control shadow-sm rounded" asp-for="warehouse.Description">
+            <input type="submit" value="Usuń" class="btn btn-primary mt-4" />
+        </form>
+    </div>
+</div>

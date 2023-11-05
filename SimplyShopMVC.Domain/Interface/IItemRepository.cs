@@ -35,6 +35,7 @@ namespace SimplyShopMVC.Domain.Interface
         //Warehouse
         int AddWarehouse(Warehouse warehouse);
         IQueryable<Warehouse> GetAllWarehouses();
+        void UpdateWarehouse(Warehouse warehouse);
         void DeleteWarehouse(int warehouseId);
         // ItemWarehouse
         int AddItemWarehouse(ItemWarehouse itemWarehouse);
