@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Domain.Model.Suppliers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace SimplyShopMVC.Domain.Model
         public bool IsActive { get; set; }
 
         public virtual ICollection<ItemWarehouse> ItemWarehouses { get; set; }
+        public virtual ICollection<Incom> Incoms { get; set; }
 
     }
 }

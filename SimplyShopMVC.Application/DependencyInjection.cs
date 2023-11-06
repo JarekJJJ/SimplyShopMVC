@@ -27,6 +27,7 @@ namespace SimplyShopMVC.Application
             //services
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IItemService, ItemService>();
+            services.AddTransient<ISupplierService, SupplierService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

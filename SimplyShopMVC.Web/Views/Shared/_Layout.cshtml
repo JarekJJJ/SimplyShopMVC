@@ -67,6 +67,15 @@
                                     <li><a class="dropdown-item" asp-controller="Article" asp-action="ListArticleTagToUpdate">Edytuj ArticleTag</a></li>
                                 </ul>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dostawy Xml</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddIncomItemsXML">Dostawa Incom XML</a></li>                                  
+                                    <li><hr class="dropdown-divider"></li>
+
+                                </ul>
+                            </li>
+
                         }
                     </ul>
                     <partial name="_LoginPartial" />

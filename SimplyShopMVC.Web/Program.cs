@@ -70,6 +70,10 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "Sklep",
     pattern: "{controller=Shop}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "Supplier",
+    pattern: "{controller=Supplier}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

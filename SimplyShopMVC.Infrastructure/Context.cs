@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Domain.Model;
+using SimplyShopMVC.Domain.Model.Suppliers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<ItemTag> ItemTags { get; set; }
         public DbSet<ConnectItemTag> ConnectItemTag { get; set; }
         public DbSet<VatRate> VatRates { get; set; }
+        public DbSet<Incom> Incoms { get; set; }
 
         public Context(DbContextOptions options) : base(options)
         {

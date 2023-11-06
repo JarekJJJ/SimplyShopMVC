@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "ImportXmlFile";
+}
+
+<h1>AddItemsXML</h1>
+
+<h4>NewItemVm - Incom XML</h4>
+<hr />
+<div class="col-auto">
+    <form asp-action="AddIncomItemsXML" enctype="multipart/form-data" class="row gy-2 gx-3 align-items-center">
+        <div class="col-auto">
+            <label for="fileInputCategory" class="col-auto col-form-label">Plik Xml</label>
+        </div>
+        <div class="col-auto">
+            <input type="file" id="fileInputCategory" name="xmlFile" class="form-control" />
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Import" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
