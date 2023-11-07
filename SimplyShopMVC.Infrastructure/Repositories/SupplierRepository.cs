@@ -30,12 +30,14 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public IQueryable<Incom> GetAllIncom()
         {
-            throw new NotImplementedException();
+            var result = _context.Incoms;
+            return result;
         }
 
         public void UpdateIncom(Incom incom)
         {
-            throw new NotImplementedException();
+           _context.Update(incom);
+            _context.SaveChanges();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Application.ViewModels.Suppliers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,6 @@ namespace SimplyShopMVC.Application.Interfaces
 {
     public interface ISupplierService
     {
-        string LoadIncomItemsXML(XDocument xmlDocument);
+        AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
     }
 }

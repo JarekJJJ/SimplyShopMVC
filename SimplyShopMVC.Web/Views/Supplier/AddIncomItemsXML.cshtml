@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SimplyShopMVC.Application.ViewModels.Suppliers.AddIncomItemsVm
+@{
     ViewData["Title"] = "ImportXmlFile";
 }
 
@@ -6,16 +7,37 @@
 
 <h4>NewItemVm - Incom XML</h4>
 <hr />
-<div class="col-auto">
+<div class="row">
     <form asp-action="AddIncomItemsXML" enctype="multipart/form-data" class="row gy-2 gx-3 align-items-center">
-        <div class="col-auto">
-            <label for="fileInputCategory" class="col-auto col-form-label">Plik Xml</label>
+        <div class="col-md-3">
+            <label  class="col-auto col-form-label" asp-for="warehouseId">Wybierz magazym: </label>
+            <select class="form-select" asp-for="warehouseId">
+                @foreach (var ware in Model.warehouseForListVm)
+                {
+                    <option value="@ware.Id" name="@ware.Name">@ware.Name</option>
+                }
+            </select>
         </div>
-        <div class="col-auto">
-            <input type="file" id="fileInputCategory" name="xmlFile" class="form-control" />
+        <div class="col-md-3">
+            <label for="fileInputCategory" class="col-auto col-form-label">Dodaj plik Xml</label>
+            <input type="file" asp-for="formFile" class="form-control" />
         </div>
         <div class="col-auto">
             <input type="submit" value="Import" class="btn btn-primary" />
         </div>
     </form>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.raportAddItem != null)
+        {
+            <hr />
+            <span>Raport : <br /></span>
+            foreach (var result in Model.raportAddItem)
+            {
+                <span>@Html.Raw(result); <br /></span>
+
+            }
+        }
+    </div>
 </div>

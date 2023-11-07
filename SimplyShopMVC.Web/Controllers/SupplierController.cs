@@ -19,18 +19,22 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpGet]
         public IActionResult AddIncomItemsXML()
         {
-            return View();
+            AddIncomItemsVm _incomItem = new AddIncomItemsVm();
+            XDocument _doc= new XDocument();
+            var incomItem = _supplierService.LoadIncomItemsXML(_incomItem, _doc);
+            return View(incomItem);
         }
         [HttpPost]
-        public IActionResult AddIncomItemsXML(IFormFile xmlFile)
+        public IActionResult AddIncomItemsXML(AddIncomItemsVm incomItems)
         {
-            if (xmlFile != null && xmlFile.Length > 0)
+            if (incomItems.formFile != null && incomItems.formFile.Length > 0)
             {
 
-                var listItemsXML = XDocument.Load(xmlFile.OpenReadStream());
-                var raport = _supplierService.LoadIncomItemsXML(listItemsXML);
+                var listItemsXML = XDocument.Load( incomItems.formFile.OpenReadStream());
+                var returnRaport = _supplierService.LoadIncomItemsXML(incomItems, listItemsXML);
+                return View(returnRaport);
             }
-            return View();
+           return View();
         }
     }
 }
