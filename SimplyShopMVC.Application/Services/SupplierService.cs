@@ -6,6 +6,7 @@ using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Suppliers;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model.Suppliers;
+using SimplyShopMVC.Application.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -36,10 +37,26 @@ namespace SimplyShopMVC.Application.Services
         }
         public AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
+
             int countItemUpdate = 0;
             int countItemAdd = 0;
+            int countItemRemove = 0;
+            int countImageAdd = 0;
+            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
+            List<string> list = new List<string>();
+            returnRaport.raportAddItem = new List<string>();
             if (incomItems.warehouseId != 0)
             {
+                if (incomItems.removeItems == true)
+                {
+                    var itemFromSelectedWarehouse = _supplierRepo.GetAllIncom().Where(i => i.warehouseId == incomItems.warehouseId).ToList();
+                    foreach (var item in itemFromSelectedWarehouse)
+                    {
+                        _supplierRepo.DeleteIncomItem(item.Id);
+                        countItemRemove++;
+                    }
+
+                }
                 CultureInfo cultureInfo = new CultureInfo("pl-PL");
                 cultureInfo.NumberFormat.NumberDecimalSeparator = ",";
 
@@ -91,106 +108,48 @@ namespace SimplyShopMVC.Application.Services
                     itemVm.symbol_produktu = symbol_produktu.Value;
                     itemVm.nazwa_produktu = nazwa_produktu.Value;
                     itemVm.symbol_producenta = symbol_producenta.Value;
-                    itemVm.ean = ean.Value;
+                    itemVm.ean = xmlHelpers.eanController(ean.Value);
                     itemVm.nazwa_producenta = nazwa_producenta.Value;
                     itemVm.opis = fullDescription;
                     //string cleanedText = new string(stan_magazynowy.Value.Where(char.IsDigit).ToArray());                             
                     itemVm.stan_magazynowy = changeToInt(stan_magazynowy.Value);
                     itemVm.cena = decimal.Parse(cena.Value, cultureInfo);
                     itemVm.dlugosc = changeToDecimal(dlugosc.Value);
-                    itemVm.szeroksc = changeToDecimal(szerokosc.Value);
+                    itemVm.szerokosc = changeToDecimal(szerokosc.Value);
                     itemVm.wysokosc = changeToDecimal(wysokosc.Value);
                     itemVm.waga = changeToDecimal(waga.Value);
                     itemVm.createDate = dateTime; // Tutaj zrobić podział na update i Add !!!
+                    var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
                     var mapedItemVm = _mapper.Map<Incom>(itemVm);
-                    var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i=>i.symbol_produktu == itemVm.symbol_produktu);
-                    if (itemToCheck != null)
+
+                    if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
                     {
+
                         _supplierRepo.UpdateIncom(mapedItemVm);
                         countItemUpdate++;
                     }
-                    if(itemToCheck== null)
+                    if (itemToCheck == null && !string.IsNullOrEmpty(itemVm.ean))
                     {
                         var itemId = _supplierRepo.AddIncomItem(mapedItemVm);
+                        var result = ImageHelper.SaveImageFromUrl(linkImage, itemVm.ean, _webHost);
+                        countImageAdd = countImageAdd + result;
                         countItemAdd++;
                     }
-                    
-                    // dodać county do raportu !!!
                 }
             }
-            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
-            List<string> list = new List<string>();
-            returnRaport.raportAddItem = new List<string>();
-            if (countItemAdd> 0 || countItemUpdate>0)
+            if (countItemAdd > 0 || countItemUpdate > 0)
             {
+                returnRaport.raportAddItem.Add($"Usunięto rekordów: {countItemRemove}");
                 returnRaport.raportAddItem.Add($"Dodano rekordów: {countItemAdd}");
                 returnRaport.raportAddItem.Add($"Zmodyfikowano rekordów: {countItemUpdate}");
+                returnRaport.raportAddItem.Add($"Dodano zdjęć: {countImageAdd}");
+
                 returnRaport.raportAddItem.Add("ok");
             }
-           
-
             returnRaport.warehouseForListVm = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
             return returnRaport;
-
         }
 
-        //        if (ProductName != null && XEanCode != null)
-        //        {
-        //            NewItemVm itemVm = new NewItemVm();
-        //            NewWarehouseItemVm newWarehouseItemVm = new NewWarehouseItemVm();
-        //            int warehouseItemId = 0;
-
-        //            var validationItem = _itemRepo.GetAllItems().FirstOrDefault(i => i.EanCode == XEanCode.Value);
-        //            if (validationItem == null)
-        //            {
-        //                itemVm.Name = ProductName.Value;
-        //                itemVm.Symbol = ProductSymbol.Value;
-        //                itemVm.ImageFolderName = XEanCode.Value;
-        //                itemVm.EanCode = XEanCode.Value;
-        //                itemVm.ShortDescription = ProductDescription.Value;
-        //                itemVm.Producent = ProducentName.Value;
-        //                itemVm.IsDeleted = false;
-        //                itemVm.IsActive = false;
-        //                SaveImageFromLink(ImageLink.Value, itemVm.EanCode);
-        //                var newItem = _mapper.Map<Item>(itemVm);
-        //                var id = _itemRepo.AddItem(newItem);
-
-        //                warehouseItemId = id; //jeżeli produkt nie istnieje pobierane jest Id z nowo utworzonego
-        //            }
-        //            else
-        //            {
-        //                warehouseItemId = validationItem.Id; //Jeżeli isnieje pobierane jest z istniejącego
-        //            }
-        //            var warehouseItem = _wItemRepo.GetItem(itemVm.Id, 1);
-
-        //            if (warehouseItem == null)
-        //            {
-        //                newWarehouseItemVm.SuppCategoryId = int.Parse(suppCategory.Value);
-        //                newWarehouseItemVm.ItemId = warehouseItemId;
-        //                newWarehouseItemVm.WarehouseId = 1;
-        //                newWarehouseItemVm.VatRate = 23;
-        //                newWarehouseItemVm.Quantity = int.Parse(ProductQuantity.Value);
-        //                newWarehouseItemVm.NetPurchasePrice = float.Parse(PurchasePrice.Value, cultureInfo);
-        //                newWarehouseItemVm.IsActive = false;
-        //                var _newWarehouseItem = _mapper.Map<WarehouseItem>(newWarehouseItemVm);
-        //                var wId = _wItemRepo.AddNewDelivery(_newWarehouseItem);
-
-        //            }
-        //            else
-        //            {
-        //                //newWarehouseItemVm.Quantity = int.Parse(ProductQuantity.Value);
-        //                //newWarehouseItemVm.NetPurchasePrice = float.Parse(PurchasePrice.Value);
-        //                //var _newWarehouseItem = _mapper.Map<WarehouseItem>(newWarehouseItemVm);
-        //                //var wId = _wItemRepo.UpdateItemInWarehouse(_newWarehouseItem);
-
-        //            }
-
-
-        //            // _itemRepo.AddItem - zrobić mapowanie oraz zapis do warehouseItem
-        //        }
-
-        //    }
-        //}
         public int changeToInt(string text)
         {
             if (!string.IsNullOrEmpty(text))

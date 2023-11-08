@@ -27,7 +27,7 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
         [Column(TypeName = "decimal(18, 2)")]
         public decimal dlugosc { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal szeroksc { get; set; }
+        public decimal szerokosc { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal wysokosc { get; set; }
         [Column(TypeName = "decimal(18, 2)")]

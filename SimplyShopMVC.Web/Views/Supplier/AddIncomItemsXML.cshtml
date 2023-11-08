@@ -22,10 +22,18 @@
             <label for="fileInputCategory" class="col-auto col-form-label">Dodaj plik Xml</label>
             <input type="file" asp-for="formFile" class="form-control" />
         </div>
+        <div class="col-md-2">
+            <label class="form-check-label text-danger">
+                Czy usunąć wszystkie towery tego dostawcy z bazy (niezalecane) ?
+            </label>
+            <input class="form-check-input h4" asp-for="removeItems" />
+
+        </div>
         <div class="col-auto">
             <input type="submit" value="Import" class="btn btn-primary" />
         </div>
     </form>
+
 </div>
 <div class="row">
     <div class="col-md-12">

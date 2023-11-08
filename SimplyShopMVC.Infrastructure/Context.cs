@@ -23,6 +23,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<ConnectItemTag> ConnectItemTag { get; set; }
         public DbSet<VatRate> VatRates { get; set; }
         public DbSet<Incom> Incoms { get; set; }
+        public DbSet<IncomGroup> IncomGroups { get; set; }
 
         public Context(DbContextOptions options) : base(options)
         {
