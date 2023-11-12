@@ -11,5 +11,8 @@ namespace SimplyShopMVC.Application.Interfaces
     public interface ISupplierService
     {
         AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
+        AddIncomGroupsVm AddIncomGroupsXML(AddIncomGroupsVm incomGroups, XDocument xmlDocument);
+        ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm();
+        ConnectItemsToSupplierVm AddConnectItemsToSupplierVm(ConnectItemsToSupplierVm connectedItems);
     }
 }

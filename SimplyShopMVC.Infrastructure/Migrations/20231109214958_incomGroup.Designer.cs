@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20231109214958_incomGroup")]
+    partial class incomGroup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -331,32 +333,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.ToTable("ConnectItemTag");
                 });
 
-            modelBuilder.Entity("SimplyShopMVC.Domain.Model.GroupItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PriceMarkupA")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PriceMarkupB")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PriceMarkupC")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GroupItems");
-                });
-
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.Item", b =>
                 {
                     b.Property<int>("Id")
@@ -373,9 +349,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
                     b.Property<string>("EanCode")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("GroupItemId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ImageFolder")
                         .HasColumnType("nvarchar(max)");
@@ -400,8 +373,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("GroupItemId");
 
                     b.ToTable("Items");
                 });
@@ -710,13 +681,7 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                         .WithMany("Items")
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("SimplyShopMVC.Domain.Model.GroupItem", "GroupItem")
-                        .WithMany("Items")
-                        .HasForeignKey("GroupItemId");
-
                     b.Navigation("Category");
-
-                    b.Navigation("GroupItem");
                 });
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.ItemWarehouse", b =>
@@ -776,11 +741,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.Category", b =>
-                {
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("SimplyShopMVC.Domain.Model.GroupItem", b =>
                 {
                     b.Navigation("Items");
                 });

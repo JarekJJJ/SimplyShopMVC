@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
+using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Suppliers;
 using System.Xml.Linq;
 
@@ -35,6 +36,35 @@ namespace SimplyShopMVC.Web.Controllers
                 return View(returnRaport);
             }
            return View();
+        }
+        [HttpGet]
+        public IActionResult AddIncomGroupsXML()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddIncomGroupsXML(AddIncomGroupsVm incomGroups)
+        {
+            if(incomGroups.formFile != null && incomGroups.formFile.Length > 0)
+            {
+                var listGroupXml = XDocument.Load(incomGroups.formFile.OpenReadStream());
+                var returnRaport = _supplierService.AddIncomGroupsXML(incomGroups, listGroupXml);
+                return View(returnRaport);
+            }
+            return View();
+        }
+        [HttpGet]
+        public IActionResult AddGroupItems()
+        {
+            //ConnectItemsToSupplierVm _connectItems = new ConnectItemsToSupplierVm();
+            var connectItems = _supplierService.LoadConnectItemsToSupplierVm();
+            return View(connectItems);
+        }
+        [HttpPost]
+        public IActionResult AddGroupItems(ConnectItemsToSupplierVm connectItems)
+        {
+           var returnRaport =  _supplierService.AddConnectItemsToSupplierVm(connectItems);
+            return View(returnRaport);
         }
     }
 }

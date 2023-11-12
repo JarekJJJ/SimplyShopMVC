@@ -16,6 +16,6 @@ namespace SimplyShopMVC.Domain.Interface
         void DeleteIncomItem(int incomId);
         int AddIncomGroup(IncomGroup incomGroup);
         IQueryable<IncomGroup> GetAllIncomGroup();
-        void DeleteIncomGroup(int incomGroupId);
+        void DeleteIncomGroup();
     }
 }

@@ -24,6 +24,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<VatRate> VatRates { get; set; }
         public DbSet<Incom> Incoms { get; set; }
         public DbSet<IncomGroup> IncomGroups { get; set; }
+        public DbSet<GroupItem> GroupItems { get; set; }
 
         public Context(DbContextOptions options) : base(options)
         {

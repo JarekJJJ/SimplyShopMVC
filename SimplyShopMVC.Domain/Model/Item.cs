@@ -15,6 +15,7 @@ namespace SimplyShopMVC.Domain.Model
         public bool IsDeleted { get; set; } = false;
         public bool IsActive { get; set; } = true;
         public int? CategoryId { get; set; }
+        public int? GroupItemId { get; set; }
         public string? EanCode { get; set; }
         public string ItemSymbol { get; set; }
         public string? ImageFolder { get; set; }
@@ -22,6 +23,7 @@ namespace SimplyShopMVC.Domain.Model
         public virtual Category Category { get; set; }
         public ICollection<ConnectItemTag> ConnectItemTags { get; set; }
         public virtual ICollection<ItemWarehouse> ItemWarehouses { get; set; }
+        public virtual GroupItem GroupItem { get; set; }
 
     }
 }

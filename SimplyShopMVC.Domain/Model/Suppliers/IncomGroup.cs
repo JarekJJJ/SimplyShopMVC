@@ -9,8 +9,8 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
     public class IncomGroup
     {
         public int Id { get; set; }
-        public string GroupId { get; set; }
-        public string GroupIdHome { get; set; }
+        public int GroupId { get; set; }
+        public int GroupIdHome { get; set; }
         public string Name { get; set; }
         public ICollection<Incom> Incoms { get; set; }
     }

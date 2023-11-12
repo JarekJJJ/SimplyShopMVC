@@ -11,6 +11,7 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
     {
         public int Id { get; set; }
         public int warehouseId { get; set; }
+        public int incomGroupId { get; set; }
         public string grupa_towarowa { get; set; }
         public string nazwa_grupy_towarowej { get; set; }
         public string symbol_produktu { get; set; }

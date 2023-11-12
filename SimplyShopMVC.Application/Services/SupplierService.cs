@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using SimplyShopMVC.Domain.Model;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -27,13 +28,15 @@ namespace SimplyShopMVC.Application.Services
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHost;
         private readonly IItemRepository _itemRepo;
+        private readonly IGroupItemRepository _groupItemRepo;
 
-        public SupplierService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost, ISupplierRepository supplierRepo)
+        public SupplierService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost, ISupplierRepository supplierRepo, IGroupItemRepository groupItemRepo)
         {
             _itemRepo = itemRepo;
             _mapper = mapper;
             _webHost = webHost;
             _supplierRepo = supplierRepo;
+            _groupItemRepo = groupItemRepo;
         }
         public AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
@@ -149,6 +152,48 @@ namespace SimplyShopMVC.Application.Services
             returnRaport.warehouseForListVm = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
             return returnRaport;
         }
+        public AddIncomGroupsVm AddIncomGroupsXML(AddIncomGroupsVm incomGroups, XDocument xmlDocument)
+        {
+            int countItemAdd = 0;
+            int countItemFalse = 0;
+            int countItemRemove = 0;
+            AddIncomGroupsVm returnRaport = new AddIncomGroupsVm();
+            returnRaport.raportAddItem = new List<string>();
+            foreach (XElement elementXml in xmlDocument.Root.Elements("grupy"))
+            {
+                XElement GroupId = elementXml.Element("id");
+                XElement GroupIdHome = elementXml.Element("idh");
+                XElement Name = elementXml.Element("name");
+
+                IncomGroupForListVm incomGroupVm = new IncomGroupForListVm();
+                incomGroupVm.GroupId = int.Parse(GroupId.Value);
+                if (!string.IsNullOrEmpty(GroupIdHome.Value))
+                {
+                    incomGroupVm.GroupIdHome = int.Parse(GroupIdHome.Value);
+                }
+                else
+                {
+                    incomGroupVm.GroupIdHome = 0;
+                }
+
+                incomGroupVm.Name = Name.Value;
+                var mappedIncomGroup = _mapper.Map<IncomGroup>(incomGroupVm);
+                var returnId = _supplierRepo.AddIncomGroup(mappedIncomGroup);
+                if (returnId != 0)
+                {
+                    countItemAdd++;
+                }
+                else
+                {
+                    countItemFalse++;
+                }
+
+            }
+
+            returnRaport.raportAddItem.Add($"Dodano {countItemAdd} grup do bazy!");
+            returnRaport.raportAddItem.Add($"Nie udało się dodać {countItemFalse} grup do bazy!");
+            return returnRaport;
+        }
 
         public int changeToInt(string text)
         {
@@ -174,6 +219,45 @@ namespace SimplyShopMVC.Application.Services
             }
             return 0;
         }
-    }
 
+        public ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm()
+        {
+            ConnectItemsToSupplierVm connectItems = new ConnectItemsToSupplierVm();
+            connectItems.raport = new List<string>();
+            connectItems.groupItems = _groupItemRepo.GetAllGroupItem()
+                .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
+            connectItems.incomGroups = _supplierRepo.GetAllIncomGroup()
+                .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var group in connectItems.incomGroups.Where(i=>i.GroupIdHome != 0))
+            {
+                var parrentName = connectItems.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
+                string groupName = $"{parrentName}->{group.Name}";
+                group.Name = groupName;
+            }
+           var ascendingList =  connectItems.incomGroups.OrderBy(i => i.Name).ToList();
+            connectItems.incomGroups = ascendingList;
+            return connectItems;
+        }
+
+        public ConnectItemsToSupplierVm AddConnectItemsToSupplierVm(ConnectItemsToSupplierVm connectedItems)
+        {
+            ConnectItemsToSupplierVm newConnectItem = new ConnectItemsToSupplierVm();
+            newConnectItem.raport = new List<string>();
+            if (connectedItems.groupItem != null && !string.IsNullOrEmpty(connectedItems.groupItem.Name))
+            {
+                var mappedGroupItem = _mapper.Map<GroupItem>(connectedItems.groupItem);
+                _groupItemRepo.AddGroupItem(mappedGroupItem);
+                string raport = $"Dodano pomyślnie grupę : {mappedGroupItem.Name}";
+                newConnectItem.raport.Add(raport);
+            }
+            newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
+                .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
+            newConnectItem.incomGroups = _supplierRepo.GetAllIncomGroup()
+                .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+            return newConnectItem;
+        }
+
+
+
+    }
 }

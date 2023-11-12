@@ -11,8 +11,8 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
     public class IncomGroupForListVm : IMapFrom<SimplyShopMVC.Domain.Model.Suppliers.IncomGroup>
     {
         public int Id { get; set; }
-        public string GroupId { get; set; }
-        public string GroupIdHome { get; set; }
+        public int GroupId { get; set; }
+        public int GroupIdHome { get; set; }
         public string Name { get; set; }
 
         public void Mapping(Profile profile)

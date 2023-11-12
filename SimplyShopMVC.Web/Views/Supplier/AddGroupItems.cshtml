@@ -1,0 +1,82 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Suppliers.ConnectItemsToSupplierVm
+
+@{
+    ViewData["Title"] = "Add supplierGroup to ItemGroup";
+}
+
+<h1>Łączenie grup dostawcy z grupami sklepu</h1>
+
+<div class="row bg-light rounded m-2 pb-4">
+    <span class="text-center pt-1 h4">Dodaj nową grupę:</span>
+    <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="groupItem.Id" />
+        <div class="col-md-3">
+            <label asp-for="groupItem.Name" class="control-label"> Nazwa grupy</label>
+            <input asp-for="groupItem.Name" class="form-control" value="" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="groupItem.PriceMarkupA" class="control-label">Narzut A (%) </label>
+            <input asp-for="groupItem.PriceMarkupA" type="number" value="" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="groupItem.PriceMarkupB" class="control-label">Narzut B (%) </label>
+            <input asp-for="groupItem.PriceMarkupB" type="number" value="" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="groupItem.PriceMarkupC" class="control-label">Narzut C (%) </label>
+            <input asp-for="groupItem.PriceMarkupC" type="number" value="" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+</div>
+@if (Model.raport != null)
+{
+    <span class="text-center">
+        @foreach (var result in Model.raport)
+        {
+            <p>@Html.Raw(result);</p>
+
+        }
+    </span>
+}
+
+
+<div class="row bg-light rounded m-2 pb-4">
+    <span class="text-center pt-1 h4">Dodaj nową grupę:</span>
+    <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
+        <div class="col-md-3">
+            <label asp-for="selectedGroupItem" class="form-label">Wybierz grupę towarową w sklepie:</label>
+            <select class="form-select" asp-for="selectedGroupItem">
+
+                @foreach (var gItem in Model.groupItems)
+                {
+                    <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
+                }
+            </select>
+        </div>
+         <div class="col-md-3">
+            <label asp-for="selectedGroupSupplier" class="form-label">Wybierz grupę towarową u dostawcy:</label>
+            <select class="form-select" asp-for="selectedGroupSupplier">
+
+                @foreach (var gItem in Model.incomGroups)
+                {
+                        <option value="@gItem.GroupId" name="@gItem.Name">@gItem.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="groupItem.Name" class="control-label"> Nazwa grupy</label>
+            <input asp-for="groupItem.Name" class="form-control" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+
+</div>
+
+

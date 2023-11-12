@@ -1,0 +1,25 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Suppliers.AddIncomGroupsVm
+
+@{
+    ViewData["Title"] = "Add supplierGroup to database";
+}
+
+<h1>Dodawanie grup incom do bazy</h1>
+<div class="row">
+    <form asp-action="AddIncomGroupsXML" enctype="multipart/form-data" class="row gy-2 gx-3 align-items-center">
+                <div class="col-md-3">
+            <label for="fileInputCategory" class="col-auto col-form-label">Dodaj plik Xml</label>
+            <input type="file" asp-for="formFile" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-check-label text-danger">
+                Czy usunąć wszystkie grupy tego dostawcy z bazy (niezalecane) ?
+            </label>
+            <input class="form-check-input h4" asp-for="removeItems" />
+
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Import" class="btn btn-primary" />
+        </div>
+    </form>
+</div>

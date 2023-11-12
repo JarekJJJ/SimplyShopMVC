@@ -34,13 +34,6 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public List<CategoryForListVm>? Categories { get; set; }
         public CategoryForListVm? Category { get; set; }
         public int selectedCategory { get; set; }
-        //public int categoryId { get; set; }
-        //public string categoryName { get; set; }
-        //public string categoryDescription { get; set; }
-        //public bool isActiveCategory { get; set; }
-        //public bool isMainCategory { get; set; }
-        //public int? mainCategoryId { get; set; }
-
         //p.3 Zdjęcia
         public List<IFormFile>? Image { get; set; }
         public List<PhotoItemVm>? ListImages { get; set; }
