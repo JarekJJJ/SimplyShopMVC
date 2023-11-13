@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20231113200836_supplierUpdate")]
+    partial class supplierUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -368,9 +370,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -379,9 +378,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
                     b.Property<int?>("GroupItemId")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("Height")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImageFolder")
                         .HasColumnType("nvarchar(max)");
@@ -396,27 +392,12 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Lenght")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProducentName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ShortDescription")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("Weight")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Width")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -455,7 +436,7 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<decimal?>("FinalPriceA")
+                    b.Property<decimal>("FinalPriceA")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ItemId")

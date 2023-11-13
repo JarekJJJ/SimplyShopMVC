@@ -246,6 +246,8 @@ namespace SimplyShopMVC.Application.Services
             }
             var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
             newConnectItem.categoryItems = ascendingListCategory;
+            newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
+                    .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
             return newConnectItem;
         }
 
@@ -272,6 +274,50 @@ namespace SimplyShopMVC.Application.Services
                     newConnectItem.raport.Add(raport);
                 }
             }
+            //Add new or update item from supplier database
+            if (connectedItems.selectedGroupSupplier > 0 && connectedItems.selectedCategory != null
+                && connectedItems.selectedWarehouse!=null)
+            {
+                var supplierItemByGroupId = _supplierRepo.GetAllIncom().Where(s => s.grupa_towarowa == connectedItems.selectedGroupSupplier.ToString()).ToList();
+                foreach (var supItem in supplierItemByGroupId)
+                {
+                    var resultItem = _itemRepo.GetAllItems().FirstOrDefault(r => r.EanCode == supItem.ean);
+                    int newItemId = 0;
+                    if (resultItem == null && supItem.stan_magazynowy > 0)
+                    {
+                        ItemForListVm newItem = new ItemForListVm();
+                        newItem.Name = supItem.nazwa_produktu;
+                        newItem.ItemSymbol = supItem.symbol_produktu;
+                        newItem.Description = supItem.opis;
+                        newItem.CategoryId = (int)connectedItems.selectedCategory;
+                        newItem.EanCode = supItem.ean;
+                        newItem.ImageFolder = supItem.ean;
+                        newItem.ProducentName = supItem.nazwa_producenta;
+                        newItem.Lenght = supItem.dlugosc;
+                        newItem.Width = supItem.szerokosc;
+                        newItem.Height = supItem.wysokosc;
+                        newItem.Weight = supItem.waga;
+                        newItem.GroupItemId = connectedItems.selectedGroupItem;
+                        var mappedNewItem = _mapper.Map<Item>(newItem);
+                        newItemId = _itemRepo.AddItem(mappedNewItem);
+                        string selectedVatRate = "A";
+                        var idVatRate = _itemRepo.GetAllVatRate().FirstOrDefault(i=>i.Name== selectedVatRate);
+                        ItemWarehouseForListVm itemWarehouse= new ItemWarehouseForListVm();
+                        itemWarehouse.WarehouseId = (int)connectedItems.selectedWarehouse;
+                        itemWarehouse.ItemId= newItemId;
+                        itemWarehouse.Quantity = supItem.stan_magazynowy;
+                        itemWarehouse.NetPurchasePrice = supItem.cena;
+                        itemWarehouse.VatRateName = selectedVatRate;
+                        itemWarehouse.VatRateId = idVatRate.Id;
+                        var mappedItemWare = _mapper.Map<ItemWarehouse>(itemWarehouse);
+                        _itemRepo.AddItemWarehouse(mappedItemWare);
+
+                    }
+
+
+                }
+            }
+
             //Supplier and shop group View
             newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
@@ -296,6 +342,8 @@ namespace SimplyShopMVC.Application.Services
             }
             var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
             newConnectItem.categoryItems = ascendingListCategory;
+            newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
+                .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
             return newConnectItem;
         }
 

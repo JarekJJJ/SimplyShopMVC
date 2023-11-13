@@ -10,14 +10,14 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
     public class ConnectItemsToSupplierVm
     {
         public List<ItemWarehouseForListVm> itemsWarehouse { get; set; }
-       // public List<WarehouseForListVm> warehouseForLists { get; set; }
+        public List<WarehouseForListVm> warehouseForLists { get; set; }
         public List<IncomGroupForListVm> incomGroups { get; set; }
         public List<GroupItemForListVm> groupItems { get; set; }
         public List<CategoryForListVm> categoryItems { get; set; }
         public CategoryForListVm category { get; set; }
         public GroupItemForListVm groupItem { get; set; }
         public List<string> raport { get; set; }
-        //public int? selectedWarehouse { get; set; }
+        public int? selectedWarehouse { get; set; }
         public int? selectedGroupItem { get; set; }
         public int? selectedCategory { get; set; }
         public int? selectedGroupSupplier { get; set; }

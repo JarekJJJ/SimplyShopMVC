@@ -12,6 +12,6 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
         public int GroupId { get; set; }
         public int GroupIdHome { get; set; }
         public string Name { get; set; }
-        public ICollection<Incom> Incoms { get; set; }
+       // public ICollection<Incom> Incoms { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
     {
         public int Id { get; set; }
         public int warehouseId { get; set; }
-        public int incomGroupId { get; set; }
+       // public int incomGroupId { get; set; }
         public string grupa_towarowa { get; set; }
         public string nazwa_grupy_towarowej { get; set; }
         public string symbol_produktu { get; set; }
@@ -35,6 +35,6 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
         public DateTime updateTime { get; set; }
 
         public virtual Warehouse warehouse { get; set; }
-        public virtual IncomGroup incomGroup { get; set; }
+        //public virtual IncomGroup incomGroup { get; set; }
     }
 }

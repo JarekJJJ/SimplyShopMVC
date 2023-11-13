@@ -86,7 +86,7 @@
 <div class="row bg-light rounded m-2 pb-4">
     <span class="text-center pt-1 h4">Dodaj towary do sklepu:</span>
     <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label asp-for="selectedGroupItem" class="form-label">Wybierz grupę towarową w sklepie:</label>
             <select class="form-select" asp-for="selectedGroupItem">
 
@@ -111,6 +111,16 @@
             <select class="form-select" asp-for="selectedCategory">
 
                 @foreach (var gItem in Model.categoryItems.Where(c=>c.IsMainCategory==false).ToList())
+                {
+                    <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="selectedWarehouse" class="form-label">Wybierz magazyn dostawcy:</label>
+            <select class="form-select" asp-for="selectedWarehouse">
+
+                @foreach (var gItem in Model.warehouseForLists)
                 {
                     <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
                 }
