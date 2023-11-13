@@ -222,27 +222,38 @@ namespace SimplyShopMVC.Application.Services
 
         public ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm()
         {
-            ConnectItemsToSupplierVm connectItems = new ConnectItemsToSupplierVm();
-            connectItems.raport = new List<string>();
-            connectItems.groupItems = _groupItemRepo.GetAllGroupItem()
+            ConnectItemsToSupplierVm newConnectItem = new ConnectItemsToSupplierVm();
+            newConnectItem.raport = new List<string>();
+            newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
-            connectItems.incomGroups = _supplierRepo.GetAllIncomGroup()
+            newConnectItem.incomGroups = _supplierRepo.GetAllIncomGroup()
                 .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
-            foreach (var group in connectItems.incomGroups.Where(i=>i.GroupIdHome != 0))
+            foreach (var group in newConnectItem.incomGroups.Where(i => i.GroupIdHome != 0))
             {
-                var parrentName = connectItems.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
+                var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
                 string groupName = $"{parrentName}->{group.Name}";
                 group.Name = groupName;
             }
-           var ascendingList =  connectItems.incomGroups.OrderBy(i => i.Name).ToList();
-            connectItems.incomGroups = ascendingList;
-            return connectItems;
+            var ascendingList = newConnectItem.incomGroups.OrderBy(i => i.Name).ToList();
+            newConnectItem.incomGroups = ascendingList;
+            newConnectItem.categoryItems = _itemRepo.GetAllCategories()
+                .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var category in newConnectItem.categoryItems.Where(c => c.IsMainCategory == false))
+            {
+                var parrentCategory = newConnectItem.categoryItems.FirstOrDefault(c => c.Id == category.MainCategoryId).Name;
+                string categoryName = $"{parrentCategory}->{category.Name}";
+                category.Name = categoryName;
+            }
+            var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
+            newConnectItem.categoryItems = ascendingListCategory;
+            return newConnectItem;
         }
 
         public ConnectItemsToSupplierVm AddConnectItemsToSupplierVm(ConnectItemsToSupplierVm connectedItems)
         {
             ConnectItemsToSupplierVm newConnectItem = new ConnectItemsToSupplierVm();
             newConnectItem.raport = new List<string>();
+            //Dodawanie
             if (connectedItems.groupItem != null && !string.IsNullOrEmpty(connectedItems.groupItem.Name))
             {
                 var mappedGroupItem = _mapper.Map<GroupItem>(connectedItems.groupItem);
@@ -250,10 +261,41 @@ namespace SimplyShopMVC.Application.Services
                 string raport = $"Dodano pomyślnie grupę : {mappedGroupItem.Name}";
                 newConnectItem.raport.Add(raport);
             }
+            //Add Category 
+            if ((connectedItems.category != null) && (!string.IsNullOrEmpty(connectedItems.category.Name)))
+            {
+                var mappedCategory = _mapper.Map<Category>(connectedItems.category);
+                var idCategory = _itemRepo.AddCategory(mappedCategory);
+                if (idCategory != 0)
+                {
+                    string raport = $"Dodano pomyślnie kategorię o nazwie: {mappedCategory.Name}";
+                    newConnectItem.raport.Add(raport);
+                }
+            }
+            //Supplier and shop group View
             newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
             newConnectItem.incomGroups = _supplierRepo.GetAllIncomGroup()
                 .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var group in newConnectItem.incomGroups.Where(i => i.GroupIdHome != 0))
+            {
+                var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
+                string groupName = $"{parrentName}->{group.Name}";
+                group.Name = groupName;
+            }
+            var ascendingList = newConnectItem.incomGroups.OrderBy(i => i.Name).ToList();
+            newConnectItem.incomGroups = ascendingList;
+            // Category view
+            newConnectItem.categoryItems = _itemRepo.GetAllCategories()
+                .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var category in newConnectItem.categoryItems.Where(c => c.IsMainCategory == false))
+            {
+                var parrentCategory = newConnectItem.categoryItems.FirstOrDefault(c => c.Id == category.MainCategoryId).Name;
+                string categoryName = $"{parrentCategory}->{category.Name}";
+                category.Name = categoryName;
+            }
+            var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
+            newConnectItem.categoryItems = ascendingListCategory;
             return newConnectItem;
         }
 

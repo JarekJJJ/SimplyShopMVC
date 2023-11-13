@@ -32,6 +32,45 @@
         </div>
     </form>
 </div>
+<div class="row bg-warning-subtle rounded m-2 pb-4">
+
+    <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="category.Id" />
+        <div class="col-md-3">
+            <label asp-for="category.MainCategoryId" class="control-label">Kategoria Główna - </label>
+            <select class="form-select form-select-sm" aria-label=".form-select-sm example" asp-for="category.MainCategoryId">
+                <option value="0">Wybierz kategorię macierzystą</option>
+                @foreach (var options in Model.categoryItems.Where(i=>i.IsMainCategory==true).ToList())
+                {
+                    <option value="@options.Id">@options.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="category.Name" class="control-label"> Nazwa kategorii</label>
+            <input asp-for="category.Name" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="category.Description" class="control-label">Opis kategorii </label>
+            <input asp-for="category.Description" class="form-control" />
+        </div>
+        <div class="col-md-2 pt-4 ps-4">
+            <label class="form-check-label">
+                <input class="form-check-input" asp-for="category.IsActive" /> @Html.DisplayNameFor(model => model.category.IsActive)
+            </label>
+        </div>
+        <div class="col-md-2 pt-4 pe-4">
+            <label class="form-check-label">
+                <input class="form-check-input" asp-for="category.IsMainCategory" /> @Html.DisplayNameFor(model => model.category.IsMainCategory)
+            </label>
+        </div>
+        <div class="col-md-1">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+
+</div>
 @if (Model.raport != null)
 {
     <span class="text-center">
@@ -45,7 +84,7 @@
 
 
 <div class="row bg-light rounded m-2 pb-4">
-    <span class="text-center pt-1 h4">Dodaj nową grupę:</span>
+    <span class="text-center pt-1 h4">Dodaj towary do sklepu:</span>
     <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
         <div class="col-md-3">
             <label asp-for="selectedGroupItem" class="form-label">Wybierz grupę towarową w sklepie:</label>
@@ -67,9 +106,15 @@
                 }
             </select>
         </div>
-        <div class="col-md-3">
-            <label asp-for="groupItem.Name" class="control-label"> Nazwa grupy</label>
-            <input asp-for="groupItem.Name" class="form-control" />
+        <div class="col-md-4">
+            <label asp-for="selectedCategory" class="form-label">Wybierz kategorię w sklepie(dla nowych produktów):</label>
+            <select class="form-select" asp-for="selectedCategory">
+
+                @foreach (var gItem in Model.categoryItems.Where(c=>c.IsMainCategory==false).ToList())
+                {
+                    <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
+                }
+            </select>
         </div>
 
         <div class="col-md-2">
