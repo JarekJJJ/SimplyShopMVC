@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Web.Models;
+using SimplyShopMVC.Application.Interfaces;
 using System.Diagnostics;
 
 namespace SimplyShopMVC.Web.Controllers
@@ -7,16 +9,19 @@ namespace SimplyShopMVC.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IFrontService _frontService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IFrontService frontService)
         {
             _logger = logger;
+            _frontService = frontService;
         }
 
         public IActionResult Index()
         {
+            var items = _frontService.GetItemsToIndex();
            
-            return View();
+            return View(items);
         }
 
         public IActionResult Privacy()

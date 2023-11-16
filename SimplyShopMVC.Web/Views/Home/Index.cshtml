@@ -1,8 +1,53 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model SimplyShopMVC.Application.ViewModels.Front.IndexListVm
+@{
+    ViewData["Title"] = "HKR24.pl - Index site";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <p>Menu</p>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                @foreach (var item in Model.frontItemForLists)
+                {
+                    <div class="col-md-3 p-1 shopbox">
+                        <div class=" shadow-sm border border-1 p-1 h-100">
+                            <div class=" badge bg-danger text-wrap" style="width: 6rem;">
+                                Polecamy
+                            </div>
+                            <div class="text-center m-1">
+                                <img src="@item.imageUrl" class=" object-fit-contain  img-thumbnail w-75 h-100 border-0" alt="@item.name">
+                            </div>
+                            <div class="text-center">
+                                <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
+                            </div>
+                            <div class="text-center">
+                                <span class="fs-6">@item.name</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row m-2">
+    <table class="table table-striped">
+        <tr>
+            <th>id</th>
+            <th>nazwa</th>
+            <th>ilość</th>
+            <th>cena brutto</th>
+        </tr>
+        @foreach (var item in Model.frontItemForLists)
+        {
+            <tr>
+                <td>@item.id</td>
+                <td>@item.name</td>
+                <td>@item.quantity</td>
+                <td>@item.priceB.ToString("N2") zł</td>
+            </tr>
+        }
+    </table>
 </div>

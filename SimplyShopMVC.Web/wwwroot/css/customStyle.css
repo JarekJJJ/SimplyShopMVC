@@ -1,0 +1,27 @@
+.shopbox {
+    position: relative;
+    overflow: hidden;
+}
+
+    .shopbox:hover::before {
+        content: '\1F6D2'; /* Unicode character for an example icon (you can use your own) */
+        font-size: 40px;
+        color: #3498db; /* Color of the icon */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.8;
+        cursor: pointer;
+    }
+
+    .shopbox:hover::after {
+        content: 'Dodaj'; /* Text for the link */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, 50%);
+        font-size: 16px;       
+        color: dodgerblue; /* Color of the link text */
+        cursor: pointer;
+    }

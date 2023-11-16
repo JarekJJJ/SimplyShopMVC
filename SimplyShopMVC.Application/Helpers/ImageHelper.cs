@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
+using SimplyShopMVC.Domain.Model;
 
 namespace SimplyShopMVC.Application.Helpers
 {
@@ -60,6 +62,20 @@ namespace SimplyShopMVC.Application.Helpers
             List<string> imagePaths = Directory.GetFiles(folderPath)
                 .Where(file => IsImageFile(file)).ToList();
             //var listFile = imagePaths.Select(f => Path.GetFileName(f)).ToList();
+            return imagePaths;
+        }
+        public static string GetMainImageUrlFromPath(string folderName, IWebHostEnvironment webHost) // pobiera pliki wraz ze ścieżką
+        {
+            string folderPath  = $"{webHost.WebRootPath}\\media\\itemimg\\{folderName}\\";
+            string imagePaths = Directory.GetFiles(folderPath)
+                .FirstOrDefault(file => IsImageFile(file));
+            var listFile = Path.GetFileName(imagePaths);
+            imagePaths = $"\\media\\itemimg\\{folderName}\\{listFile}";
+            if (string.IsNullOrEmpty(listFile))
+            {
+                folderPath = $"\\media\\nophoto.jpg";
+                imagePaths = folderPath;
+            }
             return imagePaths;
         }
         static bool IsImageFile(string filePath)
