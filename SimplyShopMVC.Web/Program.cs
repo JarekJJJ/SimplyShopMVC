@@ -68,9 +68,11 @@ app.MapControllerRoute(
     name: "blog",
     pattern: "{controller=Article}/{action=Index}/{id?}");
 app.MapControllerRoute(
-    name: "Sklep",
+    name: "Admin",
     pattern: "{controller=Shop}/{action=Index}/{id?}");
-
+app.MapControllerRoute(
+    name: "Sklep",
+    pattern: "{controller=Item}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "Supplier",
     pattern: "{controller=Supplier}/{action=Index}/{id?}");

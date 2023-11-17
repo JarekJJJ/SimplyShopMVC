@@ -1,27 +1,19 @@
-.shopbox {
-    position: relative;
-    overflow: hidden;
+.cart {
+   /* position: relative;
+    background-color: #f0f0f0;
+    overflow: hidden;*/
 }
 
-    .shopbox:hover::before {
-        content: '\1F6D2'; /* Unicode character for an example icon (you can use your own) */
-        font-size: 40px;
-        color: #3498db; /* Color of the icon */
-        position: absolute;
-        top: 10%;
-        left: 90%;
-        transform: translate(-50%, -50%);
-        opacity: 0.8;
-        cursor: pointer;
-    }
+.cartbutton {
 
-    .shopbox:hover::after {
-        content:'\1F6D2'; /* Text for the link */
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, 50%);
-        font-size: 16px;       
-        color: dodgerblue; /* Color of the link text */
-        cursor: pointer;
-    }
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.cart:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.cart:hover .cartbutton {
+    opacity: 1;
+    
+}

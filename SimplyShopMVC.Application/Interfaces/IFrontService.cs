@@ -9,7 +9,7 @@ namespace SimplyShopMVC.Domain.Interface
 {
     public interface IFrontService
     {
-        IndexListVm GetItemsToIndex();
+        IndexListVm GetItemsToIndex(int? idItem, int? quantityItem);
     
     }
 }

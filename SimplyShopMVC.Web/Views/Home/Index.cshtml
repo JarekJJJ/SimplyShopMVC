@@ -14,8 +14,8 @@
                 </div>
                 @foreach (var item in Model.frontItemForLists)
                 {
-                    <div class="col-md-3 p-1">
-                        <div class=" shadow-sm border border-1 p-1 h-100 position-relative">
+                    <div class="col-md-3 p-1 cart">
+                        <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
                             <div class=" badge bg-danger text-wrap" style="width: 6rem;">
                                 Polecamy
                             </div>
@@ -26,14 +26,16 @@
                                 <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
                             </div>
                             <div class="text-center">
-                                <span class="fs-6">@item.name</span>
+                                <span class="fs-6"><a href="">@Html.ActionLink(item.name, "DetailItem","Item", new {id=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</a></span>
                             </div>
-                            <div class="position-absolute bottom-0 end-0">
-                                <button type="button" class="btn btn-light">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus-fill" viewBox="0 0 16 16">
-                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                                    </svg>
-                                </button>
+                            <div class="flex-grow-1 d-flex align-items-end justify-content-center">
+                                
+                                        <button type="button" class="btn cartbutton btn-danger">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                    </svg> <span class="text-light">Dodaj do koszyka</span>
+                                        </button>
+                                                                 
                             </div>
                         </div>
                     </div>
@@ -54,7 +56,7 @@
         {
             <tr>
                 <td>@item.id</td>
-                <td>@item.name</td>
+                <td>@Html.ActionLink(item.name, "DetailItem","Item", new {id=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</td>
                 <td>@item.quantity</td>
                 <td>@item.priceB.ToString("N2") zł</td>
             </tr>

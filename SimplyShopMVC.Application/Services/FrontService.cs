@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimplyShopMVC.Domain.Model;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -27,19 +28,28 @@ namespace SimplyShopMVC.Application.Services
             _groupItemRepo = groupItemRepo;
         }
 
-        public IndexListVm GetItemsToIndex() //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
+        public IndexListVm GetItemsToIndex(int? idItem, int? quantityItem) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
         {
             IndexListVm indexList = new IndexListVm();
 
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
+            List<Item> itemList = new List<Item>();
             do
             {
-                var itemList = _itemRepo.GetAllItems().OrderBy(x => Guid.NewGuid()).Take(1).Where(i => i.IsActive == true && i.IsDeleted == false).ToList();
+                if (idItem > 0 && idItem != null)
+                {
+                     itemList = _itemRepo.GetAllItems().Where
+                }
+                if (idItem == 0 || idItem == null)
+                {
+                     itemList = _itemRepo.GetAllItems().OrderBy(x => Guid.NewGuid()).Take(1).Where(i => i.IsActive == true && i.IsDeleted == false).ToList();
+                }
+                    
                 foreach (var item in itemList)
                 {
-                    var checkDuplicateItem = frontItemForLists.FirstOrDefault(f=>f.id==item.Id);
+                    var checkDuplicateItem = frontItemForLists.FirstOrDefault(f => f.id == item.Id);
                     var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id);
-                    if (indexItemWare != null && checkDuplicateItem==null)
+                    if (indexItemWare != null && checkDuplicateItem == null)
                     {
                         var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == indexItemWare.VatRateId);  //Dodać sprawdzenie czy istnieje przedmiot w itemWArehouse!
                         FrontItemForList indexItem = new FrontItemForList();
