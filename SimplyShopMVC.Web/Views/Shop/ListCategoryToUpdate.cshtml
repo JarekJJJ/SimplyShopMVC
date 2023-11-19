@@ -4,7 +4,9 @@
     ViewData["Title"] = "ListCategoryToUpdate";
 }
 
-
+@{
+    var mainCategory = Model.listCategory.Where(i => i.IsMainCategory == true);
+}
 <h1>Lista dostępnych Category</h1>
 <div class="row">
     <form asp-action="ListCategoryToUpdate" asp-controller="Shop" method="get">
@@ -30,35 +32,58 @@
             <th>
                 Liczba towarów
             </th>
+            <th>
+                Aktywna ?
+            </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var cat in Model.listCategory)
+        @foreach (var cat in mainCategory)
         {
-            var countCat = Model.countCategory.FirstOrDefault(i => i.categoryId == cat.Id);
+            var subCategory = Model.listCategory.Where(i => i.MainCategoryId == cat.Id);
+            foreach (var subcat in subCategory)
+            {
+
+                string pathName = $"{cat.Name} -> {subcat.Name}";
+                var countCat = Model.countCategory.FirstOrDefault(i => i.categoryId == subcat.Id);
                 <tr>
                     <td>
-                    @Html.DisplayFor(modelItem => cat.Id)
+                        @Html.DisplayFor(modelItem => cat.Id)
                     </td>
                     <td>
-                    @Html.DisplayFor(modelItem => cat.Name)
+                       @pathName
                     </td>
                     <td>@Html.DisplayFor(modelItem => cat.Description)</td>
                     <td>@(countCat == null ? Html.Raw("0") : countCat.countItem)</td>
                     <td>
+                        @(subcat.IsActive == true ? Html.Raw("Tak") : Html.Raw("Nie")) </td >
+                    <td>
                         <span class="">@Html.ActionLink("Update","UpdateCategory", new {CategoryId=cat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span>
-                    @* @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @* @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
                     </td>
                 </tr>
+            }
         }
     </tbody>
 </table>
 <div class="row">
     <p class="align-center">Dodan nową kategorię: </p>
+
     <form asp-action="UpdateCategory" method="post" class="row g-3" enctype="multipart/form-data">
         <input type="hidden" asp-for="category.Id" />
         <input type="hidden" name="options" value="3" />
+        <div class="col-md-5">
+            <label asp-for="category.MainCategoryId" class="control-label">Kategoria Główna - </label>
+            <span asp-validation-for="category.MainCategoryId" class="text-danger"></span>
+            <select class="form-select form-select-sm" aria-label=".form-select-sm example" asp-for="category.MainCategoryId">
+                <option value="0">Wybierz kategorię macierzystą</option>
+                @foreach (var options in mainCategory)
+                {
+                    <option value="@options.Id">@options.Name</option>
+                }
+            </select>
+        </div>
         <div class="col-md-3">
             <label asp-for="category.Name" class="form-label">Nazwa kategorii</label>
             <input type="text" class="form-control shadow-sm rounded" asp-for="category.Name">
@@ -66,6 +91,16 @@
         <div class="col-md-3">
             <label asp-for="category.Description" class="form-label">Opis kategorii</label>
             <input type="text" class="form-control shadow-sm rounded" asp-for="category.Description">
+        </div>
+        <div class="col-md-2 pt-4 ps-4">
+            <label class="form-check-label">
+                <input class="form-check-input" asp-for="category.IsActive" /> @Html.DisplayNameFor(model => model.category.IsActive)
+            </label>
+        </div>
+        <div class="col-md-2 pt-4 pe-4">
+            <label class="form-check-label">
+                <input class="form-check-input" asp-for="category.IsMainCategory" /> @Html.DisplayNameFor(model => model.category.IsMainCategory)
+            </label>
         </div>
         <div class="col-md-2">
             <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />

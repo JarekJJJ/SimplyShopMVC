@@ -1,4 +1,5 @@
 ﻿using SimplyShopMVC.Application.ViewModels.Front;
+using SimplyShopMVC.Application.ViewModels.Item;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,10 @@ namespace SimplyShopMVC.Domain.Interface
 {
     public interface IFrontService
     {
-        IndexListVm GetItemsToIndex(int? idItem, int? quantityItem);
-    
+        IndexListVm GetItemsToIndex(int quantityItem);
+        ListItemShopIndexVm GetAllCategories();
+        ListItemShopIndexVm GetItemsByCategory(int categoryId);
+
+
     }
 }

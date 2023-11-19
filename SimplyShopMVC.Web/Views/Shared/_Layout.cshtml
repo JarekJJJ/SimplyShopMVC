@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/customStyle.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SimplyShopMVC.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/slick.css">
+    <link rel="stylesheet" href="~/css/slick-theme.css">
+
 
 </head>
 <body>
@@ -42,7 +45,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>                     
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Shop" asp-action="index">Sklep</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Item" asp-action="index">Sklep</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="index">Informacje</a>
@@ -101,12 +104,23 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/tinymce/tinymce.js"></script>
+    <script src="~/js/slick.js"></script>
+
     <script>
         tinymce.init({
             selector: '#mytextarea',
             plugins: 'image code lists',
             toolbar: 'image code numlist bullist'
         });
+        $(document).ready(function () {          
+            $('.demo').slick({
+               dots: false,
+               slidesToShow: 4,
+               slidesToScroll: 2,
+                arrows: true,
+            });           
+        });
+
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

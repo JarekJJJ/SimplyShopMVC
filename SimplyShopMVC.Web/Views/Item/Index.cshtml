@@ -1,0 +1,62 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Front.ListItemShopIndexVm
+@{
+    ViewData["Title"] = "HKR24.pl - Shop index site";
+}
+@{
+    var mainCategories = Model.categories.Where(i => i.IsMainCategory == true);
+}
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-center">
+        <p class="d-inline-flex gap-1 mt-1">
+            <a class="link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover" data-bs-toggle="collapse" href="#listCategories" role="button" aria-expanded="false" aria-controls="listCategories">
+                <span class="text-center h5 "> Wyświetl kategorie </span>
+            </a>
+    </div>
+    <div class="col-md-12">
+        <div class="row collapse" id="listCategories">
+            @foreach (var mainCategory in mainCategories)
+            {
+                <div class="col-md-3">
+                    <div class="pt-2 pb-1 h5">@mainCategory.Name</div>
+                    @{
+                        var subCategory = Model.categories.Where(i => i.MainCategoryId == mainCategory.Id);
+                    }
+                    @foreach (var subCat in subCategory)
+                    {
+                        <div class="h7">  <span class="">@Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span> </div>
+                    }
+                </div>
+
+
+            }
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <tr>
+                <th>Nazwa towaru</th>
+                <th>dostępna ilość</th>
+                <th>cena brutto</th>
+                <th>czas dostawy</th>
+                <th>szczegóły</th>
+            </tr>
+
+
+            @foreach (var sItem in Model.categoryItems)
+            {
+                <tr>
+                    <td>@sItem.name</td>
+                    <td>@sItem.quantity</td>
+                    <td>@sItem.priceB.ToString("N2")</td>
+                    <td>@sItem.deliveryTime</td>
+                    <td> <div class="h7">  <span class="">@Html.ActionLink("szczegóły","DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span> </div></td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+

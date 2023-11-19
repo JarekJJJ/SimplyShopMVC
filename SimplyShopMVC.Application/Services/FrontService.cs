@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimplyShopMVC.Domain.Model;
+using SimplyShopMVC.Application.ViewModels.Item;
+using AutoMapper.QueryableExtensions;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -28,52 +30,54 @@ namespace SimplyShopMVC.Application.Services
             _groupItemRepo = groupItemRepo;
         }
 
-        public IndexListVm GetItemsToIndex(int? idItem, int? quantityItem) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
+        public IndexListVm GetItemsToIndex(int quantityItem) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
         {
             IndexListVm indexList = new IndexListVm();
 
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
             List<Item> itemList = new List<Item>();
+            int doWhileCount = 0;
             do
             {
-                if (idItem > 0 && idItem != null)
+                if (quantityItem > 0)
                 {
-                     itemList = _itemRepo.GetAllItems().Where
+                    doWhileCount = quantityItem;
+                    itemList = _itemRepo.GetAllItems().OrderBy(x => Guid.NewGuid()).Take(1).Where(i => i.IsActive == true && i.IsDeleted == false).ToList();
                 }
-                if (idItem == 0 || idItem == null)
-                {
-                     itemList = _itemRepo.GetAllItems().OrderBy(x => Guid.NewGuid()).Take(1).Where(i => i.IsActive == true && i.IsDeleted == false).ToList();
-                }
-                    
-                foreach (var item in itemList)
-                {
-                    var checkDuplicateItem = frontItemForLists.FirstOrDefault(f => f.id == item.Id);
-                    var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id);
-                    if (indexItemWare != null && checkDuplicateItem == null)
-                    {
-                        var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == indexItemWare.VatRateId);  //Dodać sprawdzenie czy istnieje przedmiot w itemWArehouse!
-                        FrontItemForList indexItem = new FrontItemForList();
-                        indexItem.id = item.Id;
-                        indexItem.name = item.Name;
-                        indexItem.description = item.Description;
-                        indexItem.eanCode = item.EanCode;
-                        indexItem.imageFolder = item.ImageFolder;
-                        indexItem.itemSymbol = item.ItemSymbol;
-                        var groupIdresoult = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == item.GroupItemId);
-                        var warehouseResoult = _itemRepo.GetAllWarehouses().FirstOrDefault(w => w.Id == indexItemWare.WarehouseId);
-                        //Można dodać sprawdzenie czy cena sprzedaży nie została nadana ręcznie w ItemWarehouse jeżeli nie to pobranie marży po grupie.              
-                        var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
-                        indexItem.priceB = resultPriceB;
-                        indexItem.quantity = indexItemWare.Quantity;
-                        indexItem.deliveryTime = warehouseResoult.DeliveryTime;
-                        indexItem.imageUrl = ImageHelper.GetMainImageUrlFromPath(item.ImageFolder, _webHost);
-                        frontItemForLists.Add(indexItem);
-                    }
-                }
+                var mapedList = mapItemToList(itemList, frontItemForLists);
+                frontItemForLists.AddRange(mapedList);
             } while (frontItemForLists.Count <= 7);
             indexList.frontItemForLists = frontItemForLists;
             return indexList;
         }
+        public IndexListVm GetItemsbyTag(string tag)
+        {
+            var indexList = new IndexListVm();
+            return indexList;
+        }
+        public ListItemShopIndexVm GetItemsByCategory(int categoryId)
+        {
+            var listItem = new ListItemShopIndexVm();
+            List<Item> itemList = new List<Item>();
+            List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
+            itemList = _itemRepo.GetItemsByCategoryId(categoryId).ToList();
+            var mappedItems =  mapItemToList(itemList,frontItemForLists);
+            listItem.categoryItems = mappedItems;
+
+            return listItem;
+
+        }
+        public ListItemShopIndexVm GetAllCategories()
+        {
+            ListItemShopIndexVm listItemShopIndexVm = new ListItemShopIndexVm();
+            var listCategories = new List<CategoryForListVm>();
+            var receivedCategories = _itemRepo.GetAllCategories()
+                .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            listItemShopIndexVm.categories = receivedCategories;
+            return listItemShopIndexVm;
+        }
+
+        //funkcje 
         public decimal GetPriceDetalB(decimal netPurchasePrice, int vatRateValue, int groupMarkup)
         {
             decimal markupPercentage = (decimal)groupMarkup / 100;
@@ -83,6 +87,53 @@ namespace SimplyShopMVC.Application.Services
             decimal priceDetalB = netPurchasePrice * (1 + markupPercentage) * (1 + vatPercentage);
 
             return priceDetalB;
+        }
+        public List<FrontItemForList> mapItemToList(List<Item> items, List<FrontItemForList> frontItems)
+        {
+            IndexListVm indexList = new IndexListVm();
+
+            List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
+            foreach (var item in items)
+            {
+                var checkDuplicateItem = frontItems.FirstOrDefault(f => f.id == item.Id);
+                var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id);
+                if (indexItemWare != null && checkDuplicateItem == null)
+                {
+                    var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == indexItemWare.VatRateId);  //Dodać sprawdzenie czy istnieje przedmiot w itemWArehouse!
+                    FrontItemForList indexItem = new FrontItemForList();
+                    indexItem.id = item.Id;
+                    indexItem.name = item.Name;
+                    indexItem.description = item.Description;
+                    indexItem.eanCode = item.EanCode;
+                    indexItem.imageFolder = item.ImageFolder;
+                    indexItem.itemSymbol = item.ItemSymbol;
+                    var groupIdresoult = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == item.GroupItemId);
+                    var warehouseResoult = _itemRepo.GetAllWarehouses().FirstOrDefault(w => w.Id == indexItemWare.WarehouseId);
+                    //Można dodać sprawdzenie czy cena sprzedaży nie została nadana ręcznie w ItemWarehouse jeżeli nie to pobranie marży po grupie.              
+                    var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
+                    indexItem.priceB = resultPriceB;
+                    indexItem.quantity = indexItemWare.Quantity;
+                    indexItem.deliveryTime = warehouseResoult.DeliveryTime;
+                    var _pathImage = $"{_webHost.WebRootPath}\\media\\itemimg\\{item.ImageFolder}\\";
+                    var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+                    var listImage = new List<PhotoItemVm>();
+                    int photoId = 0;
+                    foreach (var imageUrl in imageToList)
+                    {
+                        var photoDetail = new PhotoItemVm();
+                        photoDetail.Id = photoId;
+                        photoId++;
+                        photoDetail.Name = imageUrl;
+                        var _imgFullUrl = $"/media/itemimg/{item.ImageFolder}/{imageUrl}";
+                        photoDetail.ImageUrl = _imgFullUrl;
+                        photoDetail.IsSelected = false;
+                        listImage.Add(photoDetail);
+                    }
+                    indexItem.images = listImage;
+                    frontItemForLists.Add(indexItem);
+                }
+            }
+            return frontItemForLists;
         }
     }
 }

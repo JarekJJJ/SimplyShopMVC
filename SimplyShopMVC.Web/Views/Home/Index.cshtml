@@ -3,29 +3,28 @@
     ViewData["Title"] = "HKR24.pl - Index site";
 }
 <div class="container">
-    <div class="row">
-        <div class="col-md-3">
-            <p>Menu</p>
-        </div>
-        <div class="col-md-9">
-            <div class="row">
+    <div class="row ">      
+        <div class="col-md-12">
+           
                 <div class="col-md-12 h4 mb-1 text-secondary border-bottom p-1 border-secondary">
                     <span class="align-middle">Polecane produkty: </span>
                 </div>
+            <div class="row slider demo">
                 @foreach (var item in Model.frontItemForLists)
                 {
+                    var mainImage = item.images.FirstOrDefault();
                     <div class="col-md-3 p-1 cart">
                         <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
                             <div class=" badge bg-danger text-wrap" style="width: 6rem;">
                                 Polecamy
                             </div>
-                            <div class="text-center m-1">
-                                <img src="@item.imageUrl" class=" object-fit-contain  img-thumbnail w-75 h-100 border-0" alt="@item.name">
+                            <div class="text-center d-flex justify-content-center m-1">
+                                <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@item.name">
                             </div>
                             <div class="text-center">
                                 <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
                             </div>
-                            <div class="text-center">
+                            <div class="text-center text-container">
                                 <span class="fs-6"><a href="">@Html.ActionLink(item.name, "DetailItem","Item", new {id=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</a></span>
                             </div>
                             <div class="flex-grow-1 d-flex align-items-end justify-content-center">

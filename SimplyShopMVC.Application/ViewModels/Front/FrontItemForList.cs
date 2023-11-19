@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Application.ViewModels.Item;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public int quantity { get; set; }
         public int deliveryTime { get; set; }
         public int warehouseId { get; set; }
-        public string imageUrl { get; set; } //zmienić na listę żeby wyświetlać wszystkie obrazki z folderu imageFolder!!!
+        public List<PhotoItemVm> images { get; set; }
+        //public string imageUrl { get; set; } //zmienić na listę żeby wyświetlać wszystkie obrazki z folderu imageFolder!!!
     }
 }

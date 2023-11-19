@@ -14,7 +14,8 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #F8F8F8;
 }
 .bd-placeholder-img {
     font-size: 1.125rem;
@@ -43,6 +44,9 @@ body {
     flex-shrink: 0;
     width: 1.5rem;
     height: 100vh;
+}
+.row{
+    background-color:white;
 }
 
 .bi {

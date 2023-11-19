@@ -19,7 +19,7 @@ namespace SimplyShopMVC.Web.Controllers
 
         public IActionResult Index()
         {
-            var items = _frontService.GetItemsToIndex(0,8);
+            var items = _frontService.GetItemsToIndex(8);
            
             return View(items);
         }
