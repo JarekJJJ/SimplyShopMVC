@@ -16,44 +16,63 @@ namespace SimplyShopMVC.Application.Helpers
         public static int SaveImageFromUrl(List<string> imageUrl, string folderName, IWebHostEnvironment webHost)
         {
             int result = 0;
-            try
+            if (imageUrl != null)
             {
-                string newFolderPath = Path.Combine(webHost.WebRootPath, "media\\itemimg", folderName);
+
+
+
                 try
                 {
-                    Directory.CreateDirectory(newFolderPath);
+                    string newFolderPath = Path.Combine(webHost.WebRootPath, "media\\itemimg", folderName);
+                    try
+                    {
+                        Directory.CreateDirectory(newFolderPath);
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    using (WebClient client = new WebClient())
+                    {
+                        foreach (string imageFromList in imageUrl)
+                        {
+                            try
+                            {
+                                if(imageFromList != null)
+                                {
+                                    byte[] imageData = client.DownloadData(imageFromList);
+                                    string fileName = Guid.NewGuid().ToString() + ".jpg";
+                                    string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                                    System.IO.File.WriteAllBytes(filePath, imageData);
+                                }
+                              
+                                result++;
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+                      
+                        }
+                    }
                 }
                 catch (Exception)
                 {
 
                     throw;
                 }
-                using (WebClient client = new WebClient())
-                {
-                    foreach (string imageFromList in imageUrl)
-                    {
-                        byte[] imageData = client.DownloadData(imageFromList);
-                        string fileName = Guid.NewGuid().ToString() + ".jpg";
-                        string filePath = System.IO.Path.Combine(newFolderPath, fileName);
-                        System.IO.File.WriteAllBytes(filePath, imageData);
-                        result++;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
             }
             return result;
         }
-        
+
         public static List<string> AllImageFromPath(string path) // pobiera nazwy plików
         {
             string folderPath = path;
             List<string> imagePaths = Directory.GetFiles(folderPath)
                 .Where(file => IsImageFile(file)).ToList();
-            var listFile = imagePaths.Select(f=>Path.GetFileName(f)).ToList();
+            var listFile = imagePaths.Select(f => Path.GetFileName(f)).ToList();
             return listFile;
         }
         public static List<string> AllImageUrlFromPath(string path) // pobiera pliki wraz ze ścieżką
@@ -66,7 +85,7 @@ namespace SimplyShopMVC.Application.Helpers
         }
         public static string GetMainImageUrlFromPath(string folderName, IWebHostEnvironment webHost) // pobiera pliki wraz ze ścieżką
         {
-            string folderPath  = $"{webHost.WebRootPath}\\media\\itemimg\\{folderName}\\";
+            string folderPath = $"{webHost.WebRootPath}\\media\\itemimg\\{folderName}\\";
             string imagePaths = Directory.GetFiles(folderPath)
                 .FirstOrDefault(file => IsImageFile(file));
             var listFile = Path.GetFileName(imagePaths);
@@ -97,6 +116,6 @@ namespace SimplyShopMVC.Application.Helpers
             }
 
             return result;
-        } 
+        }
     }
 }

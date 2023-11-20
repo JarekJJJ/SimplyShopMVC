@@ -100,9 +100,10 @@
             <label asp-for="selectedGroupSupplier" class="form-label">Wybierz grupę towarową u dostawcy:</label>
             <select class="form-select" asp-for="selectedGroupSupplier">
 
-                @foreach (var gItem in Model.incomGroups)
+                @foreach (var gItem in Model.incomGroups.Where(i=>i.GroupIdHome!=0).ToList())
                 {
-                        <option value="@gItem.GroupId" name="@gItem.Name">@gItem.Name</option>
+                    var count = Model.countSupplierItems.FirstOrDefault(i => i.groupId == gItem.GroupId);
+                    <option value="@gItem.GroupId" name="@gItem.Name">@gItem.Name (@count.countItem)</option>
                 }
             </select>
         </div>

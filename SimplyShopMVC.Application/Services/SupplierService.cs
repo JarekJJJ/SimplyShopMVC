@@ -29,14 +29,16 @@ namespace SimplyShopMVC.Application.Services
         private readonly IWebHostEnvironment _webHost;
         private readonly IItemRepository _itemRepo;
         private readonly IGroupItemRepository _groupItemRepo;
+        private readonly IOmnibusPriceRepository _omnibusPriceRepo;
 
-        public SupplierService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost, ISupplierRepository supplierRepo, IGroupItemRepository groupItemRepo)
+        public SupplierService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost, ISupplierRepository supplierRepo, IGroupItemRepository groupItemRepo, IOmnibusPriceRepository omnibusPriceRepo)
         {
             _itemRepo = itemRepo;
             _mapper = mapper;
             _webHost = webHost;
             _supplierRepo = supplierRepo;
             _groupItemRepo = groupItemRepo;
+            _omnibusPriceRepo = omnibusPriceRepo;
         }
         public AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
@@ -68,7 +70,8 @@ namespace SimplyShopMVC.Application.Services
 
                 foreach (XElement elementXml in xmlDocument.Root.Elements("produkt"))
                 {
-
+                    try
+                    {                   
                     XElement grupa_towarowa = elementXml.Element("grupa_towarowa");
                     XElement nazwa_grupy_towarowej = elementXml.Element("nazwa_grupy_towarowej");
                     XElement symbol_produktu = elementXml.Element("symbol_produktu");
@@ -80,14 +83,25 @@ namespace SimplyShopMVC.Application.Services
                     string firstLineDescription = "<table class=\"table table-striped-columns\">";
                     string lastLineDescription = "</table>";
                     string lineDescription = string.Empty;
-                    foreach (XElement parametrOpisu in opisProduktu.Elements("parametr"))
-                    {
-                        string paramName = parametrOpisu.Element("nazwa")?.Value;
-                        string paramValue = parametrOpisu.Element("wartosc")?.Value;
-                        string newLineDescription = $"<tr><td>{paramName}</td><td>{paramValue}</td></tr>";
-                        lineDescription = lineDescription + newLineDescription;
-                    }
-                    string fullDescription = firstLineDescription + lineDescription + lastLineDescription;
+                        string fullDescription = ("");
+                        if (opisProduktu != null)
+                        {
+
+
+                            foreach (XElement parametrOpisu in opisProduktu.Elements("parametr"))
+                            {
+                                string paramName = parametrOpisu.Element("nazwa")?.Value;
+                                string paramValue = parametrOpisu.Element("wartosc")?.Value;
+                                string newLineDescription = $"<tr><td>{paramName}</td><td>{paramValue}</td></tr>";
+                                lineDescription = lineDescription + newLineDescription;
+                            }
+
+                           fullDescription = firstLineDescription + lineDescription + lastLineDescription;
+                        }
+                        else
+                        {
+                          fullDescription = ("brak opisu");
+                        }
                     List<string> linkImage = new List<string>();
                     string link = elementXml.Element("link_do_zdjecia_produktu")?.Value;
                     linkImage.Add(link);
@@ -124,22 +138,37 @@ namespace SimplyShopMVC.Application.Services
                     itemVm.createDate = dateTime; // Tutaj zrobić podział na update i Add !!!
                     var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
                     var mapedItemVm = _mapper.Map<Incom>(itemVm);
-
+                    int itemId = 0;
                     if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
                     {
 
                         _supplierRepo.UpdateIncom(mapedItemVm);
                         countItemUpdate++;
+                        itemId = itemToCheck.Id;
                     }
                     if (itemToCheck == null && !string.IsNullOrEmpty(itemVm.ean))
                     {
-                        var itemId = _supplierRepo.AddIncomItem(mapedItemVm);
+                        itemId = _supplierRepo.AddIncomItem(mapedItemVm);
                         var result = ImageHelper.SaveImageFromUrl(linkImage, itemVm.ean, _webHost);
                         countImageAdd = countImageAdd + result;
                         countItemAdd++;
                     }
+                    OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                    var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                    mapedOmnibusPrice.PriceN = itemVm.cena;
+                    mapedOmnibusPrice.Ean = itemVm.ean;
+                    mapedOmnibusPrice.ChangeTime = dateTime;
+                    mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
+                    _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
                 }
             }
+
             if (countItemAdd > 0 || countItemUpdate > 0)
             {
                 returnRaport.raportAddItem.Add($"Usunięto rekordów: {countItemRemove}");
@@ -223,6 +252,8 @@ namespace SimplyShopMVC.Application.Services
         public ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm()
         {
             ConnectItemsToSupplierVm newConnectItem = new ConnectItemsToSupplierVm();
+           
+            List<CountSupplierItem> listCountItem = new List<CountSupplierItem>();
             newConnectItem.raport = new List<string>();
             newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
@@ -230,10 +261,16 @@ namespace SimplyShopMVC.Application.Services
                 .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
             foreach (var group in newConnectItem.incomGroups.Where(i => i.GroupIdHome != 0))
             {
+                CountSupplierItem countItem = new CountSupplierItem();
                 var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
                 string groupName = $"{parrentName}->{group.Name}";
                 group.Name = groupName;
+                int count = _supplierRepo.GetAllIncom().Where(i => i.grupa_towarowa == group.GroupId.ToString()).Count();
+                countItem.groupId = group.GroupId;
+                countItem.countItem = count;
+                listCountItem.Add(countItem);               
             }
+            newConnectItem.countSupplierItems = listCountItem;
             var ascendingList = newConnectItem.incomGroups.OrderBy(i => i.Name).ToList();
             newConnectItem.incomGroups = ascendingList;
             newConnectItem.categoryItems = _itemRepo.GetAllCategories()
@@ -243,6 +280,7 @@ namespace SimplyShopMVC.Application.Services
                 var parrentCategory = newConnectItem.categoryItems.FirstOrDefault(c => c.Id == category.MainCategoryId).Name;
                 string categoryName = $"{parrentCategory}->{category.Name}";
                 category.Name = categoryName;
+               
             }
             var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
             newConnectItem.categoryItems = ascendingListCategory;

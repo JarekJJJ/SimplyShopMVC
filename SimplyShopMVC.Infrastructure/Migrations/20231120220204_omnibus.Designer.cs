@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20231120220204_omnibus")]
+    partial class omnibus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -499,9 +501,8 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Property<DateTime>("ChangeTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Ean")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("PriceN")
                         .HasColumnType("decimal(18,2)");
@@ -510,6 +511,8 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("WarehouseId");
 
@@ -792,11 +795,19 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.OmnibusPrice", b =>
                 {
+                    b.HasOne("SimplyShopMVC.Domain.Model.Item", "Item")
+                        .WithMany("OmnibusPrices")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SimplyShopMVC.Domain.Model.Warehouse", "Warehouse")
                         .WithMany("OmnibusPrices")
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Item");
 
                     b.Navigation("Warehouse");
                 });
@@ -837,6 +848,8 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Navigation("ConnectItemTags");
 
                     b.Navigation("ItemWarehouses");
+
+                    b.Navigation("OmnibusPrices");
                 });
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.ItemTag", b =>

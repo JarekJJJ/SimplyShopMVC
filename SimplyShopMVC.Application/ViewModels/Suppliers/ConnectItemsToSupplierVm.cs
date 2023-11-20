@@ -17,6 +17,7 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
         public CategoryForListVm category { get; set; }
         public GroupItemForListVm groupItem { get; set; }
         public List<string> raport { get; set; }
+        public List<CountSupplierItem> countSupplierItems { get; set; }
         public int? selectedWarehouse { get; set; }
         public int? selectedGroupItem { get; set; }
         public int? selectedCategory { get; set; }
