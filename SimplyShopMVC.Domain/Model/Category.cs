@@ -16,5 +16,6 @@ namespace SimplyShopMVC.Domain.Model
         public int? MainCategoryId { get; set; }
 
         public virtual ICollection<Item> Items { get; set; }
+        public ICollection<ConnectCategoryTag> ConnectCategoryTags { get; set; }
     }
 }

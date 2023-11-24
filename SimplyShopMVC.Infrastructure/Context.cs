@@ -26,7 +26,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<IncomGroup> IncomGroups { get; set; }
         public DbSet<GroupItem> GroupItems { get; set; }
         public DbSet<OmnibusPrice> OmnibusPrices { get; set; }
-
+        public DbSet<ConnectCategoryTag> ConnectCategoryTags { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }
@@ -34,6 +34,18 @@ namespace SimplyShopMVC.Infrastructure
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ConnectCategoryTag>()
+                .HasKey(cct => new { cct.CategoryId, cct.ItemTagId});
+            builder.Entity<ConnectCategoryTag>()
+                .HasOne<Category>(cct => cct.Category)
+                .WithMany(b => b.ConnectCategoryTags)
+                .HasForeignKey(cct => cct.CategoryId);
+            builder.Entity<ConnectCategoryTag>()
+                .HasOne<ItemTag>(cct => cct.ItemTag)
+                .WithMany(c => c.ConnectCategoryTags)
+                .HasForeignKey(cct => cct.CategoryId);
+
             builder.Entity<ConnectArticleTag>()
                 .HasKey(cat => new { cat.ArticleId, cat.ArticleTagId });
             
