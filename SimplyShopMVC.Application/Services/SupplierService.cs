@@ -259,16 +259,22 @@ namespace SimplyShopMVC.Application.Services
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
             newConnectItem.incomGroups = _supplierRepo.GetAllIncomGroup()
                 .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
-            foreach (var group in newConnectItem.incomGroups.Where(i => i.GroupIdHome != 0))
+            foreach (var group in newConnectItem.incomGroups)
             {
                 CountSupplierItem countItem = new CountSupplierItem();
-                var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
-                string groupName = $"{parrentName}->{group.Name}";
-                group.Name = groupName;
+                if (group.GroupIdHome != null && group.GroupIdHome!=0)
+                {
+                    var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
+                    string groupName = $"{parrentName}->{group.Name}";
+                    group.Name = groupName;
+                }               
                 int count = _supplierRepo.GetAllIncom().Where(i => i.grupa_towarowa == group.GroupId.ToString()).Count();
-                countItem.groupId = group.GroupId;
-                countItem.countItem = count;
-                listCountItem.Add(countItem);               
+                if(count > 0)
+                {
+                    countItem.groupId = group.GroupId;
+                    countItem.countItem = count;
+                    listCountItem.Add(countItem);
+                }            
             }
             newConnectItem.countSupplierItems = listCountItem;
             var ascendingList = newConnectItem.incomGroups.OrderBy(i => i.Name).ToList();

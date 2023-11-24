@@ -64,7 +64,10 @@ namespace SimplyShopMVC.Web.Controllers
         public IActionResult AddGroupItems(ConnectItemsToSupplierVm connectItems)
         {
            var returnRaport =  _supplierService.AddConnectItemsToSupplierVm(connectItems);
-            return View(returnRaport);
+            var newconnectItems = _supplierService.LoadConnectItemsToSupplierVm();
+            newconnectItems.raport = returnRaport.raport;
+
+            return View(newconnectItems);
         }
     }
 }

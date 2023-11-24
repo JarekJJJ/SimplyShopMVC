@@ -118,17 +118,32 @@ namespace SimplyShopMVC.Application.Services
                     var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
                     var listImage = new List<PhotoItemVm>();
                     int photoId = 0;
-                    foreach (var imageUrl in imageToList)
+                    if(imageToList.Count > 0)
+                    {
+                        foreach (var imageUrl in imageToList)
+                        {
+                            var photoDetail = new PhotoItemVm();
+                            photoDetail.Id = photoId;
+                            photoId++;
+                            photoDetail.Name = imageUrl;
+                            var _imgFullUrl = $"/media/itemimg/{item.ImageFolder}/{imageUrl}";
+                            photoDetail.ImageUrl = _imgFullUrl;
+                            photoDetail.IsSelected = false;
+                            listImage.Add(photoDetail);
+                        }
+                    }
+                    else
                     {
                         var photoDetail = new PhotoItemVm();
                         photoDetail.Id = photoId;
                         photoId++;
-                        photoDetail.Name = imageUrl;
-                        var _imgFullUrl = $"/media/itemimg/{item.ImageFolder}/{imageUrl}";
+                        photoDetail.Name = "nophoto.png";
+                        var _imgFullUrl = $"/media/{photoDetail.Name}";
                         photoDetail.ImageUrl = _imgFullUrl;
                         photoDetail.IsSelected = false;
                         listImage.Add(photoDetail);
                     }
+             
                     indexItem.images = listImage;
                     frontItemForLists.Add(indexItem);
                 }

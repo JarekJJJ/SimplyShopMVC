@@ -44,10 +44,15 @@ namespace SimplyShopMVC.Application.Helpers
                                     byte[] imageData = client.DownloadData(imageFromList);
                                     string fileName = Guid.NewGuid().ToString() + ".jpg";
                                     string filePath = System.IO.Path.Combine(newFolderPath, fileName);
-                                    System.IO.File.WriteAllBytes(filePath, imageData);
+                                    if (imageData.Length > 2048)
+                                    {
+                                        System.IO.File.WriteAllBytes(filePath, imageData);
+                                        result++;
+                                    }
+                                   
                                 }
                               
-                                result++;
+                               
                             }
                             catch (Exception)
                             {
