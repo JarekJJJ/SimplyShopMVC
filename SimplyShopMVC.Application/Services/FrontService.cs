@@ -55,14 +55,20 @@ namespace SimplyShopMVC.Application.Services
             var indexList = new IndexListVm();
             return indexList;
         }
-        public ListItemShopIndexVm GetItemsByCategory(int categoryId)
+        public ListItemShopIndexVm GetItemsByCategory(int categoryId, int pageSize, int pageNo, string searchItem)
         {
             var listItem = new ListItemShopIndexVm();
             List<Item> itemList = new List<Item>();
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
-            itemList = _itemRepo.GetItemsByCategoryId(categoryId).ToList();
+            itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i=>i.Name).ToList();
             var mappedItems =  mapItemToList(itemList,frontItemForLists);
-            listItem.categoryItems = mappedItems;
+            var mappedItemsToShow = mappedItems.Skip(pageSize*(pageNo-1)).Take(pageSize).ToList();
+            listItem.count = mappedItems.Count;
+            listItem.pageSize = pageSize;
+            listItem.currentPage= pageNo;
+            listItem.searchItem= searchItem;
+            listItem.selectedCategory = categoryId;
+            listItem.categoryItems = mappedItemsToShow;
 
             return listItem;
 

@@ -32,6 +32,24 @@
         </div>
     </form>
 </div>
+<div class="row bg-light rounded m-2 pb-4">
+    <span class="text-center pt-1 h4">Dodaj nowy Tag:</span>
+    <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="itemTag.Id" />
+        <div class="col-md-3">
+            <label asp-for="itemTag.Name" class="control-label"> Nazwa tagu</label>
+            <input asp-for="itemTag.Name" class="form-control" value="" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="itemTag.Description" class="control-label">Dodaj opis:</label>
+            <input asp-for="itemTag.Description" type="text" value="" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+        </div>
+    </form>
+</div>
 <div class="row bg-warning-subtle rounded m-2 pb-4">
 
     <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
@@ -86,7 +104,7 @@
 <div class="row bg-light rounded m-2 pb-4">
     <span class="text-center pt-1 h4">Dodaj towary do sklepu:</span>
     <form asp-action="AddGroupItems" class="row g-3" enctype="multipart/form-data">
-        <div class="col-md-2">
+        <div class="col-md-3">
             <label asp-for="selectedGroupItem" class="form-label">Wybierz grupę towarową w sklepie:</label>
             <select class="form-select" asp-for="selectedGroupItem">
 
@@ -96,7 +114,7 @@
                 }
             </select>
         </div>
-         <div class="col-md-3">
+         <div class="col-md-4">
             <label asp-for="selectedGroupSupplier" class="form-label">Wybierz grupę towarową u dostawcy:</label>
             <select class="form-select" asp-for="selectedGroupSupplier">
 
@@ -126,6 +144,16 @@
             <select class="form-select" asp-for="selectedWarehouse">
 
                 @foreach (var gItem in Model.warehouseForLists)
+                {
+                    <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="selectedItemTags" class="form-label">Wybierz tagi dla produktów:</label>
+            <select class="form-select" id="selectedItemTags" name="selectedItemTags" multiple>
+
+                @foreach (var gItem in Model.itemTagsForLists)
                 {
                     <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
                 }

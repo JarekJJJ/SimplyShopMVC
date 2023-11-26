@@ -73,6 +73,11 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             var result = _context.ConnectItemTag.Where(t => t.ItemId == itemId);
             return result;
         }
+        public IQueryable<ConnectItemTag> GetAllConnectedItemTags()
+        {
+            var result = _context.ConnectItemTag;
+            return result;
+        }
 
         public int AddItemTag(ItemTag itemTag)
         {
@@ -93,6 +98,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             ConnectItemTag con = new ConnectItemTag();
             con.ItemId = item.Id;
             con.ItemTagId = tags.Id;
+            _context.Entry(item).State = EntityState.Detached;
             _context.ConnectItemTag.Add(con);
             _context.SaveChanges();
         }

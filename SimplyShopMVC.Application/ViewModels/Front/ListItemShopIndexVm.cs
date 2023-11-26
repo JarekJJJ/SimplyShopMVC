@@ -18,5 +18,10 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public List<ItemTagsForListVm> tags { get; set; }
         public int selectedCategory { get; set; }
         public int selectedTag { get; set; }
+        public int selectedView { get; set; }
+        public int count { get; set; }
+        public int currentPage { get; set; }
+        public int pageSize { get; set; }
+        public string searchItem { get; set; }
     }
 }

@@ -1,5 +1,7 @@
-﻿using SimplyShopMVC.Domain.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
+using SimplyShopMVC.Infrastructure.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +12,31 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 {
     public class CategoryTagsRepository : ICategoryTagsRepository
     {
-        public void AddConnectCategoryTags(int ItemTagId, int CategoryId)
+        private readonly Context _context;
+        public CategoryTagsRepository(Context context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public void AddConnectCategoryTags(ItemTag sTag, int CategoryId)
+        {      
+            var category = _context.Categories.FirstOrDefault(c=>c.Id == CategoryId);
+                ConnectCategoryTag con = new ConnectCategoryTag();
+                con.CategoryId = category.Id;
+                con.ItemTagId = sTag.Id;
+                _context.ConnectCategoryTags.Add(con);
+                _context.SaveChanges();           
         }
 
-        public ItemTag GetTagsByCategoryId(int CategoryId)
+        public IQueryable<ConnectCategoryTag> GetAllCategoryTags()
         {
-            throw new NotImplementedException();
+            var result = _context.ConnectCategoryTags;
+            return result;
+        }
+        public void DeleteConnectionCategoryTags(int CategoryId)
+        {
+            var result = _context.ConnectCategoryTags.Where(a => a.CategoryId == CategoryId);
+            _context.ConnectCategoryTags.RemoveRange(result);
+            _context.SaveChanges();
         }
     }
 }

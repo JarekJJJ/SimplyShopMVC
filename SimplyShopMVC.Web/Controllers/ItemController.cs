@@ -15,22 +15,49 @@ namespace SimplyShopMVC.Web.Controllers
             _logger = logger;
             _frontService = frontService;
         }
+        [HttpGet]
         public IActionResult Index(int? selectedCategory)
         {
 
             var listCategories = new ListItemShopIndexVm();
             if (selectedCategory != null && selectedCategory > 0)
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory);
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "");
                 var receivedCategories = _frontService.GetAllCategories();
                 listCategories.categories = receivedCategories.categories.ToList();
             }
             else
             {
-               listCategories = _frontService.GetAllCategories();
+                listCategories = _frontService.GetAllCategories();
                 listCategories.categoryItems = new List<FrontItemForList>();
             }
-            
+
+            return View(listCategories);
+        }
+        [HttpPost]
+        public IActionResult Index(int pageSize, int? pageNo, string searchItem, int? selectedCategory)
+        {
+            if (!pageNo.HasValue)
+            {
+                pageNo = 1;
+            }
+            if(searchItem is null)
+            {
+                searchItem = string.Empty;
+            }
+            var listCategories = new ListItemShopIndexVm();
+            if (selectedCategory != null && selectedCategory > 0)
+            {
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem);
+                var receivedCategories = _frontService.GetAllCategories();
+                listCategories.categories = receivedCategories.categories.ToList();
+            }
+            else
+            {
+                listCategories = _frontService.GetAllCategories();
+                listCategories.categoryItems = new List<FrontItemForList>();
+            }
+
             return View(listCategories);
         }
         public IActionResult DetailItem(int selectedItem)

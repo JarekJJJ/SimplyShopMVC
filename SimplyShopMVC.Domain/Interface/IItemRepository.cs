@@ -18,7 +18,8 @@ namespace SimplyShopMVC.Domain.Interface
         //Tagi
         IQueryable<ItemTag> GetAllItemTags();
         IQueryable<Item> GetItemsByTagId(int tagId);
-        IQueryable<ConnectItemTag> GetConnectItemTags(int articleId);
+        IQueryable<ConnectItemTag> GetConnectItemTags(int itemId);
+        IQueryable<ConnectItemTag> GetAllConnectedItemTags();
         int AddItemTag(ItemTag itemTag);
         ItemTag GetItemTagByTagId(int tagId);
         void AddConnectionItemTags(int itemId, ItemTag tags);
