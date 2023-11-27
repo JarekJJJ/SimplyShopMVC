@@ -26,8 +26,6 @@
                         <div class="h7">  <span class="">@Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span> </div>
                     }
                 </div>
-
-
             }
         </div>
     </div>
@@ -38,7 +36,7 @@
     </div>
 </div>
 <form asp-action="Index" method="post">
-    <div class="row mt-2 d-flex">
+    <div class="row mt-2 d-flex pb-1">
         <div class="col-md-4 d-flex">
             <div class="col-md-8 m-1">
                 <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
@@ -50,11 +48,18 @@
         </div>
         <div class="col-md-8 d-flex justify-content-end text-info">
             <div class="col-md-1 d-flex justify-content-center align-items-center pt-2">
-                <a class="icon-link h2 border text-center align-middle" href="#">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
+                <a class="icon-link fs-3 border text-center align-middle btn btn-outline-primary" href="javascript:SetViewLocal(0)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5zM3 3H2v1h1z" />
                         <path d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1z" />
                         <path fill-rule="evenodd" d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5zM2 7h1v1H2zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm1 .5H2v1h1z" />
+                    </svg>
+                </a>
+            </div>
+            <div class="col-md-1 d-flex justify-content-center align-items-center pt-2">
+                <a class="icon-link fs-3 border text-center align-middle btn btn-outline-primary" href="javascript:SetViewLocal(1)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
                     </svg>
                 </a>
             </div>
@@ -62,9 +67,9 @@
 
     </div>
 
-    <div class="row mt-2">
-        <div class="col-md-12">
-            <table class="table table-striped mt-2">
+    <div class="row mt-1 bg-light">
+        <div class="col-md-12 bg-light p-0">
+            <table class="table table-striped mt-2" style="display:none" id="produktyLista">
                 <tr>
                     <th>Nazwa towaru</th>
                     <th>dostępna ilość</th>
@@ -85,8 +90,24 @@
                     </tr>
                 }
             </table>
+            <div class="col-md-12 bg-light" style="display:none" id="produktyPanel">
+
+                @foreach (var sItem in Model.categoryItems)
+                {
+                    var mainImage = sItem.images.FirstOrDefault();
+                    <div class="col-md-12 d-flex mt-2 bg-white">
+                        <div class="text-center d-flex justify-content-start m-1">
+                            <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name">
+                       </div>
+                        <div class="d-flex justify-content-center">@sItem.name</div>
+                       <div class=""></div>
+                    </div>
+                }
+            </div>
+
         </div>
     </div>
+
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             <li class="page-item">
@@ -112,6 +133,8 @@
     </nav>
     <input type="hidden" name="pageNo" id="pageNo" />
     <input type="hidden" name="pageSize" id="pageSize" value="10" />
+    <input type="hidden" name="selectedView" id="selectedView" />
+
 
 </form>
 @section Scripts
@@ -121,6 +144,28 @@
             document.getElementById("pageNo").value = index;
             document.forms[0].submit();
         }
+        function ViewClick(view) {
+            document.getElementById("selectedView").value = view;
+            document.forms[0].submit();
+        }
+        function SetViewLocal(setView) {
+            localStorage.setItem("selectedView", setView);
+            document.forms[0].submit();
+        }
+        window.onload = function () {
+            // Odczytujemy wartość z localStorage
+            var wartosc = localStorage.getItem("selectedView");
+
+            // Jeśli wartość istnieje i jest równa określonemu warunkowi, pokazujemy tabelę
+            if (wartosc >= 1) {
+                var tabela = document.getElementById("produktyLista");
+                tabela.style.display = "";  // Pokazanie tabeli
+            }
+            if (wartosc == 0) {
+                var panel = document.getElementById("produktyPanel");
+                panel.style.display = "";  // Pokazanie div-a
+            }
+        };
     </script>
 
 }
