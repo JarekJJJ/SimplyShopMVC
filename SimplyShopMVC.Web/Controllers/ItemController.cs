@@ -19,7 +19,7 @@ namespace SimplyShopMVC.Web.Controllers
         public IActionResult Index(int? selectedCategory)
         {
 
-            var listCategories = new ListItemShopIndexVm();
+            var listCategories = new ListItemShopIndexVm();         
             if (selectedCategory != null && selectedCategory > 0)
             {
                 listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "");
@@ -31,11 +31,11 @@ namespace SimplyShopMVC.Web.Controllers
                 listCategories = _frontService.GetAllCategories();
                 listCategories.categoryItems = new List<FrontItemForList>();
             }
-
+            listCategories.itemToOrder = new FrontItemForList();
             return View(listCategories);
         }
         [HttpPost]
-        public IActionResult Index(int pageSize, int? pageNo, string searchItem, int? selectedCategory, int? selectedView)
+        public IActionResult Index(ListItemShopIndexVm result, int pageSize, int? pageNo, string searchItem, int? selectedCategory, int? selectedView)
         {
             if (!pageNo.HasValue)
             {
@@ -44,6 +44,10 @@ namespace SimplyShopMVC.Web.Controllers
             if(searchItem is null)
             {
                 searchItem = string.Empty;
+            }
+            if(pageSize==0)
+            {
+                pageSize = 10;
             }
             var listCategories = new ListItemShopIndexVm();
             
