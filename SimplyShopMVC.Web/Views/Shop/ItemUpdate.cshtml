@@ -108,6 +108,17 @@
                 }             
             </select>
             <span asp-validation-for="SelectedTags" class="text-danger"></span>
+           <p class="mt-1 mb-0">Wybierz grupę towaru: </p>
+            <select class="form-select mb-2" id="selectedGroup" name="selectedGroup">
+
+                @if (Model.ListGroup != null)
+                {
+                    @foreach (var options in Model.ListGroup)
+                    {
+                        <option value="@options.Id" name="@options.Name" selected="@(Model.GroupItemId != 0 && Model.GroupItemId == options.Id ? "selected": null)">@options.Name</option>
+                    }
+                }
+            </select>
         </div>
 
         <div class="col-md-6">

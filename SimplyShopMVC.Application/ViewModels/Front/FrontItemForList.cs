@@ -21,6 +21,7 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public int deliveryTime { get; set; }
         public int warehouseId { get; set; }
         public List<PhotoItemVm> images { get; set; }
+        public List<ItemTagsForListVm>? tags { get; set; }
         //public string imageUrl { get; set; } //zmienić na listę żeby wyświetlać wszystkie obrazki z folderu imageFolder!!!
     }
 }

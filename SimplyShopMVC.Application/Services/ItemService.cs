@@ -19,14 +19,16 @@ namespace SimplyShopMVC.Application.Services
     public class ItemService : IItemService
     {
         private readonly IItemRepository _itemRepo;
+        private readonly IGroupItemRepository _groupItemRepo;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHost;
 
-        public ItemService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost)
+        public ItemService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost, IGroupItemRepository groupItemRepo)
         {
             _itemRepo = itemRepo;
             _mapper = mapper;
             _webHost = webHost;
+            _groupItemRepo = groupItemRepo;
         }
 
         public AddItemVm AddItem(AddItemVm item, IWebHostEnvironment webHostFolder) // Do wywalenia AddItemWarehouse !
@@ -211,6 +213,8 @@ namespace SimplyShopMVC.Application.Services
             item.ListImages = listImage;
             item.Categories = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            item.ListGroup = _groupItemRepo.GetAllGroupItem()
+                .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
 
             return item;
         }
@@ -218,7 +222,12 @@ namespace SimplyShopMVC.Application.Services
         {
             var _item = _mapper.Map<Item>(model);
             _item.CategoryId = model.selectedCategory;
+            _item.GroupItemId = model.selectedGroup;
             _itemRepo.UpdateItem(_item);
+            if(model.EanCode != null && model.EanCode.Length > 0)
+            {
+                _item.ImageFolder= model.EanCode;
+            }
             string folderName;
             if (model.ImageFolder != null)
             {

@@ -14,7 +14,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
 {
     public class AddItemVm : IMapFrom<SimplyShopMVC.Domain.Model.Item>
     {
-        public int Id { get; set; }       
+        public int Id { get; set; }
         public string Name { get; set; }
         public string? ShortDescription { get; set; }
         public string? Description { get; set; }
@@ -23,6 +23,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public string? EanCode { get; set; }
         public string? ItemSymbol { get; set; }
         public string? ImageFolder { get; set; }
+        public int GroupItemId { get; set; }
         // pomocnicze
         // p.1 - dodawanie i obsługa tagów
         public List<ItemTagsForListVm>? ItemTags { get; set; }
@@ -38,6 +39,9 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public List<IFormFile>? Image { get; set; }
         public List<PhotoItemVm>? ListImages { get; set; }
         public List<string>? SelectedImage { get; set; }
+        //grupy towarów
+         public List<GroupItemForListVm> ListGroup { get; set; }
+        public int selectedGroup { get; set; }
 
         // p.4 Przyjęcie towaru
         //public ItemWarehouseForListVm? ItemWarehouse { get; set; }
@@ -55,14 +59,16 @@ namespace SimplyShopMVC.Application.ViewModels.Item
                             .ForMember(s => s.TagDescription, opt => opt.Ignore())
                             .ForMember(s => s.SelectedTags, opt => opt.Ignore())
                             .ForMember(s => s.selectedCategory, opt => opt.Ignore())
-                            .ForMember(s=>s.SelectedImage, opt => opt.Ignore())
-                            //.ForMember(s => s.categoryId, opt => opt.Ignore())
-                            //.ForMember(s => s.categoryDescription, opt => opt.Ignore())
-                            //.ForMember(s => s.categoryName, opt => opt.Ignore())
-                            //.ForMember(s => s.isMainCategory, opt => opt.Ignore())
-                            //.ForMember(s => s.isActiveCategory, opt => opt.Ignore())
-                            //.ForMember(s => s.mainCategoryId, opt => opt.Ignore())
-                             .ForMember(s => s.Image, opt => opt.Ignore());
+                            .ForMember(s => s.SelectedImage, opt => opt.Ignore())
+                             //.ForMember(s => s.categoryId, opt => opt.Ignore())
+                             //.ForMember(s => s.categoryDescription, opt => opt.Ignore())
+                             //.ForMember(s => s.categoryName, opt => opt.Ignore())
+                             //.ForMember(s => s.isMainCategory, opt => opt.Ignore())
+                             //.ForMember(s => s.isActiveCategory, opt => opt.Ignore())
+                             //.ForMember(s => s.mainCategoryId, opt => opt.Ignore())
+                             .ForMember(s => s.Image, opt => opt.Ignore())
+                             .ForMember(s=>s.ListGroup, opt => opt.Ignore())
+                             .ForMember(s => s.selectedGroup, opt => opt.Ignore());
         }
         public class AddItemValidation : AbstractValidator<AddItemVm>
         {
@@ -70,7 +76,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
             {
                 RuleFor(x => x.Id).NotNull();
                 RuleFor(x => x.Name).MinimumLength(5).NotEmpty();
-                    
+
             }
         }
     }

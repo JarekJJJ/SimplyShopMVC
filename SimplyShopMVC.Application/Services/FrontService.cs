@@ -60,13 +60,13 @@ namespace SimplyShopMVC.Application.Services
             var listItem = new ListItemShopIndexVm();
             List<Item> itemList = new List<Item>();
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
-            itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i=>i.Name).ToList();
-            var mappedItems =  mapItemToList(itemList,frontItemForLists);
-            var mappedItemsToShow = mappedItems.Skip(pageSize*(pageNo-1)).Take(pageSize).ToList();
+            itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
+            var mappedItems = mapItemToList(itemList, frontItemForLists);
+            var mappedItemsToShow = mappedItems.Skip(pageSize * (pageNo - 1)).Take(pageSize).ToList();
             listItem.count = mappedItems.Count;
             listItem.pageSize = pageSize;
-            listItem.currentPage= pageNo;
-            listItem.searchItem= searchItem;
+            listItem.currentPage = pageNo;
+            listItem.searchItem = searchItem;
             listItem.selectedCategory = categoryId;
             listItem.categoryItems = mappedItemsToShow;
 
@@ -113,7 +113,7 @@ namespace SimplyShopMVC.Application.Services
                     indexItem.eanCode = item.EanCode;
                     indexItem.imageFolder = item.ImageFolder;
                     indexItem.itemSymbol = item.ItemSymbol;
-                    var groupIdresoult = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == item.GroupItemId);
+                    var groupIdresoult = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == item.GroupItemId);               
                     var warehouseResoult = _itemRepo.GetAllWarehouses().FirstOrDefault(w => w.Id == indexItemWare.WarehouseId);
                     //Można dodać sprawdzenie czy cena sprzedaży nie została nadana ręcznie w ItemWarehouse jeżeli nie to pobranie marży po grupie.              
                     var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
@@ -124,7 +124,7 @@ namespace SimplyShopMVC.Application.Services
                     var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
                     var listImage = new List<PhotoItemVm>();
                     int photoId = 0;
-                    if(imageToList.Count > 0)
+                    if (imageToList.Count > 0)
                     {
                         foreach (var imageUrl in imageToList)
                         {
@@ -149,12 +149,37 @@ namespace SimplyShopMVC.Application.Services
                         photoDetail.IsSelected = false;
                         listImage.Add(photoDetail);
                     }
-             
+                    indexItem.tags = ListTagsForItem(item.Id);
                     indexItem.images = listImage;
                     frontItemForLists.Add(indexItem);
                 }
             }
             return frontItemForLists;
+        }
+        public List<ItemTagsForListVm> ListTagsForItem(int itemId) //Dodaje do vm listę tagów do konkretnego itema
+        {
+            List<ItemTagsForListVm> itemTagsToList = new List<ItemTagsForListVm>();
+
+            var listTag = _itemRepo.GetAllConnectedItemTags().Where(i => i.ItemId == itemId);
+            if (listTag.Any())
+            {
+                foreach (var tags in listTag)
+                {
+                    ItemTagsForListVm itemTags = new ItemTagsForListVm();
+                    var tag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tags.ItemTagId);
+                    if (tag != null)
+                    {
+                        itemTags.Id = tag.Id;
+                        itemTags.Name = tag.Name;
+                        itemTags.Description = tag.Description;
+                        itemTagsToList.Add(itemTags);
+                    }
+
+                }
+            }
+            // itemTagsToList.AddRange(listTag);
+
+            return itemTagsToList;
         }
     }
 }

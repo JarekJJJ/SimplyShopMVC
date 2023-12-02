@@ -104,9 +104,20 @@
                                 <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name">
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center flex-grow-1 p-4">
+                        <div class="d-flex justify-content-center flex-grow-1 p-4 flex-column">
                             <div class="d-flex justify-content-center">
                                 <span class="">@Html.ActionLink(sItem.name,"DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0 h4 text-black text-start"})</span>
+                            </div>
+                            <div class="d-inline-flex">
+                                @if ((sItem.tags.Any()) && (sItem.tags != null))
+                                {
+                                    @foreach (var tags in sItem.tags)
+                                    {
+                                        <div class=" badge bg-danger text-wrap" style="width: 6rem;">
+                                            <span>@tags.Name</span>
+                                        </div>
+                                    }
+                                }
                             </div>
                         </div>
                         <div class="d-flex align-items-end flex-column mb-3" style="height: 200px;">
@@ -121,7 +132,7 @@
                                 <input type="hidden" id="prizeB_@sItem.id" asp-for="@Model.itemToOrder.priceB" value="@sItem.priceB">
                                 <span class="input-group-text" id="inputGroup-sizing-lg">szt.</span>
                                 <input type="number" min="0" asp-for="itemToOrder.quantity" name="itemToOrder.quantity" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
-                                
+
                             </div>
                             <div class="mt-auto">
                                 <button type="submit" class="btn btn-danger ms-4 me-4">

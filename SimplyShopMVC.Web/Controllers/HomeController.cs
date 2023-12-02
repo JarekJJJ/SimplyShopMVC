@@ -22,6 +22,7 @@ namespace SimplyShopMVC.Web.Controllers
             var items = _frontService.GetItemsToIndex(8);
            
             return View(items);
+
         }
 
         public IActionResult Privacy()
