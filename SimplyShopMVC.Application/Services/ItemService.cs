@@ -229,7 +229,7 @@ namespace SimplyShopMVC.Application.Services
                 _item.ImageFolder= model.EanCode;
             }
             string folderName;
-            if (model.ImageFolder != null)
+            if (model.ImageFolder != null || (model.EanCode != null))
             {
                 folderName = _item.ImageFolder;
             }
