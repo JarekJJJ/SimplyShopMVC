@@ -21,13 +21,15 @@ namespace SimplyShopMVC.Application.Services
         private readonly IWebHostEnvironment _webHost;
         private readonly IItemRepository _itemRepo;
         private readonly IGroupItemRepository _groupItemRepo;
-        public FrontService(ISupplierRepository supplierRepo, IMapper mapper, IWebHostEnvironment webHost, IItemRepository itemRepo, IGroupItemRepository groupItemRepo)
+        private readonly ICategoryTagsRepository _categoryTagsRepo;
+        public FrontService(ISupplierRepository supplierRepo, IMapper mapper, IWebHostEnvironment webHost, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ICategoryTagsRepository categoryTagsRep)
         {
             _supplierRepo = supplierRepo;
             _mapper = mapper;
             _webHost = webHost;
             _itemRepo = itemRepo;
             _groupItemRepo = groupItemRepo;
+            _categoryTagsRepo = categoryTagsRep;
         }
 
         public IndexListVm GetItemsToIndex(int quantityItem) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
@@ -55,12 +57,21 @@ namespace SimplyShopMVC.Application.Services
             var indexList = new IndexListVm();
             return indexList;
         }
-        public ListItemShopIndexVm GetItemsByCategory(int categoryId, int pageSize, int pageNo, string searchItem)
+        public ListItemShopIndexVm GetItemsByCategory(int categoryId, int pageSize, int pageNo, string searchItem, int selectedTags)
         {
             var listItem = new ListItemShopIndexVm();
+            listItem.tags = new List<ItemTagsForListVm>();
             List<Item> itemList = new List<Item>();
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
-            itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
+           
+            if (selectedTags > 0)
+            {
+                itemList = _itemRepo.GetItemsByTagId(selectedTags).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem) && i.CategoryId == categoryId).OrderBy(i => i.Name).ToList();
+            }
+            else
+            {
+                itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
+            }
             var mappedItems = mapItemToList(itemList, frontItemForLists);
             var mappedItemsToShow = mappedItems.Skip(pageSize * (pageNo - 1)).Take(pageSize).ToList();
             listItem.count = mappedItems.Count;
@@ -69,7 +80,13 @@ namespace SimplyShopMVC.Application.Services
             listItem.searchItem = searchItem;
             listItem.selectedCategory = categoryId;
             listItem.categoryItems = mappedItemsToShow;
-
+            var categoryTags = _categoryTagsRepo.GetAllCategoryTags().Where(i => i.CategoryId == categoryId).ToList();
+            foreach (var tag in categoryTags)
+            {
+                ItemTagsForListVm tagsForListVm= new ItemTagsForListVm();
+                var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));              
+                listItem.tags.Add(itemTag);
+            }
             return listItem;
 
         }
@@ -113,7 +130,7 @@ namespace SimplyShopMVC.Application.Services
                     indexItem.eanCode = item.EanCode;
                     indexItem.imageFolder = item.ImageFolder;
                     indexItem.itemSymbol = item.ItemSymbol;
-                    var groupIdresoult = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == item.GroupItemId);               
+                    var groupIdresoult = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == item.GroupItemId);
                     var warehouseResoult = _itemRepo.GetAllWarehouses().FirstOrDefault(w => w.Id == indexItemWare.WarehouseId);
                     //Można dodać sprawdzenie czy cena sprzedaży nie została nadana ręcznie w ItemWarehouse jeżeli nie to pobranie marży po grupie.              
                     var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);

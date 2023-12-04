@@ -42,6 +42,8 @@
                 <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
                 <input type="hidden" name="pageNo" value="1" />
                 <input class="form-control" type="search" placeholder="Search" aria-label="Search" asp-for="searchItem">
+                <input type="hidden" asp-for="selectedTag" id="selectedTag" value="" />
+
             </div>
             <div class="col-md-3 m-1">
                 <button class="btn btn-outline-success" type="submit">Wyszukaj</button>
@@ -69,7 +71,24 @@
     </div>
 </form>
 <div class="row mt-1 bg-light">
-    <div class="col-md-12 bg-light p-0">
+    <div class="col-md-3 bg-white me-2 mt-2">
+        <p class="text-center">Filtry:</p>
+       
+            @if (Model.tags != null)
+            {
+                @foreach (var filtr in Model.tags)
+                {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="@filtr.Id">
+                    <label class="form-check-label" for="@filtr.Id">
+                        @filtr.Name
+                    </label>
+                </div>
+                }
+            }  
+      
+    </div>
+    <div class="col-md-8 bg-light p-0">
         <table class="table table-striped mt-2" style="display:none" id="produktyLista">
             <tr>
                 <th>Nazwa towaru</th>
@@ -121,8 +140,8 @@
                             <div class="p-1">
                                 <span class="">@Html.ActionLink(sItem.name,"DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0 h4 text-black text-start"})</span>
                             </div>
-                            <div class="mt-auto row">                               
-                                    <div class="col p-1"><span class="text-secondary">Ean: @sItem.eanCode</span></div>
+                            <div class="mt-auto row">
+                                <div class="col p-1"><span class="text-secondary">Ean: @sItem.eanCode</span></div>
                                 <div class="col p-1"><span class="text-secondary">Symbol: @sItem.itemSymbol</span></div>
                                 <div class="col p-1"><span class="text-secondary">Czas wysyłki: do @sItem.deliveryTime dni</span></div>
                                 <div class="col p-1"><span class="text-secondary">Ilość na magazynie: @sItem.quantity szt.</span></div>
@@ -131,7 +150,7 @@
                         </div>
                         <div class="d-flex align-items-end flex-column mb-3" style="height: 200px;">
                             <div class="p-2 justify-content-center text-center m-auto">
-                                <span class="fs-5 fw-bolder">@sItem.priceB.ToString("N2") zł</span>
+                                <span class="fs-5 fw-bolder text-success">@sItem.priceB.ToString("N2") zł</span>
                             </div>
                             <div class="p-2 input-group input-group-lg justify-content-center">
 
@@ -139,7 +158,7 @@
                                 <input type="hidden" name="pageNo" value="@Model.currentPage" />
                                 <input type="hidden" id="@sItem.id" asp-for="@Model.itemToOrder.id" value="@sItem.id">
                                 <input type="hidden" id="prizeB_@sItem.id" asp-for="@Model.itemToOrder.priceB" value="@sItem.priceB">
-                              
+
                                 <input type="number" min="0" asp-for="itemToOrder.quantity" class="form-control p-1" name="itemToOrder.quantity" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
                                 <span class="input-group-text" id="inputGroup-sizing-lg">szt.</span>
                             </div>

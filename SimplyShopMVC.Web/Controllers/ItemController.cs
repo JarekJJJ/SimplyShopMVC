@@ -22,7 +22,7 @@ namespace SimplyShopMVC.Web.Controllers
             var listCategories = new ListItemShopIndexVm();         
             if (selectedCategory != null && selectedCategory > 0)
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "");
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "",0);
                 var receivedCategories = _frontService.GetAllCategories();
                 listCategories.categories = receivedCategories.categories.ToList();
             }
@@ -35,7 +35,8 @@ namespace SimplyShopMVC.Web.Controllers
             return View(listCategories);
         }
         [HttpPost]
-        public IActionResult Index(ListItemShopIndexVm result, int pageSize, int? pageNo, string searchItem, int? selectedCategory, int? selectedView)
+        public IActionResult Index(ListItemShopIndexVm result, int pageSize, int? pageNo, string searchItem, int? selectedCategory, int? selectedView, int selectedTag)
+      // zrobić paginacje z aktywnym filtrem, oraz czyszczenie filtrów
         {
             if (!pageNo.HasValue)
             {
@@ -53,7 +54,7 @@ namespace SimplyShopMVC.Web.Controllers
             
             if (selectedCategory != null && selectedCategory > 0)
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem);
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem, selectedTag);
                 var receivedCategories = _frontService.GetAllCategories();
                 listCategories.categories = receivedCategories.categories.ToList();
             }
