@@ -80,6 +80,7 @@ namespace SimplyShopMVC.Application.Services
             listItem.searchItem = searchItem;
             listItem.selectedCategory = categoryId;
             listItem.categoryItems = mappedItemsToShow;
+            listItem.selectedTag = selectedTags;
             var categoryTags = _categoryTagsRepo.GetAllCategoryTags().Where(i => i.CategoryId == categoryId).ToList();
             foreach (var tag in categoryTags)
             {

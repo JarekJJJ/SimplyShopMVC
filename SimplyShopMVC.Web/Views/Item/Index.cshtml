@@ -42,7 +42,7 @@
                 <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
                 <input type="hidden" name="pageNo" value="1" />
                 <input class="form-control" type="search" placeholder="Search" aria-label="Search" asp-for="searchItem">
-                <input type="hidden" asp-for="selectedTag" id="selectedTag" value="" />
+                <input type="hidden" asp-for="selectedTag" id="selectedTag" value="@Model.selectedTag" />
 
             </div>
             <div class="col-md-3 m-1">
@@ -71,24 +71,28 @@
     </div>
 </form>
 <div class="row mt-1 bg-light">
-    <div class="col-md-3 bg-white me-2 mt-2">
-        <p class="text-center">Filtry:</p>
-       
-            @if (Model.tags != null)
-            {
-                @foreach (var filtr in Model.tags)
-                {
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="@filtr.Id">
-                    <label class="form-check-label" for="@filtr.Id">
-                        @filtr.Name
-                    </label>
-                </div>
-                }
-            }  
-      
+    <div class="col-md-2 bg-white me-2 mt-2 d-flex align-items-center">
+        <p class="text-center mb-auto">Filtry:</p>
+
+        @if (Model.tags != null)
+        {
+            <div class="col-md-6 btn-group-vertical mb-auto mt-5" role="group" aria-label="Vertical radio toggle button group">
+                        <input type="radio" class="btn-check filtrRadio" name="options-base" id="0" autocomplete="off" checked="@(Model.selectedTag==0 ? true:false)">
+             <label class="btn btn-outline-dark" for="0">brak</label>
+                    @foreach (var filtr in Model.tags)
+                    {
+                        
+                            <input type="radio" class="btn-check filtrRadio border border-1 m-1" name="options-base" id="@filtr.Id" autocomplete="off" checked="@(Model.selectedTag==filtr.Id ? true:false)">
+                            <label class="btn btn-outline-info" for="@filtr.Id">@filtr.Name</label>
+                        
+                    }                     
+            </div>
+          
+            
+        }
+
     </div>
-    <div class="col-md-8 bg-light p-0">
+    <div class="col-md-9 bg-light p-0">
         <table class="table table-striped mt-2" style="display:none" id="produktyLista">
             <tr>
                 <th>Nazwa towaru</th>
