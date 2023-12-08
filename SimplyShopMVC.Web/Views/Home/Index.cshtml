@@ -3,14 +3,35 @@
     ViewData["Title"] = "HKR24.pl - Index site";
 }
 <div class="container">
-    <div class="row ">      
+    <div id="carouselExampleInterval m-1" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner" style="max-height:250px">
+            <div class="carousel-item active" data-bs-interval="10000">
+                <img src="/media/nophoto.png" class="d-block w-100"  alt="...">
+            </div>
+            <div class="carousel-item" data-bs-interval="2000">
+                <img src="/media/nophoto.png" class="d-block w-100"  alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="/media/nophoto.png" class="d-block w-100" alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <div class="row m-1 ">
         <div class="col-md-12">
-           
-                <div class="col-md-12 h4 mb-1 text-secondary border-bottom p-1 border-secondary">
-                    <span class="align-middle">Polecane produkty: </span>
-                </div>
+
+            <div class="col-md-12 h4 mb-1 text-secondary border-bottom p-1 border-secondary">
+                <span class="align-middle">Polecane produkty: </span>
+            </div>
             <div class="row slider demo">
-               @foreach (var item in Model.frontItemForLists)
+                @foreach (var item in Model.frontItemForLists)
                 {
                     var mainImage = item.images.FirstOrDefault();
                     <div class="col-md-3 p-1 cart">
@@ -25,16 +46,16 @@
                                 <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
                             </div>
                             <div class="text-center text-container">
-                                <span class="fs-6"><a href="">@Html.ActionLink(item.name, "DetailItem","Item", new {id=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</a></span>
+                                <span class="fs-6"><a href="">@Html.ActionLink(item.name, "DetailItem","Item", new {selectedItem=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</a></span>
                             </div>
                             <div class="flex-grow-1 d-flex align-items-end justify-content-center">
-                                
-                                        <button type="button" class="btn cartbutton btn-danger">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
-                                                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+
+                                <button type="button" class="btn cartbutton btn-danger">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
                                     </svg> <span class="text-light">Dodaj do koszyka</span>
-                                        </button>
-                                                                 
+                                </button>
+
                             </div>
                         </div>
                     </div>
@@ -42,23 +63,43 @@
             </div>
         </div>
     </div>
-</div>
-<div class="row m-2">
-    <table class="table table-striped">
-        <tr>
-            <th>id</th>
-            <th>nazwa</th>
-            <th>ilość</th>
-            <th>cena brutto</th>
-        </tr>
-        @foreach (var item in Model.frontItemForLists)
-        {
-            <tr>
-                <td>@item.id</td>
-                <td>@Html.ActionLink(item.name, "DetailItem","Item", new {id=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</td>
-                <td>@item.quantity</td>
-                <td>@item.priceB.ToString("N2") zł</td>
-            </tr>
-        }
-    </table>
+    <div class="row m-1 ">
+        <div class="col-md-12">
+
+            <div class="col-md-12 h4 mb-1 text-secondary border-bottom p-1 border-secondary">
+                <span class="align-middle">Nowe produkty: </span>
+            </div>
+            <div class="row slider demo">
+                @foreach (var item in Model.frontItemForLists)
+                {
+                    var mainImage = item.images.FirstOrDefault();
+                    <div class="col-md-3 p-1 cart">
+                        <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
+                            <div class=" badge bg-primary text-wrap" style="width: 6rem;">
+                                Nowość
+                            </div>
+                            <div class="text-center d-flex justify-content-center m-1">
+                                <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@item.name">
+                            </div>
+                            <div class="text-center">
+                                <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
+                            </div>
+                            <div class="text-center text-container">
+                                <span class="fs-6"><a href="">@Html.ActionLink(item.name, "DetailItem","Item", new {selectedItem=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</a></span>
+                            </div>
+                            <div class="flex-grow-1 d-flex align-items-end justify-content-center">
+
+                                <button type="button" class="btn cartbutton btn-danger">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                    </svg> <span class="text-light">Dodaj do koszyka</span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>

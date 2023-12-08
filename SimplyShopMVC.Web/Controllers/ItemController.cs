@@ -69,9 +69,18 @@ namespace SimplyShopMVC.Web.Controllers
             }
             return View(listCategories);
         }
+        [HttpGet]
         public IActionResult DetailItem(int selectedItem)
         {
-            return View();
+            var item = _frontService.GetItemDetail(selectedItem);
+            return View(item);
+        }
+        [HttpPost]
+        public IActionResult DetailItem(FrontItemForList result)
+        {
+            var selectedItem = result.id;
+            var item = _frontService.GetItemDetail(selectedItem);
+            return View(item);
         }
     }
 }

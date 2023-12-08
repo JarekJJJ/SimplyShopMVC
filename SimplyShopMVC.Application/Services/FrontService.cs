@@ -32,6 +32,16 @@ namespace SimplyShopMVC.Application.Services
             _categoryTagsRepo = categoryTagsRep;
         }
 
+        public FrontItemForList GetItemDetail(int id)
+        {
+            List<FrontItemForList> frontItemList = new List<FrontItemForList>();
+            List<Item> itemList = new List<Item>();
+           var itemToMap = _itemRepo.GetItemById(id);
+            itemList.Add(itemToMap);
+            var mappedList = mapItemToList(itemList, frontItemList);
+            var frontItem = mappedList.FirstOrDefault();           
+            return frontItem; 
+        }
         public IndexListVm GetItemsToIndex(int quantityItem) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
         {
             IndexListVm indexList = new IndexListVm();
