@@ -77,18 +77,18 @@
         @if (Model.tags != null)
         {
             <div class="col-md-6 btn-group-vertical mb-auto mt-5" role="group" aria-label="Vertical radio toggle button group">
-                        <input type="radio" class="btn-check filtrRadio" name="options-base" id="0" autocomplete="off" checked="@(Model.selectedTag==0 ? true:false)">
-             <label class="btn btn-outline-dark" for="0">brak</label>
-                    @foreach (var filtr in Model.tags)
-                    {
-                        
-                            <input type="radio" class="btn-check filtrRadio border border-1 m-1" name="options-base" id="@filtr.Id" autocomplete="off" checked="@(Model.selectedTag==filtr.Id ? true:false)">
-                            <label class="btn btn-outline-info" for="@filtr.Id">@filtr.Name</label>
-                        
-                    }                     
+                <input type="radio" class="btn-check filtrRadio" name="options-base" id="0" autocomplete="off" checked="@(Model.selectedTag==0 ? true:false)">
+                <label class="btn btn-outline-dark" for="0">brak</label>
+                @foreach (var filtr in Model.tags)
+                {
+
+                    <input type="radio" class="btn-check filtrRadio border border-1 m-1" name="options-base" id="@filtr.Id" autocomplete="off" checked="@(Model.selectedTag==filtr.Id ? true:false)">
+                    <label class="btn btn-outline-info" for="@filtr.Id">@filtr.Name</label>
+
+                }
             </div>
-          
-            
+
+
         }
 
     </div>
@@ -210,6 +210,7 @@
     <input type="hidden" name="selectedView" id="selectedView" />
     <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
     <input class="form-control" type="hiden" aria-label="Search" asp-for="searchItem" value="@Model.searchItem">
+    <input type="hidden" asp-for="selectedTag" id="selectedTag" value="@Model.selectedTag" />
 
 </form>
 @section Scripts

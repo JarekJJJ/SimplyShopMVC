@@ -161,24 +161,45 @@ namespace SimplyShopMVC.Application.Services
                 _itemRepo.AddItemWarehouse(modelMapped);
             }
         }
-        public AddItemWarehouseVm ListItemToUpdate(string searchItem)
+        public AddItemWarehouseVm ListItemToUpdate(string searchItem, int? countItem) //Lista artykułów - Panel administratora - wczytywanie listy do edycji
         {
+            if (countItem == 0 || countItem == null)
+            {
+                countItem = 20;
+            }
             AddItemWarehouseVm item = new AddItemWarehouseVm();
             if (searchItem != null)
             {
                 var resultItem = _itemRepo.GetAllItems().Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem))
-                       .ProjectTo<ItemForListVm>(_mapper.ConfigurationProvider).Take(20);
+                       .ProjectTo<ItemForListVm>(_mapper.ConfigurationProvider).Take((int)countItem);
                 item.items = resultItem.OrderByDescending(i => i.Id).ToList();
             }
             else
             {
                 var resultItem = _itemRepo.GetAllItems()
-                    .ProjectTo<ItemForListVm>(_mapper.ConfigurationProvider).Take(20);
-                var resultItemWare = _itemRepo.GetAllItemWarehouses()
-                    .ProjectTo<ItemWarehouseForListVm>(_mapper.ConfigurationProvider).Take(20);
+                    .ProjectTo<ItemForListVm>(_mapper.ConfigurationProvider).Take((int)countItem);
                 item.items = resultItem.OrderByDescending(i => i.Id).ToList();
-                item.itemWarehouses = resultItemWare.ToList();
             }
+            var resultItemWare = _itemRepo.GetAllItemWarehouses()
+                   .ProjectTo<ItemWarehouseForListVm>(_mapper.ConfigurationProvider);
+            item.itemWarehouses = resultItemWare.ToList();
+            item.warehouses = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            item.itemTags = _itemRepo.GetAllItemTags().ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+            item.categories = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            List<ItemTagsForListVm> tempListTag = new List<ItemTagsForListVm>();
+            foreach (var _item in item.items) // dodawanie tagów występujących w wybranych produktach
+            {
+                var listTags = _itemRepo.GetAllConnectedItemTags().Where(i => i.ItemId == _item.Id);
+                 if(listTags.Any())
+                {
+                    foreach (var tag in listTags)
+                    {
+                        var tempTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));
+                        tempListTag.Add(tempTag);
+                    }
+                }                               
+            }
+            item.forDeleteItemTags = tempListTag.ToList();
             return item;
         }
 
@@ -224,9 +245,9 @@ namespace SimplyShopMVC.Application.Services
             _item.CategoryId = model.selectedCategory;
             _item.GroupItemId = model.selectedGroup;
             _itemRepo.UpdateItem(_item);
-            if(model.EanCode != null && model.EanCode.Length > 0)
+            if (model.EanCode != null && model.EanCode.Length > 0)
             {
-                _item.ImageFolder= model.EanCode;
+                _item.ImageFolder = model.EanCode;
             }
             string folderName;
             if (model.ImageFolder != null || (model.EanCode != null))

@@ -17,5 +17,15 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public string searchItem { get; set; }
         public int itemId { get; set; }
         public int selectedWarehouseId { get; set; }
+        // dodano 09.12.2023
+        public List<CategoryForListVm> categories { get; set; }
+        public List<ItemTagsForListVm> itemTags { get; set; }
+        public List<ItemTagsForListVm> forDeleteItemTags { get; set; }
+        public List<int> selectedItemId { get; set; }
+        public int selectDeleteItemTags { get; set; }
+        public int selectedItemTag { get; set; }
+        public int selectedItemCategory { get; set; }
+        public int selectedNewCategory { get; set; }
+        public int countItem { get; set; }
     }
 }

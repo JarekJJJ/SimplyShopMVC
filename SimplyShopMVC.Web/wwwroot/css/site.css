@@ -101,6 +101,12 @@ body {
     -webkit-line-clamp: 2; /* Ogranicz do 2 linijek */
     overflow: hidden;
 }
+.text-OneLine {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; /* Ogranicz do 2 linijek */
+    overflow: hidden;
+}
 div.article-list {
     height: 250px;
 }

@@ -7,51 +7,146 @@
 
 <h1>AdminListItem</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.selectedWarehouseId)
-            </th>
-            <th>
-                Symbol towaru
-            </th>
-            <th>
-                Kod Ean
-            </th>
-            <th>
-                Cena
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.items)
-        {
-            var iwar = Model.itemWarehouses?.FirstOrDefault(i => i.ItemId == item.Id);
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.ItemSymbol)</td>
-                <td>@Html.DisplayFor(modelItem => item.EanCode)</td>
-                <td>
-                    @(iwar != null ? Html.DisplayFor(modelItem => iwar.FinalPriceA) : Html.Raw("brak towaru"))
-                </td>
-                <td>
-                    <span class="">@Html.ActionLink("Update","ItemUpdate", new {selectedItem=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<form asp-action="AdminListItem" method="get" id="adminListForm">
+    <div class="row mt-2 d-flex pb-1">
+        <div class="col-md-4 d-flex  mt-auto">
+            <div class="col-md-8 m-1">
+                <input type="hidden" asp-for="selectedItemCategory" value="@Model.selectedItemCategory" />
+                <input class="form-control" type="search" placeholder="Search" aria-label="Search" asp-for="searchItem">
+                <input type="hidden" asp-for="selectedItemTag" id="selectedTag" value="@Model.selectedItemTag" />
+
+            </div>
+            <div class="col-md-3 m-1">
+                <button class="btn btn-outline-success" type="submit">Wyszukaj</button>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <label for="countItem" class="form-label">Ilość pozycji na stronie :</label>
+            <select class="form-select" asp-for="countItem" id="countItem">
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="500">500</option>
+            </select>
+        </div>
+    </div>
+</form>
+<form asp-action="AdminListItem" method="post">
+    <div class="col-md-12">
+        <table class="table table-hover p-0">
+            <thead>
+                <tr>
+                    <th>
+                        <p class="m-0 text-wrap"> Zaznacz wszystkie</p>
+                        <p class="m-0 text-center"> <input class="form-check-input selectAll" type="checkbox" id="flexCheckAll"> </p>
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.selectedWarehouseId)
+                    </th>
+                    <th>
+                        Symbol towaru
+                    </th>
+                    <th>
+                        Kod Ean
+                    </th>
+                    <th>
+                        Ilość
+                    </th>
+                    <th>
+                        Cena
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                @foreach (var item in Model.items)
+                {
+                    var iwar = Model.itemWarehouses?.FirstOrDefault(i => i.ItemId == item.Id);
+                    <tr>
+                        <td>
+                            <input class="form-check-input checkbox" type="checkbox" value="@item.Id" name="selectedItemId" id="flexCheckDefault">
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            <span class="text-OneLine">@Html.DisplayFor(modelItem => item.Name)</span>
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.ItemSymbol)</td>
+                        <td>@Html.DisplayFor(modelItem => item.EanCode)</td>
+                        <td>
+                            @(iwar != null ? iwar.Quantity : Html.Raw("0"))
+                        </td>
+                        <td>
+                            @(iwar != null ? Html.DisplayFor(modelItem => iwar.FinalPriceA) : Html.Raw("brak towaru"))
+                        </td>
+                        <td>
+                            <span class="">@Html.ActionLink("Update","ItemUpdate", new {selectedItem=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
+                            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-2 me-auto">
+            <span>Akcje dla zaznaczonych elementów: </span>
+        </div>
+        <div class="col-md-2">
+            <label for="selecedtItemTag" class="form-label">Dodaj Tag :</label>
+            <select class="form-select" asp-for="selectedItemTag" id="selectedItemTag">
+                <option value="0" selected>select tag</option>
+                @foreach (var itemtag in Model.itemTags)
+                {
+                    <option value="@itemtag.Id">@itemtag.Name</option>
+                }
+            </select>
+        </div>
+         <div class="col-md-2">
+            <label for="selecedtItemTag" class="form-label">wybierz tag który chcesz usunąć z produktu:</label>
+            <select class="form-select" asp-for="selectDeleteItemTags" id="selectDeleteItemTags">
+                <option value="0" selected>wybierz tag</option>
+               @if(Model.forDeleteItemTags != null){
+                @foreach (var itemtag in Model.forDeleteItemTags)
+                {
+                    <option value="@itemtag.Id">@itemtag.Name</option>
+                    }
+                }else
+                {
+                    <option value="0">brak tagów</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="selecteNewCategory" class="form-label text-wrap">Zmień kategorię dla wybranych produktów:</label>
+            <select class="form-select" asp-for="selectedNewCategory" id="selectedNewCategory">
+                <option value="0" selected>wybierz kategorię </option>
+                @foreach (var category in Model.categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit">Zatwierdź</button>
+        </div>
+    </div>
+</form>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.selectAll').on('click', function () {
+                var isChecked = $(this).prop('checked');
+                $('.checkbox').prop('checked', isChecked);
+            });
+        });
+    </script>
+}
