@@ -89,10 +89,11 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [HttpPost]
         public IActionResult AdminListItem(AddItemWarehouseVm item)
+        
         {
-
-            // Do implementacji w serwisie
-            return View();
+            _itemService.UpdateItemFromList(item);
+            var newItemW = _itemService.ListItemToUpdate("", 0);
+            return View(newItemW);
         }
         [HttpGet]
         public IActionResult ItemUpdate(int selectedItem)

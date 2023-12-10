@@ -185,22 +185,80 @@ namespace SimplyShopMVC.Application.Services
             item.itemWarehouses = resultItemWare.ToList();
             item.warehouses = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
             item.itemTags = _itemRepo.GetAllItemTags().ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
-            item.categories = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            //item.categories = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             List<ItemTagsForListVm> tempListTag = new List<ItemTagsForListVm>();
             foreach (var _item in item.items) // dodawanie tagów występujących w wybranych produktach
             {
                 var listTags = _itemRepo.GetAllConnectedItemTags().Where(i => i.ItemId == _item.Id);
-                 if(listTags.Any())
+                if (listTags.Any())
                 {
                     foreach (var tag in listTags)
                     {
                         var tempTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));
-                        tempListTag.Add(tempTag);
+                        var resultTag = tempListTag.FirstOrDefault(i => i.Id == tempTag.Id);
+                        if (resultTag == null)
+                        {
+                            tempListTag.Add(tempTag);
+                        }                        
                     }
-                }                               
+                }
             }
             item.forDeleteItemTags = tempListTag.ToList();
+            item.categories = _itemRepo.GetAllCategories()
+                .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var category in item.categories.Where(c => c.IsMainCategory == false))
+            {
+                var parrentCategory = item.categories.FirstOrDefault(c => c.Id == category.MainCategoryId).Name;
+                string categoryName = $"{parrentCategory}->{category.Name}";
+                category.Name = categoryName;
+            }
+            var ascendingListCategory = item.categories.OrderBy(i => i.Name).ToList();
+            item.categories = ascendingListCategory;
             return item;
+        }
+        public List<string> UpdateItemFromList(AddItemWarehouseVm listItem)
+        {
+            List<string> raport = new List<string>();
+            var selItemTag = _itemRepo.GetItemTagByTagId(listItem.selectedItemTag); 
+            if (listItem.selectedItemId != null)
+            {
+                foreach (var item in listItem.selectedItemId)
+                {
+                    if (selItemTag !=null)
+                    {
+                        var checkTag = _itemRepo.GetConnectItemTags(item).Where(i => i.ItemTagId == selItemTag.Id).Count();
+                        if(checkTag==0)
+                        {
+                            _itemRepo.AddConnectionItemTags(item, selItemTag);
+                        }
+                        else
+                        {
+                            raport.Add($"Produkt o Id:{item} posiada już określony tag {selItemTag.Name}");
+                        }
+                        
+                    }
+                    if(listItem.selectDeleteItemTags > 0)
+                    {
+                        _itemRepo.DeleteConnectionItemTagFromItem(item,listItem.selectDeleteItemTags);
+                    }
+                    if (listItem.selectedNewCategory > 0)
+                    {
+                        var tempItem = _itemRepo.GetAllItems().FirstOrDefault(c => c.Id == item);
+                        if (tempItem != null)
+                        {
+                            tempItem.CategoryId = listItem.selectedNewCategory;
+                            _itemRepo.UpdateItem(tempItem);
+                            // raport ok.
+                        }
+                        else
+                        {
+                            // raport błędu
+                        }                                                                     
+                    }
+                }
+            }
+
+            return raport;
         }
 
         public AddItemVm AddItemToUpdate(int selectedItem)

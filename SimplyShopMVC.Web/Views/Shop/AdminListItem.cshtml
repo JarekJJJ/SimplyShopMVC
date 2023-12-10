@@ -96,10 +96,10 @@
         </table>
     </div>
     <div class="row">
-        <div class="col-md-2 me-auto">
+        <div class="col-md-2 me-auto m-auto">
             <span>Akcje dla zaznaczonych elementów: </span>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-auto mb-1">
             <label for="selecedtItemTag" class="form-label">Dodaj Tag :</label>
             <select class="form-select" asp-for="selectedItemTag" id="selectedItemTag">
                 <option value="0" selected>select tag</option>
@@ -109,7 +109,7 @@
                 }
             </select>
         </div>
-         <div class="col-md-2">
+        <div class="col-md-2 mt-auto mb-1">
             <label for="selecedtItemTag" class="form-label">wybierz tag który chcesz usunąć z produktu:</label>
             <select class="form-select" asp-for="selectDeleteItemTags" id="selectDeleteItemTags">
                 <option value="0" selected>wybierz tag</option>
@@ -124,7 +124,7 @@
                 }
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-auto mb-1">
             <label for="selecteNewCategory" class="form-label text-wrap">Zmień kategorię dla wybranych produktów:</label>
             <select class="form-select" asp-for="selectedNewCategory" id="selectedNewCategory">
                 <option value="0" selected>wybierz kategorię </option>
@@ -134,7 +134,7 @@
                 }
             </select>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-auto mb-1">
             <button type="submit">Zatwierdź</button>
         </div>
     </div>

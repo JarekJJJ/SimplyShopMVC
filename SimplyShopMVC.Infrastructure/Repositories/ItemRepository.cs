@@ -114,6 +114,14 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.ConnectItemTag.RemoveRange(result);
             _context.SaveChanges();
         }
+        public int DeleteConnectionItemTagFromItem(int itemId, int itemTagId)
+        {
+            var result = _context.ConnectItemTag.Where(a => a.ItemId == itemId && a.ItemTagId==itemTagId);
+            var raport = result.Count();
+            _context.ConnectItemTag.RemoveRange(result);
+            _context.SaveChanges();
+            return raport;
+        }
         public void DeleteItemTag(int itemTagId)
         {
             var result = _context.ItemTags.Find(itemTagId);
@@ -215,6 +223,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             var result = _context.VatRates;
             return result;
-        }    
+        }
     }
 }

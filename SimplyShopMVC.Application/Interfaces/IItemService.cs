@@ -17,6 +17,7 @@ namespace SimplyShopMVC.Application.Interfaces
         UpdateItemVm GetItemToUpdate(int itemId);
         void AddItemWarehouse(AddItemWarehouseVm model);
         AddItemWarehouseVm ListItemToUpdate(string searchItem, int? countItem);
+        List<string> UpdateItemFromList(AddItemWarehouseVm listItem);
         AddItemWarehouseVm AddToUpdateItemWarehouse(int itemId);
         AddItemVm AddItemToUpdate(int selectedItem);
         //ItemTag
