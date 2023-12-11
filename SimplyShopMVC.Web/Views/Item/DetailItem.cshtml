@@ -64,6 +64,14 @@
             </div>
         </div>
     </div>
+     <div class="col-md-12 d-flex mt-2 bg-white justify-content-center">
+        @foreach(var omnibus in Model.omnibusPriceList)
+        {
+            <div>               
+                @omnibus.PriceDetB - @omnibus.ChangeTime
+            </div>
+        }
+    </div>
     <div class="col-md-12 d-flex mt-2 bg-white justify-content-center">
         <div>
             @Html.Raw(Model.description)

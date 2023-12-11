@@ -17,9 +17,13 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public DateTime ChangeTime { get; set; }
         public string Ean { get; set; }
         public int WarehouseId { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal PriceDetB { get; set; }
+
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<OmnibusPriceToListVm, SimplyShopMVC.Domain.Model.OmnibusPrice>().ReverseMap();
+            profile.CreateMap<OmnibusPriceToListVm, SimplyShopMVC.Domain.Model.OmnibusPrice>().ReverseMap()
+                 .ForMember(s => s.PriceDetB, opt => opt.Ignore());
         }
     }
 }

@@ -13,6 +13,7 @@ using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Application.ViewModels.Item;
 using static SimplyShopMVC.Application.ViewModels.Item.AddItemVm;
 using SimplyShopMVC.Domain.Interface;
+using SimplyShopMVC.Application.Helpers;
 
 namespace SimplyShopMVC.Application
 {
@@ -30,6 +31,7 @@ namespace SimplyShopMVC.Application
             services.AddTransient<IItemService, ItemService>();
             services.AddTransient<ISupplierService, SupplierService>();
             services.AddTransient<IFrontService, FrontService>();
+            services.AddTransient<IOmnibusHelper, OmnibusHelper>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

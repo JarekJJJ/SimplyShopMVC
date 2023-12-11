@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using SimplyShopMVC.Domain.Model;
 using SimplyShopMVC.Application.ViewModels.Item;
 using AutoMapper.QueryableExtensions;
+using SimplyShopMVC.Application.Interfaces;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -22,7 +23,8 @@ namespace SimplyShopMVC.Application.Services
         private readonly IItemRepository _itemRepo;
         private readonly IGroupItemRepository _groupItemRepo;
         private readonly ICategoryTagsRepository _categoryTagsRepo;
-        public FrontService(ISupplierRepository supplierRepo, IMapper mapper, IWebHostEnvironment webHost, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ICategoryTagsRepository categoryTagsRep)
+        private readonly IOmnibusHelper _omnibusHelper;
+        public FrontService(ISupplierRepository supplierRepo, IMapper mapper, IWebHostEnvironment webHost, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ICategoryTagsRepository categoryTagsRep, IOmnibusHelper omnibusHelper)
         {
             _supplierRepo = supplierRepo;
             _mapper = mapper;
@@ -30,6 +32,7 @@ namespace SimplyShopMVC.Application.Services
             _itemRepo = itemRepo;
             _groupItemRepo = groupItemRepo;
             _categoryTagsRepo = categoryTagsRep;
+            _omnibusHelper = omnibusHelper;
         }
 
         public FrontItemForList GetItemDetail(int id)
@@ -39,7 +42,11 @@ namespace SimplyShopMVC.Application.Services
            var itemToMap = _itemRepo.GetItemById(id);
             itemList.Add(itemToMap);
             var mappedList = mapItemToList(itemList, frontItemList);
-            var frontItem = mappedList.FirstOrDefault();           
+            var frontItem = mappedList.FirstOrDefault();
+            if(!string.IsNullOrEmpty(frontItem.eanCode))
+            {
+                frontItem.omnibusPriceList = _omnibusHelper.GetOmnibusPrice(frontItem.eanCode);
+            }         
             return frontItem; 
         }
         public IndexListVm GetItemsToIndex(int quantityItem) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
