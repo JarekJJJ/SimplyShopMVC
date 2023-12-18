@@ -15,7 +15,7 @@ namespace SimplyShopMVC.Application.Interfaces
         int UpdateItem(AddItemVm item);
         void DeleteItem(int id);
         UpdateItemVm GetItemToUpdate(int itemId);
-        void AddItemWarehouse(AddItemWarehouseVm model);
+        AddItemWarehouseVm AddItemWarehouse(AddItemWarehouseVm model);
         AddItemWarehouseVm ListItemToUpdate(string searchItem, int? countItem);
         List<string> UpdateItemFromList(AddItemWarehouseVm listItem);
         AddItemWarehouseVm AddToUpdateItemWarehouse(int itemId);

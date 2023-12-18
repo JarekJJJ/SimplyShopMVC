@@ -36,6 +36,34 @@
 
 </div>
 <div class="row">
+    <form asp-action="AddIncomItemsXML" enctype="multipart/form-data" class="row gy-2 gx-3 align-items-center">
+        <div class="col-md-3">
+            <label  class="col-auto col-form-label" asp-for="warehouseId">Wybierz magazym: </label>
+            <select class="form-select" asp-for="warehouseId">
+                @foreach (var ware in Model.warehouseForListVm)
+                {
+                    <option value="@ware.Id" name="@ware.Name">@ware.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="fileInputCategory" class="col-auto col-form-label">Dodaj link do Xml</label>
+            <input type="text" asp-for="urlXml" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-check-label text-danger">
+                Czy usunąć wszystkie towery tego dostawcy z bazy (niezalecane) ?
+            </label>
+            <input class="form-check-input h4" asp-for="removeItems" />
+
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Import" class="btn btn-primary" />
+        </div>
+    </form>
+
+</div>
+<div class="row">
     <div class="col-md-12">
         @if (Model.raportAddItem != null)
         {

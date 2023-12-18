@@ -71,8 +71,8 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpPost]
         public IActionResult AddItemWarehouse(AddItemWarehouseVm model)
         {
-            _itemService.AddItemWarehouse(model);
-            return RedirectToAction("AddItemWarehouse");
+           var result =  _itemService.AddItemWarehouse(model);
+            return View(result);
         }
         public IActionResult ListItemWarehouse(string searchItem)
         {

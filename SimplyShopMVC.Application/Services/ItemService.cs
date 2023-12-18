@@ -147,19 +147,31 @@ namespace SimplyShopMVC.Application.Services
             itemWarehouseVm.itemId = itemId;
             return itemWarehouseVm;
         }
-        public void AddItemWarehouse(AddItemWarehouseVm model)
+        public AddItemWarehouseVm AddItemWarehouse(AddItemWarehouseVm model)
         {
-            var resultIW = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == model.itemWarehouse.ItemId || i.WarehouseId == model.itemWarehouse.WarehouseId);
+            AddItemWarehouseVm result = new AddItemWarehouseVm();
+            var resultIW = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == model.itemWarehouse.ItemId && i.WarehouseId == model.itemWarehouse.WarehouseId);
             if (resultIW != null)
             {
-                var resultIWmapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
-                _itemRepo.UpdateItemWarehouse(resultIWmapped);
+                resultIW.Quantity = model.itemWarehouse.Quantity;
+                resultIW.NetPurchasePrice = model.itemWarehouse.NetPurchasePrice;
+                resultIW.VatRateId = model.itemWarehouse.VatRateId;
+                resultIW.VatRateName = _itemRepo.GetAllVatRate().FirstOrDefault(i => i.Id == model.itemWarehouse.VatRateId).Name;
+                //var resultIWmapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
+
+                _itemRepo.UpdateItemWarehouse(resultIW);
             }
             else
             {
                 var modelMapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
                 _itemRepo.AddItemWarehouse(modelMapped);
             }
+            result.itemWarehouse = _mapper.Map<ItemWarehouseForListVm>(resultIW);
+            result.itemWarehouses = _itemRepo.GetAllItemWarehouses().Where(a => a.ItemId == model.itemWarehouse.ItemId)
+                .ProjectTo<ItemWarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            result.warehouses = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            result.vatRate = _itemRepo.GetAllVatRate().ProjectTo<VatRateForListVm>(_mapper.ConfigurationProvider).ToList();
+            return result;
         }
         public AddItemWarehouseVm ListItemToUpdate(string searchItem, int? countItem) //Lista artykułów - Panel administratora - wczytywanie listy do edycji
         {

@@ -14,6 +14,7 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
         public int warehouseId { get; set; }
         public IFormFile formFile { get; set; }
         public List<string> raportAddItem { get; set; }
+        public string urlXml { get; set; }
         public bool removeItems { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Front.FrontItemForList
+@using System.Web
 @{
     ViewData["Title"] = "HKR24.pl - product detail";
     var mainImage = Model.images.FirstOrDefault();
@@ -15,7 +16,7 @@
                 @foreach (var img in Model.images)
                 {
                     <div>
-                        <img src="@img.ImageUrl" class=" object-fit-contain img-fluid border-0 "alt="@img.Name">
+                        <img src="@img.ImageUrl" class=" object-fit-contain img-fluid border-0 " alt="@img.Name">
                     </div>
                 }
             </div>
@@ -64,13 +65,14 @@
             </div>
         </div>
     </div>
-     <div class="col-md-12 d-flex mt-2 bg-white justify-content-center">
-        @foreach(var omnibus in Model.omnibusPriceList)
+    <div class="col-md-12">
+        @foreach(var oPrice in Model.omnibusPriceList)
         {
-            <div>               
-                @omnibus.PriceDetB - @omnibus.ChangeTime
-            </div>
+            <span>
+                Najniża cena z ostatnich 30 dni : @oPrice.PriceDetB.ToString("N2") (Data: (@oPrice.ChangeTime.ToString("yyyy-MM-dd")))
+            </span>
         }
+  
     </div>
     <div class="col-md-12 d-flex mt-2 bg-white justify-content-center">
         <div>
@@ -90,6 +92,7 @@
                 arrows: true,
             });
         });
+
     </script>
     }
 

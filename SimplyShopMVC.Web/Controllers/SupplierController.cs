@@ -2,6 +2,7 @@
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Suppliers;
+using System.Security.Policy;
 using System.Xml.Linq;
 
 namespace SimplyShopMVC.Web.Controllers
@@ -26,16 +27,28 @@ namespace SimplyShopMVC.Web.Controllers
             return View(incomItem);
         }
         [HttpPost]
-        public IActionResult AddIncomItemsXML(AddIncomItemsVm incomItems)
+        public async Task<IActionResult> AddIncomItemsXML(AddIncomItemsVm incomItems)
         {
+            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
             if (incomItems.formFile != null && incomItems.formFile.Length > 0)
             {
 
                 var listItemsXML = XDocument.Load( incomItems.formFile.OpenReadStream());
-                var returnRaport = _supplierService.LoadIncomItemsXML(incomItems, listItemsXML);
+                 returnRaport = _supplierService.LoadIncomItemsXML(incomItems, listItemsXML);
                 return View(returnRaport);
             }
-           return View();
+            if (!string.IsNullOrEmpty(incomItems.urlXml))
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string xmlString = await client.GetStringAsync(incomItems.urlXml);
+                    var listItemXmlfromUrl = XDocument.Parse(xmlString);
+                     returnRaport = _supplierService.LoadIncomItemsXML(incomItems, listItemXmlfromUrl);
+                }
+                return View(returnRaport);
+            }
+
+            return View();
         }
         [HttpGet]
         public IActionResult AddIncomGroupsXML()

@@ -210,14 +210,14 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public void UpdateItemWarehouse(ItemWarehouse itemWarehouse)
         {
-            var itemToUpdate = _context.ItemWarehouses.FirstOrDefault(i=>i.ItemId==itemWarehouse.ItemId || i.WarehouseId==itemWarehouse.WarehouseId);
-            if (itemToUpdate != null)
-            {
-                itemWarehouse.Id = itemToUpdate.Id;
-                _context.Entry(itemToUpdate).State = EntityState.Detached;
+            //var itemToUpdate = _context.ItemWarehouses.FirstOrDefault(i=>i.ItemId==itemWarehouse.ItemId || i.WarehouseId==itemWarehouse.WarehouseId);
+            //if (itemToUpdate != null)
+            //{
+                //itemWarehouse.Id = itemToUpdate.Id;
+                //_context.Entry(itemToUpdate).State = EntityState.Detached;
                 _context.Update(itemWarehouse);
                 _context.SaveChanges();
-            }                 
+            //}                 
         }
         public IQueryable<VatRate> GetAllVatRate()
         {

@@ -376,13 +376,13 @@ namespace SimplyShopMVC.Application.Services
                     {
                         newItemId = resultItem.Id;
                     }
-                    if (connectedItems.selectedItemTags.Count > 0)
+                    if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
                     {
                         foreach (var tag in connectedItems.selectedItemTags)
                         {
                             var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
                             var resultItemTag = _itemRepo.GetAllConnectedItemTags().FirstOrDefault(r => r.ItemTagId == sTag.Id && r.ItemId == newItemId);
-                            if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (newItemId != 0) &&(resultItemTag ==null))
+                            if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (newItemId != 0) && (resultItemTag == null))
                             {
                                 //  _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
 
@@ -403,14 +403,17 @@ namespace SimplyShopMVC.Application.Services
 
 
                 }
-                foreach (var tag in connectedItems.selectedItemTags)
+                if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
                 {
-                    var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
-                    var sCategory = _itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == (int)connectedItems.selectedCategory);
-                    var resultTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(r => r.ItemTagId == tag && r.CategoryId == sCategory.Id);
-                    if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (resultTag == null))
+                    foreach (var tag in connectedItems.selectedItemTags)
                     {
-                        _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
+                        var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
+                        var sCategory = _itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == (int)connectedItems.selectedCategory);
+                        var resultTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(r => r.ItemTagId == tag && r.CategoryId == sCategory.Id);
+                        if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (resultTag == null))
+                        {
+                            _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
+                        }
                     }
                 }
 
@@ -440,7 +443,7 @@ namespace SimplyShopMVC.Application.Services
                 //newConnectItem.categoryItems = ascendingListCategory;
                 //newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
                 //    .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
-               
+
             }
 
             return newConnectItem;

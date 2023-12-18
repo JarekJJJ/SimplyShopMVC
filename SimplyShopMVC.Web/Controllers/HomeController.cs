@@ -3,6 +3,9 @@ using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Web.Models;
 using SimplyShopMVC.Application.Interfaces;
 using System.Diagnostics;
+using SimplyShopMVC.Application.ViewModels.Item;
+using SimplyShopMVC.Application.ViewModels.Front;
+using SimplyShopMVC.Application.Services;
 
 namespace SimplyShopMVC.Web.Controllers
 {
@@ -19,9 +22,12 @@ namespace SimplyShopMVC.Web.Controllers
 
         public IActionResult Index()
         {
-            var items = _frontService.GetItemsToIndex(8);
-           
-            return View(items);
+            IndexListVm listItems= new IndexListVm();
+            var items = _frontService.GetItemsToIndex(8, ("Polecamy"));
+           listItems.frontItemForLists = items;
+            var itemsNews = _frontService.GetItemsToIndex(8, ("Nowość"));
+            listItems.frontItemNews = itemsNews;
+            return View(listItems);
 
         }
 

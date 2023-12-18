@@ -39,35 +39,48 @@ namespace SimplyShopMVC.Application.Services
         {
             List<FrontItemForList> frontItemList = new List<FrontItemForList>();
             List<Item> itemList = new List<Item>();
-           var itemToMap = _itemRepo.GetItemById(id);
+            var itemToMap = _itemRepo.GetItemById(id);
             itemList.Add(itemToMap);
             var mappedList = mapItemToList(itemList, frontItemList);
             var frontItem = mappedList.FirstOrDefault();
-            if(!string.IsNullOrEmpty(frontItem.eanCode))
+            if (!string.IsNullOrEmpty(frontItem.eanCode))
             {
-                frontItem.omnibusPriceList = _omnibusHelper.GetOmnibusPrice(frontItem.eanCode);
-            }         
-            return frontItem; 
+                frontItem.omnibusPriceList = _omnibusHelper.GetOmnibusPrice(frontItem.eanCode).Where(x => x.ChangeTime>= DateTime.Now.AddDays(-31)).OrderBy(p=>p.PriceN).Take(1).ToList();
+            }
+            return frontItem;
         }
-        public IndexListVm GetItemsToIndex(int quantityItem) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
+        public List<FrontItemForList> GetItemsToIndex(int quantityItem, string tagName) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
         {
-            IndexListVm indexList = new IndexListVm();
+            //IndexListVm indexList = new IndexListVm();
 
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
             List<Item> itemList = new List<Item>();
             int doWhileCount = 0;
-            do
+            if (tagName == ("Nowość"))
+            {
+               itemList = _itemRepo.GetAllItems().OrderByDescending(i=>i.Created).Take(100).OrderBy(x=>Guid.NewGuid()).Take(quantityItem).ToList();
+            }
+            else
             {
                 if (quantityItem > 0)
                 {
                     doWhileCount = quantityItem;
-                    itemList = _itemRepo.GetAllItems().OrderBy(x => Guid.NewGuid()).Take(1).Where(i => i.IsActive == true && i.IsDeleted == false).ToList();
+                    var tagRecommended = _itemRepo.GetAllItemTags().FirstOrDefault(i => i.Name == (tagName));
+                    if (tagRecommended != null)
+                    {
+                        itemList = _itemRepo.GetItemsByTagId(tagRecommended.Id).Take(quantityItem).ToList();
+                    }
+                    else
+                    {
+                        itemList = _itemRepo.GetAllItems().OrderBy(x => Guid.NewGuid()).Take(quantityItem).Where(i => i.IsActive == true && i.IsDeleted == false).ToList();
+                    }
                 }
-                var mapedList = mapItemToList(itemList, frontItemForLists);
-                frontItemForLists.AddRange(mapedList);
-            } while (frontItemForLists.Count <= 7);
-            indexList.frontItemForLists = frontItemForLists;
-            return indexList;
+            }
+            var mapedList = mapItemToList(itemList, frontItemForLists);
+            frontItemForLists.AddRange(mapedList);
+
+            //indexList.frontItemForLists = frontItemForLists;
+            return frontItemForLists;
         }
         public IndexListVm GetItemsbyTag(string tag)
         {
@@ -80,7 +93,7 @@ namespace SimplyShopMVC.Application.Services
             listItem.tags = new List<ItemTagsForListVm>();
             List<Item> itemList = new List<Item>();
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
-           
+
             if (selectedTags > 0)
             {
                 itemList = _itemRepo.GetItemsByTagId(selectedTags).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem) && i.CategoryId == categoryId).OrderBy(i => i.Name).ToList();
@@ -101,8 +114,8 @@ namespace SimplyShopMVC.Application.Services
             var categoryTags = _categoryTagsRepo.GetAllCategoryTags().Where(i => i.CategoryId == categoryId).ToList();
             foreach (var tag in categoryTags)
             {
-                ItemTagsForListVm tagsForListVm= new ItemTagsForListVm();
-                var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));              
+                ItemTagsForListVm tagsForListVm = new ItemTagsForListVm();
+                var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));
                 listItem.tags.Add(itemTag);
             }
             return listItem;
