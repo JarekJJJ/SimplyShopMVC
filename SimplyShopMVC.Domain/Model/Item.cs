@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Domain.Model.Order;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -36,6 +37,7 @@ namespace SimplyShopMVC.Domain.Model
         public ICollection<ConnectItemTag> ConnectItemTags { get; set; }
         public virtual ICollection<ItemWarehouse> ItemWarehouses { get; set; }
         public virtual GroupItem GroupItem { get; set; }
+        public virtual ICollection<CartItems> CartItems { get; set; }
 
     }
 }

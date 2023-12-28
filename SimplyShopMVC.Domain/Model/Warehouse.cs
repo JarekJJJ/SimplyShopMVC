@@ -1,4 +1,5 @@
-﻿using SimplyShopMVC.Domain.Model.Suppliers;
+﻿using SimplyShopMVC.Domain.Model.Order;
+using SimplyShopMVC.Domain.Model.Suppliers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,6 @@ namespace SimplyShopMVC.Domain.Model
         public virtual ICollection<ItemWarehouse> ItemWarehouses { get; set; }
         public virtual ICollection<Incom> Incoms { get; set; }
         public virtual ICollection<OmnibusPrice> OmnibusPrices { get; set;}
-
+        public virtual ICollection<CartItems> CartItems { get; set; }
     }
 }

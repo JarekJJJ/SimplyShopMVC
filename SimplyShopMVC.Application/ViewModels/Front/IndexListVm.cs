@@ -10,5 +10,6 @@ namespace SimplyShopMVC.Application.ViewModels.Front
     {
         public List<FrontItemForList> frontItemForLists { get; set; }
         public List<FrontItemForList> frontItemNews { get; set; }
+        public string userId { get; set; }
     }
 }

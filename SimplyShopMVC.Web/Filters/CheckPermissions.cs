@@ -13,14 +13,14 @@ namespace SimplyShopMVC.Web.Filters
         }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-           bool isAuthorized = CeckUserPermission(context.HttpContext.User, _permission);
+           bool isAuthorized = CheckUserPermission(context.HttpContext.User, _permission);
             if (!isAuthorized)
             {
                 context.Result = new UnauthorizedResult();
             }         
         }
 
-        private bool CeckUserPermission(ClaimsPrincipal user, string permission)
+        private bool CheckUserPermission(ClaimsPrincipal user, string permission)
         {
             //połącz z bazą danych
             //pobierz użytkownika

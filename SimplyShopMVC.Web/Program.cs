@@ -18,7 +18,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Context>();
-//Tutaj trzeba powi�za� interfejsy z repository !!!
+//Tutaj trzeba powiązać interfejsy z repository !!!
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 

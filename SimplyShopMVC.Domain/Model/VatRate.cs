@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Domain.Model.Order;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,6 @@ namespace SimplyShopMVC.Domain.Model
         public int Value { get; set; }
 
         public virtual ICollection<ItemWarehouse> ItemWarehouses { get; set; }
-
+        public virtual ICollection<CartItems> CartItems { get; set; } 
     }
 }

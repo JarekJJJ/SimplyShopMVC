@@ -6,6 +6,7 @@ using System.Diagnostics;
 using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Front;
 using SimplyShopMVC.Application.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace SimplyShopMVC.Web.Controllers
 {
@@ -13,11 +14,13 @@ namespace SimplyShopMVC.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IFrontService _frontService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IFrontService frontService)
+        public HomeController(ILogger<HomeController> logger, IFrontService frontService, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _frontService = frontService;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -27,6 +30,8 @@ namespace SimplyShopMVC.Web.Controllers
            listItems.frontItemForLists = items;
             var itemsNews = _frontService.GetItemsToIndex(8, ("Nowość"));
             listItems.frontItemNews = itemsNews;
+            var iduser = _userManager.GetUserId(User);
+            listItems.userId = iduser; //test do usunięcia
             return View(listItems);
 
         }

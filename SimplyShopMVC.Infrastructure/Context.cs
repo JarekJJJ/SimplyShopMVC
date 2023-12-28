@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Domain.Model;
+using SimplyShopMVC.Domain.Model.Order;
 using SimplyShopMVC.Domain.Model.Suppliers;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<GroupItem> GroupItems { get; set; }
         public DbSet<OmnibusPrice> OmnibusPrices { get; set; }
         public DbSet<ConnectCategoryTag> ConnectCategoryTags { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItems> CartsItems { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }
