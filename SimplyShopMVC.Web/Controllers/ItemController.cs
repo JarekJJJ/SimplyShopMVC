@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Services;
 using SimplyShopMVC.Application.ViewModels.Front;
 using SimplyShopMVC.Domain.Interface;
@@ -9,20 +11,23 @@ namespace SimplyShopMVC.Web.Controllers
     {
         private readonly ILogger<ItemController> _logger;
         private readonly IFrontService _frontService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ItemController(ILogger<ItemController> logger, IFrontService frontService)
+        public ItemController(ILogger<ItemController> logger, IFrontService frontService, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _frontService = frontService;
+            _userManager = userManager;
         }
+        [Authorize]
         [HttpGet]
         public IActionResult Index(int? selectedCategory)
         {
-
+            var iduser = _userManager.GetUserId(User);
             var listCategories = new ListItemShopIndexVm();         
             if (selectedCategory != null && selectedCategory > 0)
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "",0);
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "",0, iduser);
                 var receivedCategories = _frontService.GetAllCategories();
                 listCategories.categories = receivedCategories.categories.ToList();
             }
@@ -38,6 +43,7 @@ namespace SimplyShopMVC.Web.Controllers
         public IActionResult Index(ListItemShopIndexVm result, int pageSize, int? pageNo, string searchItem, int? selectedCategory, int? selectedView, int selectedTag)
       // zrobić paginacje z aktywnym filtrem, oraz czyszczenie filtrów
         {
+            var iduser = _userManager.GetUserId(User);
             if (!pageNo.HasValue)
             {
                 pageNo = 1;
@@ -54,7 +60,7 @@ namespace SimplyShopMVC.Web.Controllers
             
             if (selectedCategory != null && selectedCategory > 0)
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem, selectedTag);
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem, selectedTag, iduser);
                 var receivedCategories = _frontService.GetAllCategories();
                 listCategories.categories = receivedCategories.categories.ToList();
             }

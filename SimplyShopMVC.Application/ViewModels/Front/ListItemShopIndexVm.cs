@@ -1,4 +1,5 @@
 ﻿using SimplyShopMVC.Application.ViewModels.Item;
+using SimplyShopMVC.Application.ViewModels.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,12 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public List<CategoryForListVm> categories { get; set; }
         public List<ItemTagsForListVm> tags { get; set; }
         public FrontItemForList itemToOrder { get; set; }
+        // koszyk i zamówienia:
+        public List<CartForListVm> cartsList { get; set; }
+        public List<CartItemsForListVm> cartsItemsList { get; set; }
+        public CartForListVm cart { get; set; }
+        public CartItemsForListVm cartItems { get; set; }
+        //pozostałe
         public int selectedCategory { get; set; }
         public int selectedTag { get; set; }
         public int selectedView { get; set; }

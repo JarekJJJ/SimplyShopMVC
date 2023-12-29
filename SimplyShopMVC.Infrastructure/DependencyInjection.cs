@@ -20,6 +20,7 @@ namespace SimplyShopMVC.Infrastructure
             services.AddTransient<IGroupItemRepository, GroupItemRepository>();
             services.AddTransient<IOmnibusPriceRepository, OmnibusPriceRepository>();
             services.AddTransient<ICategoryTagsRepository, CategoryTagsRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
         return services;
         }
          
