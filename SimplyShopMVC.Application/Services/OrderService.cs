@@ -16,18 +16,22 @@ namespace SimplyShopMVC.Application.Services
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IMapper _mapper;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper)
+        private readonly IItemRepository _itemRepo;
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository)
         {
             _orderRepo = orderRepository;
             _mapper = mapper;
+            _itemRepo = itemRepository;
         }
 
         public ListCartItemsForListVm AddToCart(CartItemsForListVm cartItem)
         {
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
-            if(cartItem != null || cartItem.CartId != 0)
+            var itemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(a => a.ItemId == cartItem.ItemId); 
+            if(cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0)
             {
                 var mappedCartItems = _mapper.Map<CartItems>(cartItem);
+                mappedCartItems.VatRateId = itemWare.VatRateId;
                 _orderRepo.AddCartItem(mappedCartItems);
                 listCartItems = GetCartWithCartItems(cartItem.CartId);
             }
@@ -43,7 +47,7 @@ namespace SimplyShopMVC.Application.Services
         {
             CartForListVm cart = new CartForListVm();
             ListCartItemsForListVm listCartItems= new ListCartItemsForListVm();
-            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId || a.IsDeleted == false || a.IsRealized == false || a.IsSaved == false);
+            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);
             if (actualCart != null)
             {
                 var mappedCart = _mapper.Map<CartForListVm>(actualCart);
@@ -73,7 +77,8 @@ namespace SimplyShopMVC.Application.Services
         {
             CartForListVm cart = new CartForListVm();
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
-            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.Id == cartId || a.IsDeleted == false || a.IsRealized == false || a.IsSaved == false);
+            List<CartForListVm> listCart = new List<CartForListVm>();
+            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.Id == cartId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);
             if (actualCart != null)
             {
                 var mappedCart = _mapper.Map<CartForListVm>(actualCart);
@@ -94,8 +99,9 @@ namespace SimplyShopMVC.Application.Services
             {
                 cartItemsForList.AddRange(cartItems);
             }
+            listCart.Add(cart);
             listCartItems.listCartItems = cartItemsForList;
-            listCartItems.listCart.Add(cart);
+            listCartItems.listCart = listCart;
             return listCartItems;
         }
 

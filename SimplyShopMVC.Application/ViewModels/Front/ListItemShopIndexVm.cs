@@ -22,7 +22,7 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public List<CartForListVm> cartsList { get; set; }
         public List<CartItemsForListVm> cartsItemsList { get; set; }
         public CartForListVm cart { get; set; }
-        public CartItemsForListVm cartItems { get; set; }
+        public CartItemsForListVm cartItem { get; set; }
         //pozostałe
         public int selectedCategory { get; set; }
         public int selectedTag { get; set; }

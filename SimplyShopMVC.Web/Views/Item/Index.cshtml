@@ -119,7 +119,7 @@
             @foreach (var sItem in Model.categoryItems)
             {
                 var mainImage = sItem.images.FirstOrDefault();
-                <form asp-action="Index" method="post">
+                <form asp-controller="Cart" asp-action="AddCartItem" method="post">
 
                     <div class="col-md-12 d-flex mt-2 bg-white">
                         <div class="text-center d-flex justify-content-center m-1 col-md-2">
@@ -160,10 +160,11 @@
 
                                 <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
                                 <input type="hidden" name="pageNo" value="@Model.currentPage" />
-                                <input type="hidden" id="@sItem.id" asp-for="@Model.itemToOrder.id" value="@sItem.id">
-                                <input type="hidden" id="prizeB_@sItem.id" asp-for="@Model.itemToOrder.priceB" value="@sItem.priceB">
-
-                                <input type="number" min="0" asp-for="itemToOrder.quantity" class="form-control p-1" name="itemToOrder.quantity" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
+                                <input type="hidden" id="@sItem.id" asp-for="@Model.cartItem.ItemId" value="@sItem.id">
+                                <input type="hidden" id="prizeB_@sItem.id" asp-for="@Model.cartItem.PriceN" value="@sItem.priceB"/>
+                                <input type="hidden" asp-for="cartItem.WarehouseId" value="@sItem.warehouseId"/>
+                                <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id">                              
+                                <input type="number" min="0" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
                                 <span class="input-group-text" id="inputGroup-sizing-lg">szt.</span>
                             </div>
                             <div class="mt-auto">

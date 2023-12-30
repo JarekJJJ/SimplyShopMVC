@@ -172,6 +172,7 @@ namespace SimplyShopMVC.Application.Services
                     indexItem.priceB = resultPriceB;
                     indexItem.quantity = indexItemWare.Quantity;
                     indexItem.deliveryTime = warehouseResoult.DeliveryTime;
+                    indexItem.warehouseId = warehouseResoult.Id;
                     var _pathImage = $"{_webHost.WebRootPath}\\media\\itemimg\\{item.ImageFolder}\\";
                     var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
                     var listImage = new List<PhotoItemVm>();
@@ -235,7 +236,7 @@ namespace SimplyShopMVC.Application.Services
         public CartForListVm GetCart(string userId)
         {
             CartForListVm cart = new CartForListVm();
-            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId || a.IsDeleted == false || a.IsRealized == false || a.IsSaved == false);        
+            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);        
             if (actualCart != null)
             {
                 var mappedCart = _mapper.Map<CartForListVm>(actualCart);
