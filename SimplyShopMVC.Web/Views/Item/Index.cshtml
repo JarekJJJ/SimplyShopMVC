@@ -161,6 +161,7 @@
                                 <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
                                 <input type="hidden" name="pageNo" value="@Model.currentPage" />
                                 <input type="hidden" id="@sItem.id" asp-for="@Model.cartItem.ItemId" value="@sItem.id">
+                                <input type="hidden" asp-for="cartItem.Name" value="@sItem.name"/>
                                 <input type="hidden" id="prizeB_@sItem.id" asp-for="@Model.cartItem.PriceN" value="@sItem.priceB"/>
                                 <input type="hidden" asp-for="cartItem.WarehouseId" value="@sItem.warehouseId"/>
                                 <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id">                              

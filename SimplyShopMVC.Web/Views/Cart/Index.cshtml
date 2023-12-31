@@ -1,0 +1,44 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Order.ListCartItemsForListVm
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Lp.</th>
+            <th>Nazwa towaru</th>
+            <th>ilość</th>
+            <th>cena brutto</th>
+            <th>wartość</th>
+            <th>edycja</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{int lp = 1;}
+@foreach (var item in Model.listCartItems) {
+            
+            <tr>
+            <td>@lp</td>
+            <td>@item.Name</td>
+            <td>@item.Quantity</td>
+            <td>@item.PriceN</td>
+            @{
+                var sumPrice = (decimal)item.PriceN * (decimal)item.Quantity;
+            }
+            <td>@sumPrice.ToString("N2")</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |               
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+        lp++;
+}
+    </tbody>
+</table>

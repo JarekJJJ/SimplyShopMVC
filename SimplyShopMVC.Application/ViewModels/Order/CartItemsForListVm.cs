@@ -16,6 +16,7 @@ namespace SimplyShopMVC.Application.ViewModels.Order
         public int Id { get; set; }
         public int CartId { get; set; }
         public int ItemId { get; set; }
+        public string Name { get; set; }
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal PriceN { get; set; }

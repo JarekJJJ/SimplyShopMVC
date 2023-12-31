@@ -47,6 +47,7 @@ namespace SimplyShopMVC.Application.Services
         {
             CartForListVm cart = new CartForListVm();
             ListCartItemsForListVm listCartItems= new ListCartItemsForListVm();
+            List<CartForListVm> listCart = new List<CartForListVm>();
             var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);
             if (actualCart != null)
             {
@@ -68,8 +69,9 @@ namespace SimplyShopMVC.Application.Services
             {
                 cartItemsForList.AddRange(cartItems);
             }
+            listCart.Add(cart);
             listCartItems.listCartItems = cartItemsForList;
-            listCartItems.listCart.Add(cart);
+            listCartItems.listCart = listCart;
             return listCartItems;
         }
 
