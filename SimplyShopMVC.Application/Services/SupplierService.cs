@@ -19,6 +19,7 @@ using System.Xml;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using SimplyShopMVC.Domain.Model;
+using System.Net.Mail;
 
 namespace SimplyShopMVC.Application.Services
 {

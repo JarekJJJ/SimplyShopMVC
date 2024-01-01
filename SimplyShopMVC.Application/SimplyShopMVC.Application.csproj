@@ -12,10 +12,12 @@
     <PackageReference Include="FluentValidation" Version="11.7.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
+    <PackageReference Include="itext7" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SimplyShopMVC.Domain\SimplyShopMVC.Domain.csproj" />
+    <ProjectReference Include="..\SimplyShopMVC.Infrastructure\SimplyShopMVC.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

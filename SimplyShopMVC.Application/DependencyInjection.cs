@@ -33,6 +33,7 @@ namespace SimplyShopMVC.Application
             services.AddTransient<IFrontService, FrontService>();
             services.AddTransient<IOmnibusHelper, OmnibusHelper>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IEmailService, EmailService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }

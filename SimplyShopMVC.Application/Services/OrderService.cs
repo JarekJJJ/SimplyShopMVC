@@ -38,9 +38,15 @@ namespace SimplyShopMVC.Application.Services
            return listCartItems;
         }
 
-        public ListCartItemsForListVm DeleteCartItemFromCart(CartItemsForListVm cartItems)
+        public ListCartItemsForListVm DeleteCartItemFromCart(int cartItemId, int cartId)
         {
-            throw new NotImplementedException();
+            if(cartItemId != 0 && cartId != 0)
+            {
+                _orderRepo.DeleteCartItem(cartItemId);
+            }
+            ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
+            listCartItems = GetCartWithCartItems(cartId);
+            return listCartItems;
         }
 
         public ListCartItemsForListVm GetCartWithCartItems(string userId)
@@ -115,6 +121,22 @@ namespace SimplyShopMVC.Application.Services
         public ListCartItemsForListVm SaveCartWithCartItems(ListCartItemsForListVm listCartItems)
         {
             throw new NotImplementedException();
+        }
+
+        public ListCartItemsForListVm UpdateCartItem(int cartItemId, int quantity, int cartId)
+        {
+            if(quantity <= 0)
+            {
+                quantity= 1;
+            }
+            var resultCartItem = _orderRepo.GetAllCartItems().FirstOrDefault(a => a.Id == cartItemId);
+            if (resultCartItem != null)
+            {
+                resultCartItem.Quantity= quantity;
+                _orderRepo.UpdateCartItem(resultCartItem);
+            }
+            var refreshCart = GetCartWithCartItems(cartId);
+            return refreshCart;
         }
     }
 }
