@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Domain.Model;
 using SimplyShopMVC.Domain.Model.Order;
 using SimplyShopMVC.Domain.Model.Suppliers;
+using SimplyShopMVC.Domain.Model.users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,9 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<ConnectCategoryTag> ConnectCategoryTags { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItems> CartsItems { get; set; }
+        public DbSet<Orders> Orders { get; set; }
+        public DbSet<OrderItems> OrderItems { get; set; }
+        public DbSet<UserDetail> UserDetails { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }

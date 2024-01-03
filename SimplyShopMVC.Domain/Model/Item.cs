@@ -38,6 +38,7 @@ namespace SimplyShopMVC.Domain.Model
         public virtual ICollection<ItemWarehouse> ItemWarehouses { get; set; }
         public virtual GroupItem GroupItem { get; set; }
         public virtual ICollection<CartItems> CartItems { get; set; }
+        public ICollection<OrderItems> OrderItems { get; set; }
 
     }
 }

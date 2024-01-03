@@ -1,12 +1,14 @@
-﻿using System;
+﻿using AutoMapper;
+using SimplyShopMVC.Application.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimplyShopMVC.Domain.Model.Order
+namespace SimplyShopMVC.Application.ViewModels.Order
 {
-    public class Orders
+    public class OrderForListVm: IMapFrom<SimplyShopMVC.Domain.Model.Order.Orders>
     {
         public int Id { get; set; }
         public string UserId { get; set; }
@@ -14,6 +16,9 @@ namespace SimplyShopMVC.Domain.Model.Order
         public string PaymentMethod { get; set; }
         public string DocumentType { get; set; }
         public string ShipingDescription { get; set; }
-        public ICollection<OrderItems> OrderItems { get; set; }
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<OrderForListVm, SimplyShopMVC.Domain.Model.Order.Orders>().ReverseMap();
+        }
     }
 }

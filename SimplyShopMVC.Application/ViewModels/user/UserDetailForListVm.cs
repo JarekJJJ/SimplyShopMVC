@@ -1,12 +1,14 @@
-﻿using System;
+﻿using AutoMapper;
+using SimplyShopMVC.Application.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimplyShopMVC.Domain.Model.users
+namespace SimplyShopMVC.Application.ViewModels.user
 {
-    public class UserDetail
+    public class UserDetailForListVm: IMapFrom<SimplyShopMVC.Domain.Model.users.UserDetail>
     {
         public int Id { get; set; }
         public string UserId { get; set; }
@@ -20,5 +22,9 @@ namespace SimplyShopMVC.Domain.Model.users
         public string? PostalCode { get; set; }
         public string? Country { get; set; }
         public string? Street { get; set; }
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<UserDetailForListVm, SimplyShopMVC.Domain.Model.users.UserDetail>().ReverseMap();
+        }
     }
 }
