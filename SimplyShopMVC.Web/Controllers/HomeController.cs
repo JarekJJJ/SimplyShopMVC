@@ -7,6 +7,7 @@ using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Front;
 using SimplyShopMVC.Application.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace SimplyShopMVC.Web.Controllers
 {
@@ -15,12 +16,14 @@ namespace SimplyShopMVC.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IFrontService _frontService;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IEmailService _emailService;
 
-        public HomeController(ILogger<HomeController> logger, IFrontService frontService, UserManager<IdentityUser> userManager)
+        public HomeController(ILogger<HomeController> logger, IFrontService frontService, UserManager<IdentityUser> userManager, IEmailService emailService)
         {
             _logger = logger;
             _frontService = frontService;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         public IActionResult Index()

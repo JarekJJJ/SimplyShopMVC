@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Infrastructure.Repositories;
 using System;
@@ -21,8 +22,10 @@ namespace SimplyShopMVC.Infrastructure
             services.AddTransient<IOmnibusPriceRepository, OmnibusPriceRepository>();
             services.AddTransient<ICategoryTagsRepository, CategoryTagsRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
-        return services;
+            //services.AddTransient<IEmailConfiguration, EmailConfiguration>();
+            return services;
         }
-         
+
+
     }
 }

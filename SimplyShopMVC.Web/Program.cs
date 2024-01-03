@@ -7,15 +7,18 @@ using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Infrastructure;
 using SimplyShopMVC.Infrastructure.Repositories;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+var emailConfiguration = new EmailConfiguration();
+builder.Configuration.GetSection("EmailSettings").Bind(emailConfiguration);
+builder.Services.AddSingleton<IEmailConfiguration>(emailConfiguration);
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Context>();
 //Tutaj trzeba powiązać interfejsy z repository !!!
