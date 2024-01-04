@@ -30,6 +30,20 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             return cartItem.Id;
         }
 
+        public int AddOrderItems(OrderItems ordersItems)
+        {
+            _context.OrderItems.Add(ordersItems);
+            _context.SaveChanges();
+            return ordersItems.Id;
+        }
+
+        public int AddOrders(Orders orders)
+        {
+           _context.Orders.Add(orders);
+            _context.SaveChanges();
+            return orders.Id;
+        }
+
         public void DeleteCart(int cartId)
         {
             var cartToRemove = _context.Carts.Find(cartId);
@@ -50,6 +64,26 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             }
         }
 
+        public void DeleteOrderItems(int orderItemId)
+        {
+            var orderItemToRemove = _context.OrderItems.Find(orderItemId);
+            if (orderItemToRemove != null)
+            {
+                _context.OrderItems.Remove(orderItemToRemove);
+                _context.SaveChanges();
+            }
+        }
+
+        public void DeleteOrders(int orderId)
+        {
+            var ordersToRemove = _context.Orders.Find(orderId);
+            if(ordersToRemove!=null)
+            {
+                _context.Orders.Remove(ordersToRemove);
+                _context.SaveChanges();
+            }
+        }
+
         public IQueryable<CartItems> GetAllCartItems()
         {
             var cartItems = _context.CartsItems;
@@ -62,6 +96,18 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             return carts;
         }
 
+        public IQueryable<OrderItems> GetAllOrderItems()
+        {
+            var orderItems = _context.OrderItems;
+            return orderItems;
+        }
+
+        public IQueryable<Orders> GetAllOrders()
+        {
+            var orders = _context.Orders;
+            return orders;
+        }
+
         public void UpdateCart(Cart cart)
         {
             _context.Carts.Update(cart);
@@ -71,6 +117,18 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         public void UpdateCartItem(CartItems cartItem)
         {
             _context.CartsItems.Update(cartItem);
+            _context.SaveChanges();
+        }
+
+        public void UpdateOrderItems(OrderItems ordersItems)
+        {
+           _context.OrderItems.Update(ordersItems);
+            _context.SaveChanges();
+        }
+
+        public void UpdateOrders(Orders orders)
+        {
+            _context.Orders.Update(orders);
             _context.SaveChanges();
         }
     }

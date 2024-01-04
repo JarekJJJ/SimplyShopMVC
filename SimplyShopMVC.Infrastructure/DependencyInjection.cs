@@ -22,7 +22,7 @@ namespace SimplyShopMVC.Infrastructure
             services.AddTransient<IOmnibusPriceRepository, OmnibusPriceRepository>();
             services.AddTransient<ICategoryTagsRepository, CategoryTagsRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
-            //services.AddTransient<IEmailConfiguration, EmailConfiguration>();
+            services.AddTransient<IUserRepository, UserRepository>();
             return services;
         }
 

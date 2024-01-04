@@ -16,7 +16,7 @@ namespace SimplyShopMVC.Application.Interfaces
         ListCartItemsForListVm DeleteCartItemFromCart(int cartItemId, int cartId);
         ListCartItemsForListVm OrderCartItemsFromCart(ListCartItemsForListVm listCartItems);
         ListCartItemsForListVm SaveCartWithCartItems(ListCartItemsForListVm listCartItems);
-        OrderFromCartVm SendOrderFromCart(OrderFromCartVm orderFromCartVm); 
+        OrderFromCartVm SendOrderFromCart(ListCartItemsForListVm listCartItems); 
         
 
     }

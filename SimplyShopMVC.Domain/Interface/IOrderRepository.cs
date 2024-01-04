@@ -17,6 +17,16 @@ namespace SimplyShopMVC.Domain.Interface
         IQueryable<CartItems> GetAllCartItems();
         void UpdateCartItem(CartItems cartItem);
         void DeleteCartItem(int cartItemId);
+        int AddOrders(Orders orders);
+        void UpdateOrders(Orders orders);
+        void DeleteOrders(int orderId);
+        IQueryable<Orders> GetAllOrders();
+        int AddOrderItems(OrderItems ordersItems);
+        void UpdateOrderItems(OrderItems ordersItems);
+        void DeleteOrderItems(int orderItemId);
+        IQueryable<OrderItems> GetAllOrderItems();
+
+
 
     }
 }

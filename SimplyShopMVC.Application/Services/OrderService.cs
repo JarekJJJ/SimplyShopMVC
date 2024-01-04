@@ -123,6 +123,14 @@ namespace SimplyShopMVC.Application.Services
             throw new NotImplementedException();
         }
 
+        public OrderFromCartVm SendOrderFromCart(ListCartItemsForListVm listCartItems)
+        {
+            OrderFromCartVm orderFromCart = new OrderFromCartVm();
+            orderFromCart.cartItems = listCartItems.listCartItems;
+            var userFromCart = listCartItems.listCart.FirstOrDefault();
+            return orderFromCart;
+        }
+
         public ListCartItemsForListVm UpdateCartItem(int cartItemId, int quantity, int cartId)
         {
             if(quantity <= 0)
