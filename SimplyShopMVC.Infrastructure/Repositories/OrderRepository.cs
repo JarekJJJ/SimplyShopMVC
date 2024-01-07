@@ -32,7 +32,9 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public int AddOrderItems(OrderItems ordersItems)
         {          
-            _context.OrderItems.Add(ordersItems);
+            OrderItems newOrderItems = new OrderItems();
+            newOrderItems = ordersItems;
+            _context.OrderItems.Add(newOrderItems);
             _context.SaveChanges();
             return ordersItems.Id;
         }

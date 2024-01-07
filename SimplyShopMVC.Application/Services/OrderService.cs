@@ -161,30 +161,36 @@ namespace SimplyShopMVC.Application.Services
             var refreshCart = GetCartWithCartItems(cartId);
             return refreshCart;
         }
-        public OrderFromCartVm FinishOrder(OrderFromCartVm orderForList)
+        public int AddOrder(OrderFromCartVm result)
+        {
+            if (String.IsNullOrEmpty(result.orderForList.ShipingDescription))
+            {
+                result.orderForList.ShipingDescription = "brak";
+            }
+            var mappedOrder = _mapper.Map<Orders>(result.orderForList);
+            var _orderId = _orderRepo.AddOrders(mappedOrder);
+            return _orderId;
+        }
+        public OrderFromCartVm FinishOrder(OrderFromCartVm orderForList, int _orderId)
         {
             OrderFromCartVm newOrder = new OrderFromCartVm();
-            if (String.IsNullOrEmpty(orderForList.orderForList.ShipingDescription))
-            {
-                orderForList.orderForList.ShipingDescription = "brak";
-            }
-            var mappedOrder = _mapper.Map<Orders>(orderForList.orderForList);
-            var _orderId = _orderRepo.AddOrders(mappedOrder);
+            newOrder.orderItems = new List<OrderItemsForListVm>();
+           
             _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(orderForList.userDetail));
             var listCartItem = _orderRepo.GetAllCartItems().Where(c => c.CartId == orderForList.cartIdToOrder)
                 .ProjectTo<CartItemsForListVm>(_mapper.ConfigurationProvider).ToList();
             foreach (var cartItem in listCartItem)
             {
-                int idToOrder = _orderId;
                 OrderItemsForListVm orderItem = new OrderItemsForListVm();
-                orderItem.OrderId = idToOrder;
+                orderItem.OrdersId = _orderId;
                 orderItem.ItemId = cartItem.ItemId;
                 orderItem.Quantity= cartItem.Quantity;
                 orderItem.VatRateId= cartItem.VatRateId;
                 orderItem.Name= cartItem.Name;
                 orderItem.PriceB = cartItem.PriceN; //pomyłka w nazwie PrizeN to cena brutto
                 orderItem.WarehouseId= cartItem.WarehouseId;
-                var orderItemId = _orderRepo.AddOrderItems(_mapper.Map<OrderItems>(orderItem));
+                var mappedOrderItems = _mapper.Map<OrderItems>(orderItem);
+                var orderItemId = _orderRepo.AddOrderItems(mappedOrderItems);
                 orderItem.Id= orderItemId;
                 newOrder.orderItems.Add(orderItem);              
             }

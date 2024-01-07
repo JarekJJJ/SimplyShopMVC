@@ -10,7 +10,7 @@ namespace SimplyShopMVC.Domain.Model.Order
     public class OrderItems
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
+        public int OrdersId { get; set; }
         public int ItemId { get; set; }
         public string Name { get; set; }
         public int Quantity { get; set; }
@@ -19,7 +19,7 @@ namespace SimplyShopMVC.Domain.Model.Order
         public int VatRateId { get; set; }
         public int WarehouseId { get; set; }
 
-        public virtual Orders Orders { get; set; }
+        public virtual Orders? Orders { get; set; }
         public virtual Item Item { get; set; }
         public virtual VatRate VatRate { get; set; }
         public virtual Warehouse Warehouse { get; set; }

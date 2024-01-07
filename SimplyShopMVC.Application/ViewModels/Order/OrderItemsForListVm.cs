@@ -13,7 +13,7 @@ namespace SimplyShopMVC.Application.ViewModels.Order
     public class OrderItemsForListVm: IMapFrom<SimplyShopMVC.Domain.Model.Order.OrderItems>
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
+        public int OrdersId { get; set; }
         public int ItemId { get; set; }
         public string Name { get; set; }
         public int Quantity { get; set; }

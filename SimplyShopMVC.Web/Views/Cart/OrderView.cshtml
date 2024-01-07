@@ -133,7 +133,7 @@
                 <textarea class="col-md-12" asp-for="orderForList.ShipingDescription" rows="3"></textarea>
             </div>
         </div>
-        <input type="hidden" asp-for="orderForList.NumberOrders" value="orderForList.NumberOrders" />
+        <input type="hidden" asp-for="orderForList.NumberOrders" value="@Model.orderForList.NumberOrders" />
         <input type="hidden" asp-for="orderForList.UserId" value="@Model.userDetail.UserId" />
         <input type="hidden" asp-for="userDetail.UserId" value="@Model.userDetail.UserId" />
         <input type="hidden" asp-for="userDetail.Id" value="@Model.userDetail.Id" />

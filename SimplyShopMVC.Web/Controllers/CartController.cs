@@ -78,7 +78,8 @@ namespace SimplyShopMVC.Web.Controllers
         [Authorize]
         public IActionResult finishOrder(OrderFromCartVm _orderForList)
         {
-            var orderFinished = _orderService.FinishOrder(_orderForList);
+            var newOrderId = _orderService.AddOrder(_orderForList);
+            var orderFinished = _orderService.FinishOrder(_orderForList,newOrderId);
 
 
             return View();

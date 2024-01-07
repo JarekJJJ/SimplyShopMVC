@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240107222109_editOrders2")]
+    partial class editOrders2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1090,7 +1092,7 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("SimplyShopMVC.Domain.Model.Order.Orders", "Orders")
-                        .WithMany("OrderItemss")
+                        .WithMany("OrderItems")
                         .HasForeignKey("OrdersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1174,7 +1176,7 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.Order.Orders", b =>
                 {
-                    b.Navigation("OrderItemss");
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.VatRate", b =>
