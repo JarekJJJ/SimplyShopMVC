@@ -10,5 +10,6 @@ namespace SimplyShopMVC.Application.ViewModels.Order
     {
         public List<CartForListVm> listCart { get; set; }
         public List<CartItemsForListVm> listCartItems { get; set; }
+        public CartForListVm cart { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         }
 
         public int AddOrderItems(OrderItems ordersItems)
-        {
+        {          
             _context.OrderItems.Add(ordersItems);
             _context.SaveChanges();
             return ordersItems.Id;

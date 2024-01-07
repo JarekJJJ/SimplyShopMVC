@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using SimplyShopMVC.Application.Helpers;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Order;
+using SimplyShopMVC.Application.ViewModels.user;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model.Order;
+using SimplyShopMVC.Domain.Model.users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,44 +18,48 @@ namespace SimplyShopMVC.Application.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepo;
+        private readonly IUserRepository _userRepo;
         private readonly IMapper _mapper;
         private readonly IItemRepository _itemRepo;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository)
+        private readonly IEmailService _sendEmail;
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail)
         {
             _orderRepo = orderRepository;
             _mapper = mapper;
             _itemRepo = itemRepository;
+            _userRepo = userRepository;
+            _sendEmail = sendEmail;
         }
 
         public ListCartItemsForListVm AddToCart(CartItemsForListVm cartItem)
         {
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
-            var itemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(a => a.ItemId == cartItem.ItemId); 
-            if(cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0)
+            var itemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(a => a.ItemId == cartItem.ItemId);
+            if (cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0)
             {
                 var mappedCartItems = _mapper.Map<CartItems>(cartItem);
                 mappedCartItems.VatRateId = itemWare.VatRateId;
                 _orderRepo.AddCartItem(mappedCartItems);
                 listCartItems = GetCartWithCartItems(cartItem.CartId);
             }
-           return listCartItems;
+            return listCartItems;
         }
 
         public ListCartItemsForListVm DeleteCartItemFromCart(int cartItemId, int cartId)
         {
-            if(cartItemId != 0 && cartId != 0)
+            if (cartItemId != 0 && cartId != 0)
             {
                 _orderRepo.DeleteCartItem(cartItemId);
             }
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
             listCartItems = GetCartWithCartItems(cartId);
             return listCartItems;
-        }
+        }       
 
         public ListCartItemsForListVm GetCartWithCartItems(string userId)
         {
             CartForListVm cart = new CartForListVm();
-            ListCartItemsForListVm listCartItems= new ListCartItemsForListVm();
+            ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
             List<CartForListVm> listCart = new List<CartForListVm>();
             var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);
             if (actualCart != null)
@@ -92,14 +99,6 @@ namespace SimplyShopMVC.Application.Services
                 var mappedCart = _mapper.Map<CartForListVm>(actualCart);
                 cart = mappedCart;
             }
-            //else
-            //{
-            //    cart.userId = userId;
-            //    var mappedCart = _mapper.Map<Cart>(cart);
-            //    var cartId = _orderRepo.AddCart(mappedCart);
-            //    var getCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.Id == cartId);
-            //    cart = _mapper.Map<CartForListVm>(getCart);
-            //}
             List<CartItemsForListVm> cartItemsForList = new List<CartItemsForListVm>();
             var cartItems = _orderRepo.GetAllCartItems().Where(a => a.CartId == cart.Id)
                 .ProjectTo<CartItemsForListVm>(_mapper.ConfigurationProvider).ToList();
@@ -127,24 +126,81 @@ namespace SimplyShopMVC.Application.Services
         {
             OrderFromCartVm orderFromCart = new OrderFromCartVm();
             orderFromCart.cartItems = listCartItems.listCartItems;
+            orderFromCart.orderForList = new OrderForListVm();
             var userFromCart = listCartItems.listCart.FirstOrDefault();
+            var userDetail = _userRepo.GetAllUsers().FirstOrDefault(a => a.UserId == userFromCart.userId);
+
+            if (userDetail == null)
+            {
+                UserDetail newUserDetail = new UserDetail();
+                newUserDetail.UserId = userFromCart.userId;
+                _userRepo.AddUserDetail(newUserDetail);
+                orderFromCart.userDetail = _mapper.Map<UserDetailForListVm>(newUserDetail);
+            }
+            else
+            {
+                orderFromCart.userDetail = _mapper.Map<UserDetailForListVm>(userDetail);
+            }
+            var orderToView = _orderRepo.GetAllOrders().Where(o => o.UserId == userDetail.UserId).Count();
+            orderFromCart.orderForList.NumberOrders = ($"{orderToView + 1}/{userDetail.Id}/{DateTime.Now.Year}");
             return orderFromCart;
         }
 
         public ListCartItemsForListVm UpdateCartItem(int cartItemId, int quantity, int cartId)
         {
-            if(quantity <= 0)
+            if (quantity <= 0)
             {
-                quantity= 1;
+                quantity = 1;
             }
             var resultCartItem = _orderRepo.GetAllCartItems().FirstOrDefault(a => a.Id == cartItemId);
             if (resultCartItem != null)
             {
-                resultCartItem.Quantity= quantity;
+                resultCartItem.Quantity = quantity;
                 _orderRepo.UpdateCartItem(resultCartItem);
             }
             var refreshCart = GetCartWithCartItems(cartId);
             return refreshCart;
+        }
+        public OrderFromCartVm FinishOrder(OrderFromCartVm orderForList)
+        {
+            OrderFromCartVm newOrder = new OrderFromCartVm();
+            if (String.IsNullOrEmpty(orderForList.orderForList.ShipingDescription))
+            {
+                orderForList.orderForList.ShipingDescription = "brak";
+            }
+            var mappedOrder = _mapper.Map<Orders>(orderForList.orderForList);
+            var _orderId = _orderRepo.AddOrders(mappedOrder);
+            _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(orderForList.userDetail));
+            var listCartItem = _orderRepo.GetAllCartItems().Where(c => c.CartId == orderForList.cartIdToOrder)
+                .ProjectTo<CartItemsForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach (var cartItem in listCartItem)
+            {
+                int idToOrder = _orderId;
+                OrderItemsForListVm orderItem = new OrderItemsForListVm();
+                orderItem.OrderId = idToOrder;
+                orderItem.ItemId = cartItem.ItemId;
+                orderItem.Quantity= cartItem.Quantity;
+                orderItem.VatRateId= cartItem.VatRateId;
+                orderItem.Name= cartItem.Name;
+                orderItem.PriceB = cartItem.PriceN; //pomyłka w nazwie PrizeN to cena brutto
+                orderItem.WarehouseId= cartItem.WarehouseId;
+                var orderItemId = _orderRepo.AddOrderItems(_mapper.Map<OrderItems>(orderItem));
+                orderItem.Id= orderItemId;
+                newOrder.orderItems.Add(orderItem);              
+            }
+            newOrder.userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == orderForList.userDetail.UserId));
+            var cartToUpdate = _orderRepo.GetAllCarts().FirstOrDefault(c=>c.Id==orderForList.cartIdToOrder);
+           if(cartToUpdate != null)
+            {
+                cartToUpdate.RealizedDate = DateTime.Now;
+                cartToUpdate.IsRealized = true;
+                cartToUpdate.IsDeleted = true;
+                _orderRepo.UpdateCart(cartToUpdate);
+            }
+           var orderPdf = GeneratePdf.GenertateOrderPdf(orderForList);
+            _sendEmail.SendEmail($"{orderForList.userDetail.EmailAddress}","test",$"Złożono zamówienie nr: {orderForList.orderForList.NumberOrders}",orderPdf);
+ 
+            return newOrder;
         }
     }
 }

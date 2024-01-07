@@ -62,9 +62,26 @@ namespace SimplyShopMVC.Web.Controllers
             _orderService.UpdateCartItem(cartItemId, quantity, cartId);
             return RedirectToAction("Index");
         }
-        public IActionResult OrderCart()
+        [HttpPost]
+        public IActionResult SaveCart (CartForListVm cart) // Funkcja zapsywania koszyków do dodania w przyszłości.
         {
             return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public IActionResult OrderView(int cartId)
+        {
+            var cartWithItems = _orderService.GetCartWithCartItems(cartId);
+            var orderItems = _orderService.SendOrderFromCart(cartWithItems);
+            return View(orderItems);
+        }
+        [HttpPost]
+        [Authorize]
+        public IActionResult finishOrder(OrderFromCartVm _orderForList)
+        {
+            var orderFinished = _orderService.FinishOrder(_orderForList);
+
+
+            return View();
         }
     }
 }

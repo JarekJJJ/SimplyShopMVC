@@ -9,5 +9,7 @@ namespace SimplyShopMVC.Application.Interfaces
     public interface IEmailService
     {
         void SendEmail(string to, string subject, string body, List<string>? attachments);
+        void SendEmail(string to, string subject, string body, byte[] attachments);
+        void SendEmail(string to, string subject, string body);
     }
 }

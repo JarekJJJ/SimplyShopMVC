@@ -53,5 +53,46 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
         }
+        public void SendEmail(string to, string subject, string body, byte[] pdfDocument)
+        {
+            using (SmtpClient smtpClient = new SmtpClient(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort))
+            {
+                smtpClient.Credentials = new NetworkCredential(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+                smtpClient.EnableSsl = _emailConfiguration.EnableSsl;
+
+                using (MailMessage mailMessage = new MailMessage())
+                {
+                    mailMessage.From = new MailAddress(_emailConfiguration.SmtpUsername);
+                    mailMessage.To.Add(to);
+                    mailMessage.Subject = subject;
+                    mailMessage.Body = body;
+                    mailMessage.IsBodyHtml = true; // Ustaw to na false, jeśli treść wiadomości ma być zwykłym tekstem
+
+                    // Dodaj załącznik
+                    MemoryStream stream = new MemoryStream(pdfDocument);
+                    Attachment attachment = new Attachment(stream, "GeneratedFile.pdf", MediaTypeNames.Application.Pdf);
+                    mailMessage.Attachments.Add(attachment);
+                    smtpClient.Send(mailMessage);
+                }
+            }
+        }
+        public void SendEmail(string to, string subject, string body)
+        {
+            using (SmtpClient smtpClient = new SmtpClient(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort))
+            {
+                smtpClient.Credentials = new NetworkCredential(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+                smtpClient.EnableSsl = _emailConfiguration.EnableSsl;
+
+                using (MailMessage mailMessage = new MailMessage())
+                {
+                    mailMessage.From = new MailAddress(_emailConfiguration.SmtpUsername);
+                    mailMessage.To.Add(to);
+                    mailMessage.Subject = subject;
+                    mailMessage.Body = body;
+                    mailMessage.IsBodyHtml = true; // Ustaw to na false, jeśli treść wiadomości ma być zwykłym tekstem               
+                    smtpClient.Send(mailMessage);
+                }
+            }
+        }
     }
 }

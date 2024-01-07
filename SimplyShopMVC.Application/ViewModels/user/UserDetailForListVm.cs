@@ -12,8 +12,9 @@ namespace SimplyShopMVC.Application.ViewModels.user
     {
         public int Id { get; set; }
         public string UserId { get; set; }
-        public bool IsClientBusiness { get; set; }
-        public string ContactPerson { get; set; }
+        public string? FullName { get; set; }
+        public bool? IsClientBusiness { get; set; }
+        public string? ContactPerson { get; set; }
         public string? NIP { get; set; }
         public string? EmailAddress { get; set; }
         public string? PhoneNumber { get; set; }
