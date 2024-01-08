@@ -19,6 +19,7 @@ namespace SimplyShopMVC.Application.Interfaces
         OrderFromCartVm SendOrderFromCart(ListCartItemsForListVm listCartItems);
         OrderFromCartVm FinishOrder(OrderFromCartVm orderForList, int _orderId);
         int AddOrder(OrderFromCartVm result);
+        OrderForUserListVm GetOrdersByUserId(string userId);
 
     }
 }

@@ -1,0 +1,17 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Order.OrderForUserListVm
+<div class="col-md-12 pt-2 text-center">
+    <span class="fs-3">Lista zamówień:</span>
+</div>
+<div class="col-md-12">
+    <table class="table table-striped">
+        @foreach(var order in Model.listUserOrders)
+        {
+            <tr>
+                <td>@order.NumberOrders</td>
+                <td>@order.CreatedDate.ToString("yy-MM-dd HH:mm")</td>
+                <td>@(order.IsAccepted==true ? Html.Raw("Zaakceptowane"): Html.Raw("Nie"))</td>
+                <td><span class="">@Html.ActionLink("Pobierz pdf","GetPdfDocument", new {selectedOrder=order.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span></td>
+            </tr>
+        }
+    </table>
+</div>

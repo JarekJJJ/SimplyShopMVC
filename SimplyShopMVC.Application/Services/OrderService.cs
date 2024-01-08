@@ -208,5 +208,15 @@ namespace SimplyShopMVC.Application.Services
  
             return newOrder;
         }
+        public OrderForUserListVm GetOrdersByUserId(string userId)
+        {
+            OrderForUserListVm orderForUserList = new OrderForUserListVm();
+            orderForUserList.listUserOrders = new List<OrderForListVm>();
+            var repoUserOrders = _orderRepo.GetAllOrders().Where(r => r.UserId == userId)
+                .ProjectTo<OrderForListVm>(_mapper.ConfigurationProvider).ToList();
+            orderForUserList.listUserOrders.AddRange(repoUserOrders);
+
+            return orderForUserList;
+        }
     }
 }

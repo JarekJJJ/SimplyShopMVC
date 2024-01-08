@@ -82,7 +82,14 @@ namespace SimplyShopMVC.Web.Controllers
             var orderFinished = _orderService.FinishOrder(_orderForList,newOrderId);
 
 
-            return View();
+            return RedirectToAction("Index");
         }
+        [HttpGet,Authorize]
+        public IActionResult listOrderForUser()
+        {
+            var userId = _userManager.GetUserId(User);
+            var userOrder = _orderService.GetOrdersByUserId(userId);
+            return View(userOrder);
+        } // Do zrobienia akcja z pobieraniem pdf nazwa akcji "GetPdfDocument"
     }
 }
