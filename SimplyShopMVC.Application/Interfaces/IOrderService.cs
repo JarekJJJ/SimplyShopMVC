@@ -20,6 +20,7 @@ namespace SimplyShopMVC.Application.Interfaces
         OrderFromCartVm FinishOrder(OrderFromCartVm orderForList, int _orderId);
         int AddOrder(OrderFromCartVm result);
         OrderForUserListVm GetOrdersByUserId(string userId);
+        byte[] GetPdfDocumentFromService(int _orderId);
 
     }
 }

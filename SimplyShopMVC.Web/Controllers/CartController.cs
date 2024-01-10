@@ -90,6 +90,14 @@ namespace SimplyShopMVC.Web.Controllers
             var userId = _userManager.GetUserId(User);
             var userOrder = _orderService.GetOrdersByUserId(userId);
             return View(userOrder);
-        } // Do zrobienia akcja z pobieraniem pdf nazwa akcji "GetPdfDocument"
+        }
+        // Do zrobienia akcja z pobieraniem pdf nazwa akcji "GetPdfDocument"
+        [HttpPost,Authorize]
+        public IActionResult GetPdfDocument(int orderId)
+        {
+            var orderPdf = _orderService.GetPdfDocumentFromService(orderId);
+            return File(orderPdf, "application/pdf", $"zamowienie_{orderId}.pdf");
+        }
     }
+
 }

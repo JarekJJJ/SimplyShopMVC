@@ -218,5 +218,18 @@ namespace SimplyShopMVC.Application.Services
 
             return orderForUserList;
         }
+
+        public byte[] GetPdfDocumentFromService(int _orderId)
+        {
+            OrderFromCartVm orderFromCart = new OrderFromCartVm();
+            var orderToPdf = _mapper.Map<OrderForListVm>(_orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == _orderId));
+                 
+            var orderItemsToPdf = _orderRepo.GetAllOrderItems().Where(i=>i.OrdersId== _orderId)
+                .ProjectTo<OrderItemsForListVm>(_mapper.ConfigurationProvider).ToList();
+            orderFromCart.orderForList = orderToPdf;
+            orderFromCart.orderItems = orderItemsToPdf;
+            var orderPdf = GeneratePdf.GenertateOrderPdf(orderFromCart);
+            return orderPdf;
+        }
     }
 }
