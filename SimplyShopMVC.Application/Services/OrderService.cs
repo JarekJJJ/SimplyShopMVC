@@ -22,13 +22,15 @@ namespace SimplyShopMVC.Application.Services
         private readonly IMapper _mapper;
         private readonly IItemRepository _itemRepo;
         private readonly IEmailService _sendEmail;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail)
+        private readonly IGeneratePdf _genPdf;
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf)
         {
             _orderRepo = orderRepository;
             _mapper = mapper;
             _itemRepo = itemRepository;
             _userRepo = userRepository;
             _sendEmail = sendEmail;
+            _genPdf = genPdf;
         }
 
         public ListCartItemsForListVm AddToCart(CartItemsForListVm cartItem)
@@ -203,7 +205,7 @@ namespace SimplyShopMVC.Application.Services
                 cartToUpdate.IsDeleted = true;
                 _orderRepo.UpdateCart(cartToUpdate);
             }
-           var orderPdf = GeneratePdf.GenertateOrderPdf(orderForList);
+           var orderPdf = _genPdf.GenertateOrderPdf(orderForList);
             _sendEmail.SendEmail($"{orderForList.userDetail.EmailAddress}","test",$"Złożono zamówienie nr: {orderForList.orderForList.NumberOrders}",orderPdf);
  
             return newOrder;
@@ -228,7 +230,7 @@ namespace SimplyShopMVC.Application.Services
                 .ProjectTo<OrderItemsForListVm>(_mapper.ConfigurationProvider).ToList();
             orderFromCart.orderForList = orderToPdf;
             orderFromCart.orderItems = orderItemsToPdf;
-            var orderPdf = GeneratePdf.GenertateOrderPdf(orderFromCart);
+            var orderPdf = _genPdf.GenertateOrderPdf(orderFromCart);
             return orderPdf;
         }
     }

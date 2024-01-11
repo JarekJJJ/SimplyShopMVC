@@ -34,6 +34,7 @@ namespace SimplyShopMVC.Application
             services.AddTransient<IOmnibusHelper, OmnibusHelper>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IGeneratePdf, GeneratePdf>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             return services;
         }
