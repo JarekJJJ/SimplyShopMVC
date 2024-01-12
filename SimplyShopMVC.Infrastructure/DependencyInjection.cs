@@ -23,6 +23,7 @@ namespace SimplyShopMVC.Infrastructure
             services.AddTransient<ICategoryTagsRepository, CategoryTagsRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ICompanySettingsRepository, CompanySettingsRepository>();
             return services;
         }
 
