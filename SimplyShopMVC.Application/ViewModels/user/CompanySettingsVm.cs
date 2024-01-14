@@ -23,9 +23,11 @@ namespace SimplyShopMVC.Application.ViewModels.user
         public string BankName { get; set; }
         public string BankAccount { get; set; }
         public string? AdditionalInfo { get; set; }
+        public string? resultInfo { get; set; }
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<CompanySettingsVm, SimplyShopMVC.Domain.Model.users.CompanySettings>().ReverseMap();
+            profile.CreateMap<CompanySettingsVm, SimplyShopMVC.Domain.Model.users.CompanySettings>().ReverseMap()
+                 .ForMember(s => s.resultInfo, opt => opt.Ignore());
         }
     }
 }

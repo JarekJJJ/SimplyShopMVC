@@ -23,23 +23,40 @@ namespace SimplyShopMVC.Application.Services
 
         public CompanySettingsVm EditCompanySettings(int flag, CompanySettingsVm? companyName)
         {
-           if(flag == 1 && companyName != null)
+            if (flag == 1 && companyName.Id == 0)
             {
-               var companyId =  _companySettingsRepo.AddCompany(_mapper.Map<CompanySettings>(companyName));
-                if(companyId== 0 )
+                var companyId = _companySettingsRepo.AddCompany(_mapper.Map<CompanySettings>(companyName));
+                if (companyId == 0)
                 {
-                    var comapny =_mapper.Map<CompanySettingsVm>(_companySettingsRepo.GetCompanySettings());
+                    var comapny = _mapper.Map<CompanySettingsVm>(_companySettingsRepo.GetCompanySettings());
+                    comapny.resultInfo = "Dane firmy już wprowadzono można tylko edytować dane !";
                     return comapny;
                 }
-                return companyName;
+                var companyAdd = _mapper.Map<CompanySettingsVm>(_companySettingsRepo.GetCompanySettings());
+                companyAdd.resultInfo = "Pomyślnie wprowadzono dane!";
+                return companyAdd;
             }
-            if(flag == 2 && companyName != null)
+            if (companyName.Id != 0)
             {
                 _companySettingsRepo.UpdateCompany(_mapper.Map<CompanySettings>(companyName));
-                return companyName;
+                var companyAdd = _mapper.Map<CompanySettingsVm>(_companySettingsRepo.GetCompanySettings());
+                companyAdd.resultInfo = "Pomyślnie poprawiono dane!";
+                return companyAdd;
             }
-            CompanySettingsVm newCompanyName= new CompanySettingsVm();
-            return newCompanyName; //zrobić kontroler i widok dodawania / edycji danych sprzedawcy.
+            if (flag == 0)
+            {
+                var comapny = _mapper.Map<CompanySettingsVm>(_companySettingsRepo.GetCompanySettings());
+                if (!string.IsNullOrEmpty(comapny.CompanyName))
+                {
+                    return comapny;
+                }
+                else
+                {
+                    CompanySettingsVm newCompanyName = new CompanySettingsVm();
+                    return newCompanyName;
+                }
+            }
+            return companyName;
         }
     }
 }

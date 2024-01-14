@@ -228,8 +228,10 @@ namespace SimplyShopMVC.Application.Services
                  
             var orderItemsToPdf = _orderRepo.GetAllOrderItems().Where(i=>i.OrdersId== _orderId)
                 .ProjectTo<OrderItemsForListVm>(_mapper.ConfigurationProvider).ToList();
+            var userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == orderToPdf.UserId));
             orderFromCart.orderForList = orderToPdf;
             orderFromCart.orderItems = orderItemsToPdf;
+            orderFromCart.userDetail = userDetail;
             var orderPdf = _genPdf.GenertateOrderPdf(orderFromCart);
             return orderPdf;
         }

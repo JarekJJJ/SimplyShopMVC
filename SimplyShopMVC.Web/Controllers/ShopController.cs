@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Application.ViewModels.Item;
+using SimplyShopMVC.Application.ViewModels.user;
 using SimplyShopMVC.Domain.Model;
 using System.Data;
 
@@ -14,11 +15,13 @@ namespace SimplyShopMVC.Web.Controllers
     {
         private readonly IItemService _itemService;
         private readonly IValidator<AddItemVm> _itemValidator;
+        private readonly ISettingsService _settingsService;
         //private readonly IValidator<UpdateArticleVm> _updateArticleValidator;
-        public ShopController(IValidator<AddItemVm> itemValidator, IItemService itemService)
+        public ShopController(IValidator<AddItemVm> itemValidator, IItemService itemService, ISettingsService settingsService)
         {
             _itemService = itemService;
             _itemValidator = itemValidator;
+            _settingsService = settingsService;
         }
         public IActionResult Index()
         {
@@ -175,6 +178,21 @@ namespace SimplyShopMVC.Web.Controllers
             _itemService.UpdateWarehouse(model, options);
             return RedirectToAction("ListWarehouseToUpdate");
         }
-
+        // Admin Settings
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult CompanySettings()
+        {
+            CompanySettingsVm company = new CompanySettingsVm();
+            company = _settingsService.EditCompanySettings(0, company);
+            return View(company);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult CompanySettings(int flag, CompanySettingsVm company)
+        {
+           var result = _settingsService.EditCompanySettings(flag, company);
+            return View(result);
+        }
     }
 }
