@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Application.ViewModels.Item;
+using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Application.ViewModels.user;
 using SimplyShopMVC.Domain.Model;
 using System.Data;
@@ -16,12 +17,14 @@ namespace SimplyShopMVC.Web.Controllers
         private readonly IItemService _itemService;
         private readonly IValidator<AddItemVm> _itemValidator;
         private readonly ISettingsService _settingsService;
+        private readonly IOrderService _orderService;
         //private readonly IValidator<UpdateArticleVm> _updateArticleValidator;
-        public ShopController(IValidator<AddItemVm> itemValidator, IItemService itemService, ISettingsService settingsService)
+        public ShopController(IValidator<AddItemVm> itemValidator, IItemService itemService, ISettingsService settingsService, IOrderService orderService)
         {
             _itemService = itemService;
             _itemValidator = itemValidator;
             _settingsService = settingsService;
+            _orderService = orderService;
         }
         public IActionResult Index()
         {
@@ -193,6 +196,21 @@ namespace SimplyShopMVC.Web.Controllers
         {
            var result = _settingsService.EditCompanySettings(flag, company);
             return View(result);
+        }
+        //Order
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult GetOrderForAdmin()
+        {
+            var result = _orderService.GetOrdersForAdmin(0,"",0);
+           return View("AdminListOrder", result);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult GetOrderForAdmin(int status, OrderForAdminListVm order)
+        {
+            var result = _orderService.GetOrdersForAdmin(status,"", order.selectedOrders);
+            return RedirectToAction("GetOrderForAdmin");
         }
     }
 }

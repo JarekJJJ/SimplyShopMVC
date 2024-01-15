@@ -34,8 +34,25 @@ namespace SimplyShopMVC.Application.Helpers
             var pdf = new PdfDocument(writer);
             var document = new Document(pdf);
             PdfFont f = PdfFontFactory.CreateFont(FONT, PdfEncodings.IDENTITY_H);
-            // wczytanie danych sprzedawcy
-            var companyName = _companySettingsRepo.GetCompanySettings();
+            string status = "";
+            if(orderFromCart.orderForList.IsAccepted==true)
+            {
+                status = " (zaakceptowane)";
+            }
+            else
+            {
+                status = " (oczekuje na akceptację)";
+            }
+            if (orderFromCart.orderForList.IsCompleted == true)
+            {
+                status = " (zrealizowano)";
+            }
+            if (orderFromCart.orderForList.IsCancelled == true)
+            {
+                status = " (anulowano)";
+            }
+                // wczytanie danych sprzedawcy
+                var companyName = _companySettingsRepo.GetCompanySettings();
             string[] companyLine = new string[4];
             companyLine[0] = ($"{companyName.CompanyName}");
             companyLine[1] = ($"ul. {companyName.Street} {companyName.PostCode} {companyName.City}");
@@ -65,7 +82,7 @@ namespace SimplyShopMVC.Application.Helpers
             {
                 document.Add(new Paragraph(clientName[i]).SetFont(f).SetMultipliedLeading(0.5f).SetFontSize(10).SetTextAlignment(iText.Layout.Properties.TextAlignment.RIGHT));
             }
-            document.Add(new Paragraph($"numer zamówienia: {orderFromCart.orderForList.NumberOrders}").SetMarginTop(20).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+            document.Add(new Paragraph($"numer zamówienia: {orderFromCart.orderForList.NumberOrders} {status}").SetMarginTop(20).SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
             int lp = 0;
             decimal orderValue = 0;
             decimal vatValue = 0;
@@ -114,6 +131,8 @@ namespace SimplyShopMVC.Application.Helpers
             }
             else
             {
+                document.Add(new Paragraph($"Do zapłaty: {orderB_value.ToString("N2")}").SetFont(f).SetBold().SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+                document.Add(new Paragraph($"").SetFont(f));
                 document.Add(new Paragraph($"Płatność: {orderFromCart.orderForList.PaymentMethod}").SetFont(f));
                 document.Add(new Paragraph($"Przelewu prosimy dokonać na konto: ").SetFont(f));
                 document.Add(new Paragraph($"Nazwa Banku: {companyName.BankName}").SetFont(f));

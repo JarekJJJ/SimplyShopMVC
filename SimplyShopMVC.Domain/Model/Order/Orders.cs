@@ -16,6 +16,8 @@ namespace SimplyShopMVC.Domain.Model.Order
         public string DocumentType { get; set; }
         public string ShipingDescription { get; set; } = "brak";
         public bool IsAccepted { get; set; } = false;
+        public bool IsCompleted { get; set; } = false;
+        public bool IsCancelled { get; set; } = false;
         public ICollection<OrderItems> OrderItemss { get; set; }
     }
 }

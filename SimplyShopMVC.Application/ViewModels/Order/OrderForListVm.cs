@@ -18,6 +18,8 @@ namespace SimplyShopMVC.Application.ViewModels.Order
         public string DocumentType { get; set; }
         public string ShipingDescription { get; set; }
         public bool IsAccepted { get; set; } = false;
+        public bool IsCompleted { get; set; } = false;
+        public bool IsCancelled { get; set; } = false;
         public void Mapping(Profile profile)
         {
             profile.CreateMap<OrderForListVm, SimplyShopMVC.Domain.Model.Order.Orders>().ReverseMap();
