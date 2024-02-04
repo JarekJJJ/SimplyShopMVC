@@ -10,6 +10,7 @@ namespace SimplyShopMVC.Domain.Model.Order
     {
         public int Id { get; set; }
         public string UserId { get; set; }
+        public string UserName { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string NumberOrders { get; set; }
         public string PaymentMethod { get; set; }

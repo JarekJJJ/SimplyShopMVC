@@ -12,6 +12,7 @@ namespace SimplyShopMVC.Application.ViewModels.Order
     {
         public int Id { get; set; }
         public string UserId { get; set; }
+        public string UserName { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string NumberOrders { get; set; }
         public string PaymentMethod { get; set; }
@@ -20,6 +21,7 @@ namespace SimplyShopMVC.Application.ViewModels.Order
         public bool IsAccepted { get; set; } = false;
         public bool IsCompleted { get; set; } = false;
         public bool IsCancelled { get; set; } = false;
+        
         public void Mapping(Profile profile)
         {
             profile.CreateMap<OrderForListVm, SimplyShopMVC.Domain.Model.Order.Orders>().ReverseMap();

@@ -7,6 +7,7 @@
             <th>Id</th>
             <th>Numer</th>
             <th>data</th>
+            <th> Klient</th>
             <th>Status</th>
             <th>Wybierz akcję</th>
             <th>Wyślij</th>
@@ -22,10 +23,20 @@
                 <td>@orders.NumberOrders</td>
                 <td>@orders.CreatedDate</td>
                 <td>
+                    @if (!String.IsNullOrEmpty(orders.UserName))
+                    {
+                        @orders.UserName
+                    }
+                    else
+                    {
+                        <span>brak</span>
+                    }
+                </td>
+                <td>
 
                     @if (orders.IsAccepted == true)
                     {
-                        <p>Zaakceptopwane</p>
+                        <p>Zaakceptowane</p>
                     }
                     @if (orders.IsCompleted == true)
                     {
@@ -44,6 +55,7 @@
                         <option value="1">akceptuj</option>
                         <option value="2">realizuj</option>
                         <option value="3">anuluj</option>
+                        <option value="4">oczekuje na akceptację</option>
                     </select>
                 </td>
                 <td>

@@ -170,6 +170,11 @@ namespace SimplyShopMVC.Application.Services
                 result.orderForList.ShipingDescription = "brak";
             }
             var mappedOrder = _mapper.Map<Orders>(result.orderForList);
+            var userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == result.userDetail.UserId);
+            if (userDetail != null && !String.IsNullOrEmpty(userDetail.FullName))
+            {
+                mappedOrder.UserName = userDetail.FullName;
+            }
             var _orderId = _orderRepo.AddOrders(mappedOrder);
             return _orderId;
         }
@@ -238,18 +243,48 @@ namespace SimplyShopMVC.Application.Services
                 orderForList.listOrders.AddRange(repoAllOrders);
                 return orderForList;
             }
-            if(status == 1 && orderId>0)
+            var orderToChange = _orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == orderId);
+            if (orderToChange != null)
             {
-                var orderToChange = _orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == orderId);
-                if(orderToChange != null)
+                switch ((status, orderId))
                 {
-                    orderToChange.IsAccepted = true;
-                    _orderRepo.UpdateOrders(orderToChange);
-                }           
+                    case (1, > 0):
+                        orderToChange.IsAccepted = true;
+                        orderToChange.IsCancelled = false;
+                        _orderRepo.UpdateOrders(orderToChange);
+                        break;
+                    case (2, > 0):
+                        break;
+                    case (3, > 0):
+                        orderToChange.IsCancelled = true;
+                        orderToChange.IsAccepted = false;
+                        orderToChange.IsCompleted = false;
+                        _orderRepo.UpdateOrders(orderToChange);
+                        break;
+                    case (4, > 0):
+                        orderToChange.IsAccepted = false;
+                        orderToChange.IsCompleted = false;
+                        orderToChange.IsCancelled = false;
+                        _orderRepo.UpdateOrders(orderToChange);
+                        break;
+                    default: break;
+                }
             }
-            return orderForList;       
-        }
 
+            return orderForList;
+        }
+        public OrderForAdminListVm ViewOrderForAdmin(int? orderId, string? userId)
+        {
+            OrderForAdminListVm ordersList = new OrderForAdminListVm();
+            ordersList.orderItemsForList = new List<OrderItemsForListVm> { new OrderItemsForListVm() };
+            ordersList.ordersForListVm = new OrderForListVm();
+            var order = _mapper.Map<OrderForListVm>(_orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == orderId));
+            ordersList.ordersForListVm = order;
+            var orderItemsList = _orderRepo.GetAllOrderItems().Where(i => i.OrdersId == orderId)
+                .ProjectTo<OrderItemsForListVm>(_mapper.ConfigurationProvider).ToList();
+            ordersList.orderItemsForList = orderItemsList;
+            return ordersList;
+        }
         public byte[] GetPdfDocumentFromService(int _orderId)
         {
             OrderFromCartVm orderFromCart = new OrderFromCartVm();
