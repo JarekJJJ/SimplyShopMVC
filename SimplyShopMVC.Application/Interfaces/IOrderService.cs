@@ -22,6 +22,7 @@ namespace SimplyShopMVC.Application.Interfaces
         OrderForUserListVm GetOrdersByUserId(string userId);
         byte[] GetPdfDocumentFromService(int _orderId);
         OrderForAdminListVm GetOrdersForAdmin(int status, string? userId, int? orderId);
+        OrderForAdminListVm ViewOrderForAdmin(int? orderId, string? userId);
 
     }
 }

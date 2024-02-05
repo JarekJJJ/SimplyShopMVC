@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Application.ViewModels.user;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace SimplyShopMVC.Application.ViewModels.Order
         public List<OrderForListVm> listOrders { get; set; }
         public OrderForListVm ordersForListVm { get; set; }
         public List<OrderItemsForListVm> orderItemsForList { get; set; }
+        public UserDetailForListVm userDetail { get; set; }
         public int selectedOrders { get; set; }
     }
 }

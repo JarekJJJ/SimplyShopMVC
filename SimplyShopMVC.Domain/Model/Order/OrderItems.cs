@@ -18,6 +18,7 @@ namespace SimplyShopMVC.Domain.Model.Order
         public decimal PriceB { get; set; }
         public int VatRateId { get; set; }
         public int WarehouseId { get; set; }
+        public string EanCode { get; set; }
 
         public virtual Orders? Orders { get; set; }
         public virtual Item Item { get; set; }

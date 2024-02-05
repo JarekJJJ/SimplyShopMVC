@@ -212,5 +212,11 @@ namespace SimplyShopMVC.Web.Controllers
             var result = _orderService.GetOrdersForAdmin(status,"", order.selectedOrders);
             return RedirectToAction("GetOrderForAdmin");
         }
+        [Authorize(Roles = "Admin"), HttpPost]
+        public IActionResult ViewOrderForAdmin(int orderId, string userId)
+        {
+            var result = _orderService.ViewOrderForAdmin(orderId,userId);
+            return View(result);
+        }
     }
 }

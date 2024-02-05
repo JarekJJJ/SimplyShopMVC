@@ -21,6 +21,7 @@ namespace SimplyShopMVC.Application.ViewModels.Order
         public decimal PriceB { get; set; }
         public int VatRateId { get; set; }
         public int WarehouseId { get; set; }
+        public string EanCode { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<OrderItemsForListVm, SimplyShopMVC.Domain.Model.Order.OrderItems>().ReverseMap();

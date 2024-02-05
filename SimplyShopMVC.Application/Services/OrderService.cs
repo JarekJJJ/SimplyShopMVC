@@ -188,9 +188,17 @@ namespace SimplyShopMVC.Application.Services
                 .ProjectTo<CartItemsForListVm>(_mapper.ConfigurationProvider).ToList();
             foreach (var cartItem in listCartItem)
             {
+                var itemForList = _itemRepo.GetAllItems().FirstOrDefault(i => i.Id == cartItem.ItemId);
                 OrderItemsForListVm orderItem = new OrderItemsForListVm();
                 orderItem.OrdersId = _orderId;
                 orderItem.ItemId = cartItem.ItemId;
+                if (itemForList != null && !string.IsNullOrEmpty(itemForList.EanCode))
+                {
+                    orderItem.EanCode = itemForList.EanCode;
+                }else
+                {
+                    orderItem.EanCode = string.Empty;
+                }                   
                 orderItem.Quantity = cartItem.Quantity;
                 orderItem.VatRateId = cartItem.VatRateId;
                 orderItem.Name = cartItem.Name;
@@ -210,8 +218,10 @@ namespace SimplyShopMVC.Application.Services
                 cartToUpdate.IsDeleted = true;
                 _orderRepo.UpdateCart(cartToUpdate);
             }
-            var orderPdf = _genPdf.GenertateOrderPdf(orderForList);
-            _sendEmail.SendEmail($"{orderForList.userDetail.EmailAddress}", "test", $"Złożono zamówienie nr: {orderForList.orderForList.NumberOrders}", orderPdf);
+            newOrder.cartItems = listCartItem;
+            newOrder.orderForList = orderForList.orderForList;
+            var orderPdf = _genPdf.GenertateOrderPdf(newOrder);
+            _sendEmail.SendEmail($"{newOrder.userDetail.EmailAddress}", "test", $"Złożono zamówienie nr: {orderForList.orderForList.NumberOrders}", orderPdf);
 
             return newOrder;
         }
@@ -244,6 +254,9 @@ namespace SimplyShopMVC.Application.Services
                 return orderForList;
             }
             var orderToChange = _orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == orderId);
+            string subject = string.Empty;
+            string message = string.Empty;
+            byte[] orderPdf;
             if (orderToChange != null)
             {
                 switch ((status, orderId))
@@ -252,6 +265,10 @@ namespace SimplyShopMVC.Application.Services
                         orderToChange.IsAccepted = true;
                         orderToChange.IsCancelled = false;
                         _orderRepo.UpdateOrders(orderToChange);
+                        orderPdf = GetPdfDocumentFromService((int)orderId);
+                        subject = "Zaakceptowano złożone zamówienie nr:";
+                        message = "Zaakceptowano złożone zamówienie, szczegóły w załączniku";
+                        SentEmailWithOrdersDetail((int)orderId, subject, message, orderPdf);
                         break;
                     case (2, > 0):
                         break;
@@ -260,12 +277,20 @@ namespace SimplyShopMVC.Application.Services
                         orderToChange.IsAccepted = false;
                         orderToChange.IsCompleted = false;
                         _orderRepo.UpdateOrders(orderToChange);
+                        orderPdf = GetPdfDocumentFromService((int)orderId);
+                        subject = "anulowano złożone zamówienie nr:";
+                        message = "anulowano złożone zamówienie, szczegóły w załączniku";
+                        SentEmailWithOrdersDetail((int)orderId, subject, message, orderPdf);
                         break;
                     case (4, > 0):
                         orderToChange.IsAccepted = false;
                         orderToChange.IsCompleted = false;
                         orderToChange.IsCancelled = false;
                         _orderRepo.UpdateOrders(orderToChange);
+                        orderPdf = GetPdfDocumentFromService((int)orderId);
+                        subject = "zmiana statusu zamówienia!";
+                        message = "Zamówienie ponownie oczekuje na akceptacje, szczegóły w załączniku.";
+                        SentEmailWithOrdersDetail((int)orderId, subject, message, orderPdf);
                         break;
                     default: break;
                 }
@@ -277,12 +302,16 @@ namespace SimplyShopMVC.Application.Services
         {
             OrderForAdminListVm ordersList = new OrderForAdminListVm();
             ordersList.orderItemsForList = new List<OrderItemsForListVm> { new OrderItemsForListVm() };
+            ordersList.userDetail = new UserDetailForListVm();
             ordersList.ordersForListVm = new OrderForListVm();
             var order = _mapper.Map<OrderForListVm>(_orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == orderId));
             ordersList.ordersForListVm = order;
             var orderItemsList = _orderRepo.GetAllOrderItems().Where(i => i.OrdersId == orderId)
                 .ProjectTo<OrderItemsForListVm>(_mapper.ConfigurationProvider).ToList();
             ordersList.orderItemsForList = orderItemsList;
+            var userForVm = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId));
+            ordersList.userDetail = userForVm;
+
             return ordersList;
         }
         public byte[] GetPdfDocumentFromService(int _orderId)
@@ -298,6 +327,21 @@ namespace SimplyShopMVC.Application.Services
             orderFromCart.userDetail = userDetail;
             var orderPdf = _genPdf.GenertateOrderPdf(orderFromCart);
             return orderPdf;
+        }
+        public bool SentEmailWithOrdersDetail(int orderId,string subject, string message,  byte[] pdfDoc)
+        {
+            var newOrder = _orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == orderId);
+            UserDetail userDetail = new UserDetail();
+            if (newOrder != null)
+            {
+                userDetail = _userRepo.GetAllUsers().FirstOrDefault(o => o.UserId == newOrder.UserId);
+            }
+            if(userDetail!= null && !String.IsNullOrEmpty(userDetail.EmailAddress))
+            {
+                _sendEmail.SendEmail($"{userDetail.EmailAddress}", subject, message, pdfDoc);
+               
+            }
+            return true;
         }
     }
 }

@@ -1,0 +1,144 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Order.OrderForAdminListVm
+
+<div class="col-md-12 text-center">
+    <span class="fs-2">Zamówienie nr: @Model.ordersForListVm.NumberOrders</span>
+</div>
+<div>
+    <form class="row" asp-action="finishOrder" method="post">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Lp.</th>
+                        <th>Nazwa towaru</th>
+                        <th>ean</th>
+                        <th>ilość</th>
+                        <th>cena brutto</th>
+                        <th>wartość</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int lp = 1;
+                        decimal totalPrice = 0;
+                        //int _cartId = 0;
+                    }
+                    @foreach (var item in Model.orderItemsForList)
+                    {
+                        <tr>
+                            <td>@lp</td>
+                            <td>@item.Name</td>
+                            <td>@item.EanCode</td>
+                            <td>
+                                <input type="hidden" id="cartItem_@item.Id" name="cartItemId" value="@item.Id" />
+                                <div class="input-group col-md-1">
+                                    <span>@item.Quantity</span>
+                                    <input type="hidden" class="form-control" id="quantity_@item.Id" name="quantity" value="@item.Quantity" />
+                                </div>
+                            </td>
+                            <td>@item.PriceB</td>
+                            @{
+                                var sumPrice = (decimal)item.PriceB * (decimal)item.Quantity;
+                                totalPrice = totalPrice + sumPrice;
+                            }
+                            <td>@sumPrice.ToString("N2")</td>
+                        </tr>
+                        lp++;
+                        //_cartId = item.CartId;
+                    }
+                    <tr>
+                        <td colspan="3">
+                            <span> Suma zamówienia: </span>
+                        </td>
+                        <td colspan="2">
+                            <span> @totalPrice.ToString("N2") zł brutto </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row m-1">
+
+            <div class="col-md-6 border border-info rounded p-2 m-1">
+                <div class="col-md-12">
+                    <span class="text-center fs-4">Dane firmy:</span>
+                </div>
+
+                <div class="row m-1">
+
+                    <div class="col-md-12">
+                        <label asp-for="userDetail.FullName" class="form-label">Nazwa firmy:</label>
+                        <input type="text" class="form-control" asp-for="userDetail.FullName" placeholder="Pełna nazwa firmy">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.NIP" class="form-label">Nip firmy:</label>
+                        <input type="text" class="form-control" asp-for="userDetail.NIP" placeholder="nip">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.EmailAddress" class="form-label">Adres email:</label>
+                        <input type="email" class="form-control" asp-for="userDetail.EmailAddress" placeholder="email">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.ContactPerson" class="form-label">Osoba kontaktowa:</label>
+                        <input type="text" class="form-control" asp-for="userDetail.ContactPerson" placeholder="imię i nazwisko">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.PhoneNumber" class="form-label">Telefon:</label>
+                        <input type="tel" class="form-control" asp-for="userDetail.PhoneNumber" placeholder="numer telefonu">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.City" class="form-label">Miejscowość: </label>
+                        <input type="text" class="form-control" asp-for="userDetail.City" placeholder="miasto">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.PostalCode" class="form-label">Kod pocztowy: </label>
+                        <input type="text" class="form-control" asp-for="userDetail.PostalCode" placeholder="kod pocztowy">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.Street" class="form-label">Ulica i nr. : </label>
+                        <input type="text" class="form-control" asp-for="userDetail.Street" placeholder="ulica i nr">
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="userDetail.Region" class="form-label">Województwo : </label>
+                        <input type="text" class="form-control" asp-for="userDetail.Region" placeholder="województwo">
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-md-5 border border-success rounded p-2 m-1 ms-auto">
+                <div class="col-md-12 text-center">
+                    <span class="fs-4">Pozostałe dane: </span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ordersForListVm.PaymentMethod" class="form-label">Płatność:</label>
+                    <select class="form-select" asp-for="ordersForListVm.PaymentMethod" id="countItem">
+                        <option value="0" selected>wybierz rodzaj płatności</option>
+                        <option value="przelew - 7 dni">Przelew 7 dni</option>
+                        <option value="przelew - 14 dni">Przelew 14 dni</option>
+                        <option value="przedpłata">przedpłata</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ordersForListVm.DocumentType" class="form-label">Rodzaj dokumentu:</label>
+                    <select class="form-select" asp-for="ordersForListVm.DocumentType" id="countItem">
+                        <option value="0" selected>wybierz rodzaj dokumentu</option>
+                        <option value="paragon">Paragon</option>
+                        <option value="faktura_Imienna">Faktura imienna</option>
+                        <option value="fakturaVat">Faktura VAT</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label asp-for="ordersForListVm.ShipingDescription" class="form-label">Dodatkowe uwagi(np. inne miejsce dostawy itp.)</label>
+                    <textarea class="col-md-12" asp-for="ordersForListVm.ShipingDescription" rows="3"></textarea>
+                </div>
+            </div>
+            <input type="hidden" asp-for="ordersForListVm.NumberOrders" value="@Model.ordersForListVm.NumberOrders" />
+            <input type="hidden" asp-for="ordersForListVm.UserId" value="@Model.userDetail.UserId" />
+            <input type="hidden" asp-for="userDetail.UserId" value="@Model.userDetail.UserId" />
+            <input type="hidden" asp-for="userDetail.Id" value="@Model.userDetail.Id" />
+            <div class="col-md-12">
+                <button type="submit" class="btn-bd-primary">Wyślij</button>
+            </div>
+    </form>
+</div>
