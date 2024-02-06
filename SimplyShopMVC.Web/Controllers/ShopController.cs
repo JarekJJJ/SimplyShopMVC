@@ -77,12 +77,12 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpPost]
         public IActionResult AddItemWarehouse(AddItemWarehouseVm model)
         {
-           var result =  _itemService.AddItemWarehouse(model);
+            var result = _itemService.AddItemWarehouse(model);
             return View(result);
         }
         public IActionResult ListItemWarehouse(string searchItem)
         {
-            var newItemW = _itemService.ListItemToUpdate(searchItem,0);
+            var newItemW = _itemService.ListItemToUpdate(searchItem, 0);
             return View(newItemW);
         }
 
@@ -95,7 +95,7 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [HttpPost]
         public IActionResult AdminListItem(AddItemWarehouseVm item)
-        
+
         {
             _itemService.UpdateItemFromList(item);
             var newItemW = _itemService.ListItemToUpdate("", 0);
@@ -194,28 +194,44 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpPost]
         public IActionResult CompanySettings(int flag, CompanySettingsVm company)
         {
-           var result = _settingsService.EditCompanySettings(flag, company);
+            var result = _settingsService.EditCompanySettings(flag, company);
             return View(result);
         }
         //Order
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult GetOrderForAdmin()
+        public IActionResult GetOrderForAdmin(int? filterOptions, string? searchString)
         {
-            var result = _orderService.GetOrdersForAdmin(0,"",0);
-           return View("AdminListOrder", result);
+            if(!filterOptions.HasValue)
+            {
+                filterOptions = 0;
+            }
+            if(String.IsNullOrEmpty(searchString))
+            {
+                searchString = string.Empty;
+            }
+            var result = _orderService.GetOrdersForAdmin(0, "", 0, (int)filterOptions, searchString);
+            return View("AdminListOrder", result);
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult GetOrderForAdmin(int status, OrderForAdminListVm order)
+        public IActionResult GetOrderForAdmin(int status, OrderForAdminListVm order, int? filterOptions, string? searchString)
         {
-            var result = _orderService.GetOrdersForAdmin(status,"", order.selectedOrders);
+            if (!filterOptions.HasValue)
+            {
+                filterOptions = 0;
+            }
+            if (String.IsNullOrEmpty(searchString))
+            {
+                searchString = string.Empty;
+            }
+            var result = _orderService.GetOrdersForAdmin(status, "", order.selectedOrders, (int)filterOptions, searchString);
             return RedirectToAction("GetOrderForAdmin");
         }
         [Authorize(Roles = "Admin"), HttpPost]
         public IActionResult ViewOrderForAdmin(int orderId, string userId)
         {
-            var result = _orderService.ViewOrderForAdmin(orderId,userId);
+            var result = _orderService.ViewOrderForAdmin(orderId, userId);
             return View(result);
         }
     }

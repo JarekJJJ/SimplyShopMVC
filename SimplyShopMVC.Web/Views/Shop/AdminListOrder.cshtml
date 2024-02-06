@@ -1,6 +1,25 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Order.OrderForAdminListVm
 
 <p>Lista zamówień od klientów:</p>
+<div class="row">
+    <form class="row" asp-controller="Shop" asp-action="GetOrderForAdmin" method="get">
+       <div class="col-auto">
+            <select class="form-select form-control mb-2" id="filterOptions" name="filterOptions">
+            <option value="0" name="filterOptions">wszystkie</option>
+            <option value="1" name="filterOptions">dzisiaj</option>
+            <option value="7" name="filterOptions">ostatnie 7 dni</option>
+            <option value="30" name="filterOptions">ostatnie 30 dni</option>
+            <option value="365" name="filterOptions">ostatni rok</option>
+        </select>
+       </div>
+       <div class="col-auto">
+            <input type="text" class="form-control" id="searchString" name="searchString" />
+       </div>
+       <div class="col-2">
+            <button type="submit" class="form-control">Wyślij</button>
+       </div>             
+    </form>
+</div>
 <table class="table">
     <thead>
         <tr>

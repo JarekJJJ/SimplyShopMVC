@@ -235,7 +235,7 @@ namespace SimplyShopMVC.Application.Services
 
             return orderForUserList;
         }
-        public OrderForAdminListVm GetOrdersForAdmin(int status, string? userId, int? orderId)
+        public OrderForAdminListVm GetOrdersForAdmin(int status, string? userId, int? orderId, int options, string searchString)
         {
             OrderForAdminListVm orderForList = new OrderForAdminListVm();
             orderForList.listOrders = new List<OrderForListVm>();
