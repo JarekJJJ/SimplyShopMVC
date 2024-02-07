@@ -202,11 +202,11 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpGet]
         public IActionResult GetOrderForAdmin(int? filterOptions, string? searchString)
         {
-            if(!filterOptions.HasValue)
+            if (!filterOptions.HasValue)
             {
                 filterOptions = 0;
             }
-            if(String.IsNullOrEmpty(searchString))
+            if (String.IsNullOrEmpty(searchString))
             {
                 searchString = string.Empty;
             }
@@ -234,5 +234,12 @@ namespace SimplyShopMVC.Web.Controllers
             var result = _orderService.ViewOrderForAdmin(orderId, userId);
             return View(result);
         }
+        [Authorize(Roles = "Admin"), HttpPost]
+        public IActionResult adminFinishOrder(OrderForAdminListVm result)
+        {
+            _orderService.AdminFinishOrder(result);
+            return RedirectToAction("GetOrderForAdmin");
+        }
+
     }
 }

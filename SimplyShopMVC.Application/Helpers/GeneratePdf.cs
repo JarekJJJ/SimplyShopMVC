@@ -9,6 +9,7 @@ using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
 using SimplyShopMVC.Domain.Model.Order;
+using SimplyShopMVC.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,9 +87,11 @@ namespace SimplyShopMVC.Application.Helpers
             int lp = 0;
             decimal orderValue = 0;
             decimal vatValue = 0;
-            Table table = new Table(6);
+            Table table = new Table(7);
+          
             table.AddHeaderCell("lp.");
             table.AddHeaderCell("nazwa");
+            table.AddHeaderCell("EanCode");
             table.AddHeaderCell("ilosc");
             table.AddHeaderCell("cena netto");
             table.AddHeaderCell("cena brutto");
@@ -96,6 +99,7 @@ namespace SimplyShopMVC.Application.Helpers
             VatRate vatRate= new VatRate();
             foreach (var orderItem in orderFromCart.orderItems)
             {
+                Cell cell = new Cell().Add(new Paragraph(orderItem.Name).SetFontSize(8).SetFont(f));
                 lp++;
                 var vat = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == orderItem.VatRateId);
                 var priceNetto = (decimal)orderItem.PriceB / ((decimal)vat.Value / 100 + 1);
@@ -103,7 +107,15 @@ namespace SimplyShopMVC.Application.Helpers
                 var priceBString = orderItem.PriceB.ToString("N2");
                 var priceValue = orderItem.PriceB * orderItem.Quantity;
                 table.AddCell(lp.ToString()).SetFontSize(8);
-                table.AddCell(orderItem.Name).SetFontSize(8).SetFont(f);
+                table.AddCell(cell);
+                if(!string.IsNullOrEmpty(orderItem.EanCode))
+                {
+                    table.AddCell(orderItem.EanCode).SetFontSize(8);                   
+                }
+                else
+                {
+                    table.AddCell("brak").SetFontSize(8);
+                }              
                 table.AddCell(orderItem.Quantity.ToString()).SetFontSize(8);
                 table.AddCell(priceNString).SetFontSize(8);
                 table.AddCell(priceBString).SetFontSize(8);

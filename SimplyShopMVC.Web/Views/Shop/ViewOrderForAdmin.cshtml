@@ -4,7 +4,7 @@
     <span class="fs-2">Zamówienie nr: @Model.ordersForListVm.NumberOrders</span>
 </div>
 <div>
-    <form class="row" asp-action="finishOrder" method="post">
+    
         <div class="col-md-12">
             <table class="table">
                 <thead>
@@ -24,16 +24,14 @@
                         //int _cartId = 0;
                     }
                     @foreach (var item in Model.orderItemsForList)
-                    {
+                    {                      
                         <tr>
                             <td>@lp</td>
                             <td>@item.Name</td>
                             <td>@item.EanCode</td>
                             <td>
-                                <input type="hidden" id="cartItem_@item.Id" name="cartItemId" value="@item.Id" />
                                 <div class="input-group col-md-1">
-                                    <span>@item.Quantity</span>
-                                    <input type="hidden" class="form-control" id="quantity_@item.Id" name="quantity" value="@item.Quantity" />
+                                    <span>@item.Quantity</span>                                 
                                 </div>
                             </td>
                             <td>@item.PriceB</td>
@@ -44,7 +42,6 @@
                             <td>@sumPrice.ToString("N2")</td>
                         </tr>
                         lp++;
-                        //_cartId = item.CartId;
                     }
                     <tr>
                         <td colspan="3">
@@ -58,7 +55,7 @@
             </table>
         </div>
         <div class="row m-1">
-
+        <form class="row" asp-action="adminFinishOrder" method="post">
             <div class="col-md-6 border border-info rounded p-2 m-1">
                 <div class="col-md-12">
                     <span class="text-center fs-4">Dane firmy:</span>
@@ -137,8 +134,9 @@
             <input type="hidden" asp-for="ordersForListVm.UserId" value="@Model.userDetail.UserId" />
             <input type="hidden" asp-for="userDetail.UserId" value="@Model.userDetail.UserId" />
             <input type="hidden" asp-for="userDetail.Id" value="@Model.userDetail.Id" />
+            <input type="hidden" asp-for="ordersForListVm.Id" value="@Model.ordersForListVm.Id" />
             <div class="col-md-12">
-                <button type="submit" class="btn-bd-primary">Wyślij</button>
+                <button type="submit" class="btn-bd-primary">Popraw</button>
             </div>
     </form>
 </div>

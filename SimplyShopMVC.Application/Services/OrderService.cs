@@ -195,10 +195,11 @@ namespace SimplyShopMVC.Application.Services
                 if (itemForList != null && !string.IsNullOrEmpty(itemForList.EanCode))
                 {
                     orderItem.EanCode = itemForList.EanCode;
-                }else
+                }
+                else
                 {
                     orderItem.EanCode = string.Empty;
-                }                   
+                }
                 orderItem.Quantity = cartItem.Quantity;
                 orderItem.VatRateId = cartItem.VatRateId;
                 orderItem.Name = cartItem.Name;
@@ -241,15 +242,33 @@ namespace SimplyShopMVC.Application.Services
             orderForList.listOrders = new List<OrderForListVm>();
             if (status == 0)
             {
-                if (!string.IsNullOrEmpty(userId))
+                //if (!string.IsNullOrEmpty(userId))
+                //{
+                //    var repoUserOrders = _orderRepo.GetAllOrders().Where(r => r.UserId == userId)
+                //        .ProjectTo<OrderForListVm>(_mapper.ConfigurationProvider).ToList();
+                //    orderForList.listOrders.AddRange(repoUserOrders);
+                //    return orderForList;
+                //}
+                if (!String.IsNullOrEmpty(searchString) || options > 0)
                 {
-                    var repoUserOrders = _orderRepo.GetAllOrders().Where(r => r.UserId == userId)
-                        .ProjectTo<OrderForListVm>(_mapper.ConfigurationProvider).ToList();
-                    orderForList.listOrders.AddRange(repoUserOrders);
+                    if (options > 0)
+                    {
+                        DateTime ordersTime = DateTime.Now.AddDays(options * (-1));
+                        var selectedOrders = _orderRepo.GetAllOrders().Where(o => (o.UserName.Contains(searchString) || o.NumberOrders.Contains(searchString)) && (o.CreatedDate >= ordersTime))
+                            .ProjectTo<OrderForListVm>(_mapper.ConfigurationProvider).ToList();
+                        orderForList.listOrders.AddRange(selectedOrders);
+                    }
+                    else
+                    {
+                        var selectedOrders = _orderRepo.GetAllOrders().Where(o => o.UserName.Contains(searchString) || o.NumberOrders.Contains(searchString))
+                            .ProjectTo<OrderForListVm>(_mapper.ConfigurationProvider).ToList();
+                        orderForList.listOrders.AddRange(selectedOrders);
+                    }
+
                     return orderForList;
                 }
                 var repoAllOrders = _orderRepo.GetAllOrders()
-                       .ProjectTo<OrderForListVm>(_mapper.ConfigurationProvider).ToList();
+                       .ProjectTo<OrderForListVm>(_mapper.ConfigurationProvider).Take(100).ToList();
                 orderForList.listOrders.AddRange(repoAllOrders);
                 return orderForList;
             }
@@ -314,6 +333,14 @@ namespace SimplyShopMVC.Application.Services
 
             return ordersList;
         }
+        public void AdminFinishOrder(OrderForAdminListVm result)
+        {
+            OrderForAdminListVm newOrder = new OrderForAdminListVm();
+            _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(result.userDetail));
+            var mappedOrder = _mapper.Map<Orders>(result.ordersForListVm);
+            _orderRepo.UpdateOrders(mappedOrder);
+            
+        }
         public byte[] GetPdfDocumentFromService(int _orderId)
         {
             OrderFromCartVm orderFromCart = new OrderFromCartVm();
@@ -328,7 +355,7 @@ namespace SimplyShopMVC.Application.Services
             var orderPdf = _genPdf.GenertateOrderPdf(orderFromCart);
             return orderPdf;
         }
-        public bool SentEmailWithOrdersDetail(int orderId,string subject, string message,  byte[] pdfDoc)
+        public bool SentEmailWithOrdersDetail(int orderId, string subject, string message, byte[] pdfDoc)
         {
             var newOrder = _orderRepo.GetAllOrders().FirstOrDefault(o => o.Id == orderId);
             UserDetail userDetail = new UserDetail();
@@ -336,10 +363,10 @@ namespace SimplyShopMVC.Application.Services
             {
                 userDetail = _userRepo.GetAllUsers().FirstOrDefault(o => o.UserId == newOrder.UserId);
             }
-            if(userDetail!= null && !String.IsNullOrEmpty(userDetail.EmailAddress))
+            if (userDetail != null && !String.IsNullOrEmpty(userDetail.EmailAddress))
             {
                 _sendEmail.SendEmail($"{userDetail.EmailAddress}", subject, message, pdfDoc);
-               
+
             }
             return true;
         }
