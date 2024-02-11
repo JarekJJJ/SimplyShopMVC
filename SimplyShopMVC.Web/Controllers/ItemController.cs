@@ -28,13 +28,15 @@ namespace SimplyShopMVC.Web.Controllers
             if (selectedCategory != null && selectedCategory > 0)
             {
                 listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "",0, iduser);
-                var receivedCategories = _frontService.GetAllCategories();
+                var receivedCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categories = receivedCategories.categories.ToList();
             }
             else
             {
-                listCategories = _frontService.GetAllCategories();
+                listCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categoryItems = new List<FrontItemForList>();
+                var newsItems = _frontService.GetItemsToIndex(16, "Nowość");
+                listCategories.newsItems = newsItems;
             }
             listCategories.itemToOrder = new FrontItemForList();
             return View(listCategories);
@@ -61,13 +63,15 @@ namespace SimplyShopMVC.Web.Controllers
             if (selectedCategory != null && selectedCategory > 0)
             {
                 listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem, selectedTag, iduser);
-                var receivedCategories = _frontService.GetAllCategories();
+                var receivedCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categories = receivedCategories.categories.ToList();
             }
             else
             {
-                listCategories = _frontService.GetAllCategories();
+                listCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categoryItems = new List<FrontItemForList>();
+                var newsItems = _frontService.GetItemsToIndex(16, "Nowość");
+                listCategories.newsItems = newsItems;
             }
             if (selectedView > 0)
             {

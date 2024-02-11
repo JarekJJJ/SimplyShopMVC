@@ -71,117 +71,167 @@
     </div>
 </form>
 <div class="row mt-1 bg-light">
-    <div class="col-md-2 bg-white me-2 mt-2 d-flex align-items-center">
-        <p class="text-center mb-auto">Filtry:</p>
-
-        @if (Model.tags != null)
+    @if ((Model.categoryItems.Count == 0) && (Model.newsItems != null))
+    {
+        @foreach (var item in Model.newsItems)
         {
-            <div class="col-md-6 btn-group-vertical mb-auto mt-5" role="group" aria-label="Vertical radio toggle button group">
-                <input type="radio" class="btn-check filtrRadio" name="options-base" id="0" autocomplete="off" checked="@(Model.selectedTag==0 ? true:false)">
-                <label class="btn btn-outline-dark" for="0">brak</label>
-                @foreach (var filtr in Model.tags)
-                {
+            var mainImage = item.images.FirstOrDefault();
+            <div class="col-md-3 p-1 cart">
+                <form asp-controller="Cart" asp-action="AddCartItem" method="post">
 
-                    <input type="radio" class="btn-check filtrRadio border border-1 m-1" name="options-base" id="@filtr.Id" autocomplete="off" checked="@(Model.selectedTag==filtr.Id ? true:false)">
-                    <label class="btn btn-outline-info" for="@filtr.Id">@filtr.Name</label>
+                    <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
+                        <div class=" badge bg-primary text-wrap" style="width: 6rem;">
+                            Nowość
+                        </div>
+                        <div class="text-center d-flex justify-content-center m-1">
+                            <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@item.name">
+                        </div>
+                        <div class="text-center">
+                            <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
+                        </div>
+                        <div class="text-center text-container">
+                            <span class="fs-6"><a href="">@Html.ActionLink(item.name, "DetailItem","Item", new {selectedItem=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</a></span>
+                        </div>
+                        <div class="flex-grow-1 d-flex align-items-end justify-content-center">
+                            <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
+                            <input type="hidden" name="pageNo" value="@Model.currentPage" />
+                            <input type="hidden" id="@item.id" asp-for="@Model.cartItem.ItemId" value="@item.id">
+                            <input type="hidden" asp-for="cartItem.Name" value="@item.name" />
+                            <input type="hidden" id="prizeB_@item.id" asp-for="@Model.cartItem.PriceN" value="@item.priceB" />
+                            <input type="hidden" asp-for="cartItem.WarehouseId" value="@item.warehouseId" />
+                            <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id" />
+                            <input type="hidden" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@item.id" value="1" />
+                            <button type="submit" class="btn cart button btn-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                </svg> <span class="text-light">Dodaj do koszyka</span>
+                            </button>
 
-                }
+                        </div>
+                    </div>
+                </form>
             </div>
 
 
         }
+    }
+    else
+    {
+        <div class="col-md-2 bg-white me-2 mt-2 d-flex align-items-center">
+            <p class="text-center mb-auto">Filtry:</p>
 
-    </div>
-    <div class="col-md-9 bg-light p-0">
-        <table class="table table-striped mt-2" style="display:none" id="produktyLista">
-            <tr>
-                <th>Nazwa towaru</th>
-                <th>dostępna ilość</th>
-                <th>cena brutto</th>
-                <th>czas dostawy</th>
-                <th>szczegóły</th>
-            </tr>
-
-
-            @foreach (var sItem in Model.categoryItems)
+            @if (Model.tags != null)
             {
-                <tr>
-                    <td>@sItem.name</td>
-                    <td>@sItem.quantity</td>
-                    <td>@sItem.priceB.ToString("N2")</td>
-                    <td>@sItem.deliveryTime</td>
-                    <td> <div class="h7">  <span class="">@Html.ActionLink("szczegóły","DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span> </div></td>
-                </tr>
+                <div class="col-md-6 btn-group-vertical mb-auto mt-5" role="group" aria-label="Vertical radio toggle button group">
+                    <input type="radio" class="btn-check filtrRadio" name="options-base" id="0" autocomplete="off" checked="@(Model.selectedTag==0 ? true:false)">
+                    <label class="btn btn-outline-dark" for="0">brak</label>
+                    @foreach (var filtr in Model.tags)
+                    {
+
+                        <input type="radio" class="btn-check filtrRadio border border-1 m-1" name="options-base" id="@filtr.Id" autocomplete="off" checked="@(Model.selectedTag==filtr.Id ? true:false)">
+                        <label class="btn btn-outline-info" for="@filtr.Id">@filtr.Name</label>
+
+                    }
+                </div>
+
+
             }
-        </table>
-        <div class="col-md-12 bg-light" style="display:none" id="produktyPanel">
 
-            @foreach (var sItem in Model.categoryItems)
-            {
-                var mainImage = sItem.images.FirstOrDefault();
-                <form asp-controller="Cart" asp-action="AddCartItem" method="post">
+        </div>
+        <div class="col-md-9 bg-light p-0">
+            <table class="table table-striped mt-2" style="display:none" id="produktyLista">
+                <tr>
+                    <th>Nazwa towaru</th>
+                    <th>dostępna ilość</th>
+                    <th>cena brutto</th>
+                    <th>czas dostawy</th>
+                    <th>szczegóły</th>
+                </tr>
 
-                    <div class="col-md-12 d-flex mt-2 bg-white">
-                        <div class="text-center d-flex justify-content-center m-1 col-md-2">
-                            <div class="d-flex align-self-center justify-content-center">
-                                <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name">
-                            </div>
-                        </div>
-                        <div class="d-flex  flex-grow-1 p-4 flex-column">
-                            <div class="mb-auto">
-                                <div class="d-inline-flex">
-                                    @if ((sItem.tags.Any()) && (sItem.tags != null))
-                                    {
-                                        @foreach (var tags in sItem.tags)
-                                        {
-                                            <div class=" badge bg-danger text-wrap m-1" style="width: 6rem;">
-                                                <span>@tags.Name</span>
-                                            </div>
-                                        }
-                                    }
+
+                @foreach (var sItem in Model.categoryItems)
+                {
+                    <tr>
+                        <td>@sItem.name</td>
+                        <td>@sItem.quantity</td>
+                        <td>@sItem.priceB.ToString("N2")</td>
+                        <td>@sItem.deliveryTime</td>
+                        <td> <div class="h7">  <span class="">@Html.ActionLink("szczegóły","DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span> </div></td>
+                    </tr>
+                }
+            </table>
+            <div class="col-md-12 bg-light" style="display:none" id="produktyPanel">
+
+                @foreach (var sItem in Model.categoryItems)
+                {
+                    var mainImage = sItem.images.FirstOrDefault();
+                    <form asp-controller="Cart" asp-action="AddCartItem" method="post">
+
+                        <div class="col-md-12 d-flex mt-2 bg-white">
+                            <div class="text-center d-flex justify-content-center m-1 col-md-2">
+                                <div class="d-flex align-self-center justify-content-center">
+                                    <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name">
                                 </div>
                             </div>
-                            <div class="p-1">
-                                <span class="">@Html.ActionLink(sItem.name,"DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0 h4 text-black text-start"})</span>
-                            </div>
-                            <div class="mt-auto row">
-                                <div class="col p-1"><span class="text-secondary">Ean: @sItem.eanCode</span></div>
-                                <div class="col p-1"><span class="text-secondary">Symbol: @sItem.itemSymbol</span></div>
-                                <div class="col p-1"><span class="text-secondary">Czas wysyłki: do @sItem.deliveryTime dni</span></div>
-                                <div class="col p-1"><span class="text-secondary">Ilość na magazynie: @sItem.quantity szt.</span></div>
-                            </div>
+                            <div class="d-flex  flex-grow-1 p-4 flex-column">
+                                <div class="mb-auto">
+                                    <div class="d-inline-flex">
+                                        @if ((sItem.tags.Any()) && (sItem.tags != null))
+                                        {
+                                            @foreach (var tags in sItem.tags)
+                                            {
+                                                <div class=" badge bg-danger text-wrap m-1" style="width: 6rem;">
+                                                    <span>@tags.Name</span>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="p-1">
+                                    <span class="">@Html.ActionLink(sItem.name,"DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0 h4 text-black text-start"})</span>
+                                </div>
+                                <div class="mt-auto row">
+                                    <div class="col p-1"><span class="text-secondary">Ean: @sItem.eanCode</span></div>
+                                    <div class="col p-1"><span class="text-secondary">Symbol: @sItem.itemSymbol</span></div>
+                                    <div class="col p-1"><span class="text-secondary">Czas wysyłki: do @sItem.deliveryTime dni</span></div>
+                                    <div class="col p-1"><span class="text-secondary">Ilość na magazynie: @sItem.quantity szt.</span></div>
+                                </div>
 
-                        </div>
-                        <div class="d-flex align-items-end flex-column mb-3" style="height: 200px;">
-                            <div class="p-2 justify-content-center text-center m-auto">
-                                <span class="fs-5 fw-bolder text-success">@sItem.priceB.ToString("N2") zł</span>
                             </div>
-                            <div class="p-2 input-group input-group-lg justify-content-center">
+                            <div class="d-flex align-items-end flex-column mb-3" style="height: 200px;">
+                                <div class="p-2 justify-content-center text-center m-auto">
+                                    <span class="fs-5 fw-bolder text-success">@sItem.priceB.ToString("N2") zł</span>
+                                </div>
+                                <div class="p-2 input-group input-group-lg justify-content-center">
 
-                                <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
-                                <input type="hidden" name="pageNo" value="@Model.currentPage" />
-                                <input type="hidden" id="@sItem.id" asp-for="@Model.cartItem.ItemId" value="@sItem.id">
-                                <input type="hidden" asp-for="cartItem.Name" value="@sItem.name"/>
-                                <input type="hidden" id="prizeB_@sItem.id" asp-for="@Model.cartItem.PriceN" value="@sItem.priceB"/>
-                                <input type="hidden" asp-for="cartItem.WarehouseId" value="@sItem.warehouseId"/>
-                                <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id">                              
-                                <input type="number" min="0" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
-                                <span class="input-group-text" id="inputGroup-sizing-lg">szt.</span>
-                            </div>
-                            <div class="mt-auto">
-                                <button type="submit" class="btn btn-danger ms-4 me-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
-                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                                    </svg> <span class="text-light link-underline link-underline-opacity-0">Dodaj</span>
-                                </button>
+                                    <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
+                                    <input type="hidden" name="pageNo" value="@Model.currentPage" />
+                                    <input type="hidden" id="@sItem.id" asp-for="@Model.cartItem.ItemId" value="@sItem.id">
+                                    <input type="hidden" asp-for="cartItem.Name" value="@sItem.name" />
+                                    <input type="hidden" id="prizeB_@sItem.id" asp-for="@Model.cartItem.PriceN" value="@sItem.priceB" />
+                                    <input type="hidden" asp-for="cartItem.WarehouseId" value="@sItem.warehouseId" />
+                                    <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id">
+                                    <input type="number" min="0" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
+                                    <span class="input-group-text" id="inputGroup-sizing-lg">szt.</span>
+                                </div>
+                                <div class="mt-auto">
+                                    <button type="submit" class="btn btn-danger ms-4 me-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                            <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                        </svg> <span class="text-light link-underline link-underline-opacity-0">Dodaj</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            }
+                    </form>
+                }
+
+
+            </div>
+
         </div>
+    }
 
-    </div>
 </div>
 <form asp-action="Index" method="post" id="paginForm">
     <nav aria-label="Page navigation">
@@ -211,7 +261,7 @@
     <input type="hidden" name="pageSize" id="pageSize" value="10" />
     <input type="hidden" name="selectedView" id="selectedView" />
     <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
-    <input class="form-control" type="hiden" aria-label="Search" asp-for="searchItem" value="@Model.searchItem">
+    <input class="form-control" type="hidden" aria-label="Search" asp-for="searchItem" value="@Model.searchItem">
     <input type="hidden" asp-for="selectedTag" id="selectedTag" value="@Model.selectedTag" />
 
 </form>

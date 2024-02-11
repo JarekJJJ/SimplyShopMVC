@@ -15,6 +15,7 @@ using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Domain.Model.Order;
 using Microsoft.AspNetCore.Identity;
+using iText.Layout.Element;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -129,13 +130,16 @@ namespace SimplyShopMVC.Application.Services
 
             return listItem;
         }
-        public ListItemShopIndexVm GetAllCategories()
+        public ListItemShopIndexVm GetAllCategories(string userId)
         {
             ListItemShopIndexVm listItemShopIndexVm = new ListItemShopIndexVm();
             var listCategories = new List<CategoryForListVm>();
             var receivedCategories = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             listItemShopIndexVm.categories = receivedCategories;
+            var cart = GetCart(userId);
+            var cartItems = GetCartItemsToCart(cart.Id);
+            listItemShopIndexVm.cart = cart;
             return listItemShopIndexVm;
         }
         //funkcje 

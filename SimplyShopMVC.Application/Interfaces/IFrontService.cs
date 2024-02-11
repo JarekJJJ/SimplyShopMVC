@@ -12,7 +12,7 @@ namespace SimplyShopMVC.Domain.Interface
     {
         FrontItemForList GetItemDetail(int id);
         List<FrontItemForList> GetItemsToIndex(int quantityItem, string tagName);
-        ListItemShopIndexVm GetAllCategories();
+        ListItemShopIndexVm GetAllCategories(string userId);
         ListItemShopIndexVm GetItemsByCategory(int categoryId, int pageSize, int pageNo, string searchString, int selectedTags, string userId);
     }
 }
