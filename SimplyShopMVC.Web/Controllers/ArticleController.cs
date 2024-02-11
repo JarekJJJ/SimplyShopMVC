@@ -23,17 +23,38 @@ namespace SimplyShopMVC.Web.Controllers
             _articleValidator = articleValidator;
             _updateArticleValidator = updateArticleValidator;
         }
-        // [Authorize]
-        // [CheckPermissions("Read")]
         public IActionResult Index()
         {
-            var articles = _articleService.GetAllArticleForList();
-            return View(articles);
+            string tag = TempData["tagName"] as string;
+            if (String.IsNullOrEmpty(tag))
+            {
+                var articles = _articleService.GetAllArticleForList();
+                return View(articles);
+            }
+            else
+            {
+                var articles = _articleService.GetAllArticleForList(tag);
+                return View(articles);
+            }
         }
-
-
-
-
+        [HttpGet]
+        public IActionResult GetInfoArticle()
+        {
+            TempData["tagName"] = "Informacje";
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult GetFiskalneArticle()
+        {
+            TempData["tagName"] = "Fiskalne";
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult GetGamingArticle()
+        {
+            TempData["tagName"] = "GamingPC";
+            return RedirectToAction("Index");
+        }
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult AddArticle([FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)
@@ -69,6 +90,13 @@ namespace SimplyShopMVC.Web.Controllers
             return View("AddArticle", model);
 
         }
+        [HttpGet, Authorize(Roles = "Admin")]
+        public IActionResult AdminListArticle()
+        {
+            var articles = _articleService.GetAllArticleForList();
+            return View(articles);
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult UpdateArticle(int id)
@@ -76,6 +104,7 @@ namespace SimplyShopMVC.Web.Controllers
             var article = _articleService.GetArticleToUpdate(id);
             return View(article);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateArticle(UpdateArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment, List<string> SelectedImage)
@@ -94,10 +123,11 @@ namespace SimplyShopMVC.Web.Controllers
             return View("UpdateArticle", model);
 
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             _articleService.DeleteArticle(id);
-            return RedirectToAction("Index");
+            return RedirectToAction("AdminListArticle");
         }
         public IActionResult ArticleDetail(int id)
         {

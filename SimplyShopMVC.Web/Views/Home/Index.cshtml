@@ -3,16 +3,16 @@
     ViewData["Title"] = "HKR24.pl - Index site";
 }
 <div class="container">
-    <div id="carouselExampleInterval m-1" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner" style="max-height:250px">
+    <div id="carouselExampleInterval m-1" class="carousel slide mt-2" data-bs-ride="carousel">
+        <div class="carousel-inner" style="height:250px">
             <div class="carousel-item active" data-bs-interval="10000">
-                <img src="/media/nophoto.png" class="d-block w-100"  alt="...">
+                <img src="/media/baner1.jpg" class="d-block w-100"  alt="...">
             </div>
             <div class="carousel-item" data-bs-interval="2000">
-                <img src="/media/nophoto.png" class="d-block w-100"  alt="...">
+                <img src="/media/kasy.jpg" class="d-block w-100"  alt="...">
             </div>
             <div class="carousel-item">
-                <img src="/media/nophoto.png" class="d-block w-100" alt="...">
+                <img src="/media/baner1.jpg" class="d-block w-100" alt="...">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
@@ -23,6 +23,19 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
+    </div>
+    <div id="IndexPanel1">
+        @if(Model.articlePanel1 != null)
+        {
+            <p class="">@(Html.Raw(Model.articlePanel1.Content))</p>
+        }
+
+    </div>
+    <div id="IndexPanel2">
+        @if (Model.articlePanel2 != null)
+        {
+            <p class="">@(Html.Raw(Model.articlePanel2.Content))</p>
+        }
     </div>
     <div class="row m-1 ">
         <div class="col-md-12">

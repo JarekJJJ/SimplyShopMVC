@@ -165,6 +165,16 @@ namespace SimplyShopMVC.Application.Services
             };
             return articlesList;
         }
+        public ListArticleForListVm GetAllArticleForList(string tagName)
+        {
+            var tagForList = _articleRepo.GetAllArticleTags().FirstOrDefault(t => t.Name == tagName);
+            ListArticleForListVm articlesList = new ListArticleForListVm();
+            if (tagForList != null)
+            {
+                articlesList = GetAllArticlesByTagId(tagForList.Id);
+            }         
+            return articlesList;
+        }
 
         public ArticleDetailVm GetArticleDetails(int articleId)
         {
@@ -174,6 +184,23 @@ namespace SimplyShopMVC.Application.Services
             var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
             var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
             articleVm.imagePath = imageToList;
+            return articleVm;
+        }
+        public ArticleDetailVm GetArticleDetailsByTag(string tagName)
+        {
+            var tagForList = _articleRepo.GetAllArticleTags().FirstOrDefault(t => t.Name == tagName);
+            ArticleDetailVm articleVm = new ArticleDetailVm();
+            if (tagForList != null)
+            {
+                articleVm = _mapper.Map<ArticleDetailVm>(_articleRepo.GetArticlesByTagId(tagForList.Id).FirstOrDefault());
+                if (articleVm != null)
+                {
+                    var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{articleVm.Id}\\";
+                    var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+                    articleVm.imagePath = imageToList;
+
+                }
+            }
             return articleVm;
         }
 

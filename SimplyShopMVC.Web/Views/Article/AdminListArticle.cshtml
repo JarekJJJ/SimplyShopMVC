@@ -1,0 +1,44 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Article.ListArticleForListVm
+
+@{
+    ViewData["Title"] = "AdminListArticle";
+}
+
+<h1>AdminListArticle</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="AddArticle">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Tytuł
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Articles)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        <span class="">@Html.ActionLink("UpdateArticle", "UpdateArticle", new {id=item.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"}) | </span>
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.Id})
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

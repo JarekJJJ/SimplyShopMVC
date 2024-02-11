@@ -12,8 +12,10 @@ namespace SimplyShopMVC.Application.Interfaces
     public interface IArticleService
     {
         ListArticleForListVm GetAllArticleForList();
+        ListArticleForListVm GetAllArticleForList(string tagName);
         ListArticleForListVm GetAllArticlesByTagId(int tagId);
         ArticleDetailVm GetArticleDetails(int articleId);
+        ArticleDetailVm GetArticleDetailsByTag(string tagName);
         UpdateArticleVm GetArticleToUpdate(int articleId);
         NewArticleVm AddArticle(NewArticleVm article, [FromServices] IHostingEnvironment oHostingEnvironment);
         void UpdateArticle(UpdateArticleVm article, [FromServices] IHostingEnvironment oHostingEnvironment, List<string> selectedImage);

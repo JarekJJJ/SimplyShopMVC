@@ -17,13 +17,15 @@ namespace SimplyShopMVC.Web.Controllers
         private readonly IFrontService _frontService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailService _emailService;
+        private readonly IArticleService _articleService;
 
-        public HomeController(ILogger<HomeController> logger, IFrontService frontService, UserManager<IdentityUser> userManager, IEmailService emailService)
+        public HomeController(ILogger<HomeController> logger, IFrontService frontService, UserManager<IdentityUser> userManager, IEmailService emailService, IArticleService articleService)
         {
             _logger = logger;
             _frontService = frontService;
             _userManager = userManager;
             _emailService = emailService;
+            _articleService = articleService;
         }
 
         public IActionResult Index()
@@ -33,8 +35,23 @@ namespace SimplyShopMVC.Web.Controllers
            listItems.frontItemForLists = items;
             var itemsNews = _frontService.GetItemsToIndex(8, ("Nowość"));
             listItems.frontItemNews = itemsNews;
-            var iduser = _userManager.GetUserId(User);
-            listItems.userId = iduser; //test do usunięcia
+            var panel1Text = _articleService.GetArticleDetailsByTag("indexPanel1");
+            if(panel1Text != null)
+            {
+                listItems.articlePanel1 = panel1Text;
+            }
+            var panel2Text = _articleService.GetArticleDetailsByTag("indexPanel2");
+            if (panel1Text != null)
+            {
+                listItems.articlePanel2 = panel2Text;
+            }
+            var panel3Text = _articleService.GetArticleDetailsByTag("indexPanel3");
+            if (panel1Text != null)
+            {
+                listItems.articlePanel3 = panel3Text;
+            }
+            //var iduser = _userManager.GetUserId(User);
+            //listItems.userId = iduser; //test do usunięcia
             return View(listItems);
 
         }

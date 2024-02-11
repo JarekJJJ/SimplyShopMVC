@@ -46,11 +46,15 @@
                     </li>
                     @if (User.Identity.IsAuthenticated) {
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="index">Informacje</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="GetInfoArticle">Informacje</a>
                         </li>
                     }
-                    <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="index">Oferta</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-light dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Oferty</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-controller="Article" asp-action="GetFiskalneArticle">Urządzenia Fiskalne</a></li>
+                            <li><a class="dropdown-item" asp-controller="Article" asp-action="GetGamingArticle">Komputery Gaming</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="index">Serwis</a>
@@ -68,6 +72,7 @@
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="ListWarehouseToUpdate">Edycja magazynu</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" asp-controller="Article" asp-action="AddArticle">Dodaj informację</a></li>
+                                <li><a class="dropdown-item" asp-controller="Article" asp-action="AdminListArticle">Lista artykułów</a></li>
                                 <li><a class="dropdown-item" asp-controller="Article" asp-action="ListArticleTagToUpdate">Edytuj ArticleTag</a></li>
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="CompanySettings">Dane firmy</a></li>
                                  <li><a class="dropdown-item" asp-controller="Shop" asp-action="GetOrderForAdmin">Zamówienia</a></li>

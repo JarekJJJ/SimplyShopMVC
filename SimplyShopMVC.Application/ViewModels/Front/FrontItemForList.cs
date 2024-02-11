@@ -1,4 +1,5 @@
 ﻿using SimplyShopMVC.Application.ViewModels.Item;
+using SimplyShopMVC.Application.ViewModels.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,6 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public List<ItemTagsForListVm>? tags { get; set; }
         public List<OmnibusPriceToListVm> omnibusPriceList { get; set; }
         public int orderQuantity { get; set; }
+        public CartItemsForListVm cartItem { get; set; }
     }
 }
