@@ -14,7 +14,6 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
     <PackageReference Include="itext7" Version="8.0.2" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.2" />
-    <PackageReference Include="LiczbyNaSlowaNET.dll" Version="1.0.5" />
   </ItemGroup>
 
   <ItemGroup>

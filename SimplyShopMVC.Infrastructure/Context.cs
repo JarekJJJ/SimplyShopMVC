@@ -47,12 +47,12 @@ namespace SimplyShopMVC.Infrastructure
                 .HasKey(cct => new { cct.CategoryId, cct.ItemTagId});
             builder.Entity<ConnectCategoryTag>()
                 .HasOne<Category>(cct => cct.Category)
-                .WithMany(b => b.ConnectCategoryTags)
+                .WithMany(b => b.ConnectCategoryTag)
                 .HasForeignKey(cct => cct.CategoryId);
             builder.Entity<ConnectCategoryTag>()
                 .HasOne<ItemTag>(cct => cct.ItemTag)
-                .WithMany(c => c.ConnectCategoryTags)
-                .HasForeignKey(cct => cct.CategoryId);
+                .WithMany(c => c.ConnectCategoryTag)
+                .HasForeignKey(cct => cct.ItemTagId);
 
             builder.Entity<ConnectArticleTag>()
                 .HasKey(cat => new { cat.ArticleId, cat.ArticleTagId });

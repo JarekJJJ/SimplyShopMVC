@@ -12,7 +12,7 @@ namespace SimplyShopMVC.Domain.Model
         public string Name { get; set; }
         public string? Description { get; set; }
         public ICollection<ConnectItemTag> ConnectItemTags { get; set; }
-        public ICollection<ConnectCategoryTag> ConnectCategoryTags{ get; set; }
+        public ICollection<ConnectCategoryTag> ConnectCategoryTag{ get; set; }
 
 
     }

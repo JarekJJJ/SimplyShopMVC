@@ -286,9 +286,13 @@ namespace SimplyShopMVC.Application.Services
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             foreach (var category in newConnectItem.categoryItems.Where(c => c.IsMainCategory == false))
             {
-                var parrentCategory = newConnectItem.categoryItems.FirstOrDefault(c => c.Id == category.MainCategoryId).Name;
-                string categoryName = $"{parrentCategory}->{category.Name}";
-                category.Name = categoryName;
+                var parrentCategory = newConnectItem.categoryItems.FirstOrDefault(c => c.Id == category.MainCategoryId);
+                if(parrentCategory != null)
+                {
+                    string categoryName = $"{parrentCategory.Name}->{category.Name}";
+                    category.Name = categoryName;
+                }
+            
 
             }
             var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();

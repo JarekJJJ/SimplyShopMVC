@@ -18,13 +18,19 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context = context;
         }
         public void AddConnectCategoryTags(ItemTag sTag, int CategoryId)
-        {      
-            var category = _context.Categories.FirstOrDefault(c=>c.Id == CategoryId);
+        {
+            var category = _context.Categories.FirstOrDefault(c => c.Id == CategoryId);
+            var tag = _context.ItemTags.FirstOrDefault(t => t.Id == sTag.Id);
+            if (category != null && tag != null)
+            {
                 ConnectCategoryTag con = new ConnectCategoryTag();
                 con.CategoryId = category.Id;
-                con.ItemTagId = sTag.Id;
+                con.ItemTagId = tag.Id;
+                _context.Entry(category).State = EntityState.Detached;
+                _context.Entry(tag).State = EntityState.Detached;
                 _context.ConnectCategoryTags.Add(con);
-                _context.SaveChanges();           
+                _context.SaveChanges();
+            }
         }
 
         public IQueryable<ConnectCategoryTag> GetAllCategoryTags()
