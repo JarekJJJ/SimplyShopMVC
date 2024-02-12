@@ -1,22 +1,55 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
+.headbody {
+display:flex;
+align-items:center;
+justify-content:center;
+background:white;
+}
+.navigation {
+    display: flex;
+    width: 1270px;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    box-shadow: 0,5px,15px rgba(0,0,0,0.1);
+}
+.navigation ul {
+    display:flex;
+}
+.navigation ul li {
+    list-style:none;
+    position:relative;
+    align-items:center;
+}
+    .navigation ul li a .icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        color: gray;
+    }
+    .navigation ul li a span svg {
+        width:35px;
+        height:35px
+    }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
     margin-bottom: 60px;
     background-color: #F8F8F8;
 }
+
 .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
@@ -45,8 +78,9 @@ body {
     width: 1.5rem;
     height: 100vh;
 }
-.row{
-    background-color:white;
+
+.row {
+    background-color: white;
 }
 
 .bi {
@@ -95,18 +129,21 @@ body {
     .bd-mode-toggle .dropdown-menu .active .bi {
         display: block !important;
     }
+
 .text-container {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2; /* Ogranicz do 2 linijek */
     overflow: hidden;
 }
+
 .text-OneLine {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1; /* Ogranicz do 2 linijek */
     overflow: hidden;
 }
+
 div.article-list {
     height: 350px;
 }
