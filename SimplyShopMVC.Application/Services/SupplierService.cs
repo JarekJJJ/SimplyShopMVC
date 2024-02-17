@@ -43,9 +43,70 @@ namespace SimplyShopMVC.Application.Services
             _omnibusPriceRepo = omnibusPriceRepo;
             _categoryTagsRepo = categoryTagsRepo;
         }
+        public AddIncomItemsVm UpdateIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
+        {
+            int countItemUpdate = 0;
+            int countItemAdd = 0;
+            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
+            List<string> list = new List<string>();
+            returnRaport.raportAddItem = new List<string>();
+            if (incomItems.warehouseId != 0)
+            {
+                CultureInfo cultureInfo = new CultureInfo("pl-PL");
+                cultureInfo.NumberFormat.NumberDecimalSeparator = ",";
+                DateTime dateTime = DateTime.Now;
+                foreach (XElement elementXml in xmlDocument.Root.Elements("produkt"))
+                {
+                    try
+                    {
+                        XElement grupa_towarowa = elementXml.Element("grupa_towarowa");
+                        XElement nazwa_grupy_towarowej = elementXml.Element("nazwa_grupy_towarowej");
+                        XElement symbol_produktu = elementXml.Element("symbol_produktu");
+                        XElement nazwa_produktu = elementXml.Element("nazwa_produktu");
+                        XElement symbol_producenta = elementXml.Element("symbol_producenta");
+                        XElement ean = elementXml.Element("ean");
+                        XElement nazwa_producenta = elementXml.Element("nazwa_producenta");
+                        XElement stan_magazynowy = elementXml.Element("stan_magazynowy");
+                        XElement cena = elementXml.Element("cena");
+                        IncomItemsForListVm itemVm = new IncomItemsForListVm();
+                        itemVm.warehouseId = incomItems.warehouseId;
+                        itemVm.symbol_produktu = symbol_produktu.Value;
+                        itemVm.nazwa_produktu = nazwa_produktu.Value;
+                        itemVm.ean = xmlHelpers.eanController(ean.Value);
+                        itemVm.stan_magazynowy = changeToInt(stan_magazynowy.Value);
+                        itemVm.cena = decimal.Parse(cena.Value, cultureInfo);
+                        itemVm.updateTime = dateTime; // Tutaj zrobić podział na update i Add !!!
+                        var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
+                        var mapedItemVm = _mapper.Map<IncomItemsForListVm>(itemToCheck);
+                        int itemId = 0;
+                        if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
+                        {
+                            itemToCheck.cena = itemVm.cena;
+                            itemToCheck.stan_magazynowy = itemVm.stan_magazynowy;
+                            itemToCheck.updateTime = dateTime;
+                            _supplierRepo.UpdateIncom(itemToCheck);
+                            UpdateItemInShop(itemToCheck);
+                            countItemUpdate++;
+                            itemId = itemToCheck.Id;
+                            OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                            var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                            mapedOmnibusPrice.PriceN = itemVm.cena;
+                            mapedOmnibusPrice.Ean = itemVm.ean;
+                            mapedOmnibusPrice.ChangeTime = dateTime;
+                            mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
+                            _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+            }
+            return returnRaport;
+        }
         public AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
-
             int countItemUpdate = 0;
             int countItemAdd = 0;
             int countItemRemove = 0;
@@ -63,14 +124,10 @@ namespace SimplyShopMVC.Application.Services
                         _supplierRepo.DeleteIncomItem(item.Id);
                         countItemRemove++;
                     }
-
                 }
                 CultureInfo cultureInfo = new CultureInfo("pl-PL");
                 cultureInfo.NumberFormat.NumberDecimalSeparator = ",";
-
                 DateTime dateTime = DateTime.Now;
-
-
                 foreach (XElement elementXml in xmlDocument.Root.Elements("produkt"))
                 {
                     try
@@ -89,8 +146,6 @@ namespace SimplyShopMVC.Application.Services
                         string fullDescription = ("");
                         if (opisProduktu != null)
                         {
-
-
                             foreach (XElement parametrOpisu in opisProduktu.Elements("parametr"))
                             {
                                 string paramName = parametrOpisu.Element("nazwa")?.Value;
@@ -98,7 +153,6 @@ namespace SimplyShopMVC.Application.Services
                                 string newLineDescription = $"<tr><td>{paramName}</td><td>{paramValue}</td></tr>";
                                 lineDescription = lineDescription + newLineDescription;
                             }
-
                             fullDescription = firstLineDescription + lineDescription + lastLineDescription;
                         }
                         else
@@ -120,7 +174,6 @@ namespace SimplyShopMVC.Application.Services
                         XElement szerokosc = opakowanie.Element("szerokosc");
                         XElement wysokosc = opakowanie.Element("wyskosc");
                         XElement waga = opakowanie.Element("waga");
-
                         IncomItemsForListVm itemVm = new IncomItemsForListVm();
                         itemVm.warehouseId = incomItems.warehouseId;
                         itemVm.grupa_towarowa = grupa_towarowa.Value;
@@ -144,8 +197,10 @@ namespace SimplyShopMVC.Application.Services
                         int itemId = 0;
                         if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
                         {
-
+                            mapedItemVm.createDate = itemToCheck.createDate;
+                            mapedItemVm.updateTime= dateTime;
                             _supplierRepo.UpdateIncom(mapedItemVm);
+                            UpdateItemInShop(mapedItemVm);
                             countItemUpdate++;
                             itemId = itemToCheck.Id;
                         }
@@ -166,19 +221,16 @@ namespace SimplyShopMVC.Application.Services
                     }
                     catch (Exception)
                     {
-
                         throw;
                     }
                 }
             }
-
             if (countItemAdd > 0 || countItemUpdate > 0)
             {
                 returnRaport.raportAddItem.Add($"Usunięto rekordów: {countItemRemove}");
                 returnRaport.raportAddItem.Add($"Dodano rekordów: {countItemAdd}");
                 returnRaport.raportAddItem.Add($"Zmodyfikowano rekordów: {countItemUpdate}");
                 returnRaport.raportAddItem.Add($"Dodano zdjęć: {countImageAdd}");
-
                 returnRaport.raportAddItem.Add("ok");
             }
             returnRaport.warehouseForListVm = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
@@ -207,7 +259,6 @@ namespace SimplyShopMVC.Application.Services
                 {
                     incomGroupVm.GroupIdHome = 0;
                 }
-
                 incomGroupVm.Name = Name.Value;
                 var mappedIncomGroup = _mapper.Map<IncomGroup>(incomGroupVm);
                 var returnId = _supplierRepo.AddIncomGroup(mappedIncomGroup);
@@ -219,9 +270,7 @@ namespace SimplyShopMVC.Application.Services
                 {
                     countItemFalse++;
                 }
-
             }
-
             returnRaport.raportAddItem.Add($"Dodano {countItemAdd} grup do bazy!");
             returnRaport.raportAddItem.Add($"Nie udało się dodać {countItemFalse} grup do bazy!");
             return returnRaport;
@@ -255,7 +304,6 @@ namespace SimplyShopMVC.Application.Services
         public ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm()
         {
             ConnectItemsToSupplierVm newConnectItem = new ConnectItemsToSupplierVm();
-
             List<CountSupplierItem> listCountItem = new List<CountSupplierItem>();
             newConnectItem.raport = new List<string>();
             newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
@@ -287,13 +335,11 @@ namespace SimplyShopMVC.Application.Services
             foreach (var category in newConnectItem.categoryItems.Where(c => c.IsMainCategory == false))
             {
                 var parrentCategory = newConnectItem.categoryItems.FirstOrDefault(c => c.Id == category.MainCategoryId);
-                if(parrentCategory != null)
+                if (parrentCategory != null)
                 {
                     string categoryName = $"{parrentCategory.Name}->{category.Name}";
                     category.Name = categoryName;
                 }
-            
-
             }
             var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
             newConnectItem.categoryItems = ascendingListCategory;
@@ -375,7 +421,6 @@ namespace SimplyShopMVC.Application.Services
                         itemWarehouse.VatRateId = idVatRate.Id;
                         var mappedItemWare = _mapper.Map<ItemWarehouse>(itemWarehouse);
                         _itemRepo.AddItemWarehouse(mappedItemWare);
-
                     }
                     if (resultItem != null)
                     {
@@ -395,18 +440,8 @@ namespace SimplyShopMVC.Application.Services
                                 string raport = $"Dodano pomyślnie Tag o nazwie: {sTag.Name} do produktów z kategorii";
                                 newConnectItem.raport.Add(raport);
                             }
-                            //if ((resultItem != null) && (sTag != null) && (resultItemTag == null))
-                            //{
-                            //    // 
-                            //    _itemRepo.AddConnectionItemTags(resultItem.Id, _mapper.Map<ItemTag>(sTag));
-                            //    string raport = $"Dodano pomyślnie Tag o nazwie: {sTag.Name} do produktów z kategorii";
-                            //    newConnectItem.raport.Add(raport);
-                            //}
-
                         }
                     }
-
-
                 }
                 if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
                 {
@@ -421,38 +456,34 @@ namespace SimplyShopMVC.Application.Services
                         }
                     }
                 }
-
-                //Supplier and shop group View
-                //newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
-                //    .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
-                //newConnectItem.incomGroups = _supplierRepo.GetAllIncomGroup()
-                //    .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
-                //foreach (var group in newConnectItem.incomGroups.Where(i => i.GroupIdHome != 0))
-                //{
-                //    var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
-                //    string groupName = $"{parrentName}->{group.Name}";
-                //    group.Name = groupName;
-                //}
-                //var ascendingList = newConnectItem.incomGroups.OrderBy(i => i.Name).ToList();
-                //newConnectItem.incomGroups = ascendingList;
-                //// Category view
-                //newConnectItem.categoryItems = _itemRepo.GetAllCategories()
-                //    .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
-                //foreach (var category in newConnectItem.categoryItems.Where(c => c.IsMainCategory == false))
-                //{
-                //    var parrentCategory = newConnectItem.categoryItems.FirstOrDefault(c => c.Id == category.MainCategoryId).Name;
-                //    string categoryName = $"{parrentCategory}->{category.Name}";
-                //    category.Name = categoryName;
-                //}
-                //var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
-                //newConnectItem.categoryItems = ascendingListCategory;
-                //newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
-                //    .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
-
             }
-
             return newConnectItem;
-
+        }
+        public bool UpdateItemInShop(Incom incomItems)
+        {
+            ItemWarehouse itemWarehouse = new ItemWarehouse();
+            var itemShop = _itemRepo.GetAllItems().FirstOrDefault(i => i.EanCode == incomItems.ean);
+            if (itemShop != null)
+            {
+                itemWarehouse = _itemRepo.GetAllItemWarehouses().FirstOrDefault(w => w.ItemId == itemShop.Id);
+                if (itemWarehouse != null)
+                {
+                    try
+                    {
+                        itemWarehouse.NetPurchasePrice = incomItems.cena;
+                        itemWarehouse.Quantity = incomItems.stan_magazynowy;
+                        _itemRepo.UpdateItemWarehouse(itemWarehouse);
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                   
+                }
+               
+            }
+           return false;
         }
     }
 }

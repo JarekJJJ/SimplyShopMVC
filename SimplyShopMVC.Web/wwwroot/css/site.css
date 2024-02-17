@@ -1,12 +1,14 @@
 html {
     font-size: 14px;
 }
+
 .headbody {
-display:flex;
-align-items:center;
-justify-content:center;
-background:white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
 }
+
 .navigation {
     display: flex;
     width: 1270px;
@@ -15,23 +17,106 @@ background:white;
     background: white;
     box-shadow: 0,5px,15px rgba(0,0,0,0.1);
 }
-.navigation ul {
-    display:flex;
-}
-.navigation ul li {
-    list-style:none;
-    position:relative;
-    align-items:center;
-}
-    .navigation ul li a .icon {
-        position: relative;
+
+    .navigation ul {
         display: flex;
-        align-items: center;
+    }
+
+        .navigation ul li {
+            list-style: none;
+            position: relative;
+            align-items: center;
+        }
+
+            .navigation ul li a .icon {
+                position: relative;
+                display: flex;
+                align-items: center;
+                color: gray;
+            }
+
+            .navigation ul li a span svg {
+                width: 37px;
+                height: 37px
+            }
+
+    .navigation svg {
         color: gray;
     }
-    .navigation ul li a span svg {
-        width:35px;
-        height:35px
+
+    .navigation ul li button svg:hover {
+    }
+
+.frameButton {
+    background-color: white;
+    border: none;
+    color: white;
+    padding: 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 20px 4px 1px;
+    cursor: pointer;
+}
+
+    .frameButton:hover {
+        background-color: white;
+        outline: 3px solid #e7e7e7;
+        color: white;
+        padding: 4px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 20px 4px 1px;
+        cursor: pointer;
+    }
+
+    .frameButton:active {
+        background-color: white;
+        outline: 5px solid #e7e7e7;
+        color: white;
+        padding: 4px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 20px 4px 1px;
+        cursor: pointer;
+    }
+    .searchInput{
+        border:none;
+    }
+    .searchInput:focus{
+        border:none;
+        outline:none;
+    }
+
+.searchButton {
+    background-color: white;
+    border: none;
+    color: white;
+    padding: 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 10px 4px 1px;
+    cursor: pointer;
+}
+
+    .searchButton:hover {
+        background-color: white;
+        border: none;
+        color: white;
+        padding: 4px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 10px 4px 1px;
+        cursor: pointer;
     }
 
 @media (min-width: 768px) {

@@ -50,6 +50,33 @@ namespace SimplyShopMVC.Web.Controllers
 
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdateIncomItemsXML(AddIncomItemsVm incomItems)
+        {
+            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
+            if (incomItems.formFile != null && incomItems.formFile.Length > 0)
+            {
+
+                var listItemsXML = XDocument.Load(incomItems.formFile.OpenReadStream());
+                returnRaport = _supplierService.UpdateIncomItemsXML(incomItems, listItemsXML);
+                return View(returnRaport);
+            }
+            if (!string.IsNullOrEmpty(incomItems.urlXml))
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string xmlString = await client.GetStringAsync(incomItems.urlXml);
+                    var listItemXmlfromUrl = XDocument.Parse(xmlString);
+                    returnRaport = _supplierService.UpdateIncomItemsXML(incomItems, listItemXmlfromUrl);
+                }
+                AddIncomItemsVm _incomItem = new AddIncomItemsVm();
+                XDocument _doc = new XDocument();
+                var incomItem = _supplierService.LoadIncomItemsXML(_incomItem, _doc);
+                returnRaport.warehouseForListVm = incomItem.warehouseForListVm;
+                return View("~/Views/Supplier/AddIncomItemsXML.cshtml", returnRaport);
+            }
+            return View();
+        }
         [HttpGet]
         public IActionResult AddIncomGroupsXML()
         {

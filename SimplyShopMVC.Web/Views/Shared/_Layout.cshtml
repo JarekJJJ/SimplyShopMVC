@@ -20,28 +20,61 @@
 </head>
 <body>
     <div class="headbody">
-        <div class="navigation m-2 border-opacity-50 border border-2 border-dark-subtle rounded-2">
-            <ul class="m-1">
-                <li>
-                    <a href="#">
-                        <span class="icon">
+        <div class="navigation m-2">
+            <div class="d-flex d-inline-block align-items-center justify-content-start flex-fill">
+            <a class="navbar-brand" href="#">
+                <img src="~/media/primehkr24.png" height="42" alt="hkr24.pl - logo" />
+            </a>
+         </div>
+                <div class="d-flex d-inline-block align-items-center justify-content-center flex-fill">
+                    <form class="row g-3 me-5 w-100">
+                        <div class="d-flex flex-row input-group border border-secondary rounded-4">
+                            <input class="searchInput p-1 rounded-4 col-11" type="text" placeholder="search..." aria-label="input search">
+                            <div class="input-group-append">
+                                <button type="submit" id="" class="searchButton col-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            
+                <div class="d-flex d-inline-block align-items-center justify-content-end flex-fill">
+                <button type="button" id="contact" class="frameButton ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-headset" viewBox="0 0 16 16">
+                    <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" />
+                </svg>
+                </button>
+                    <div class="d-flex">
+                        <form asp-controller="Cart" asp-action="Index" method="post">
+                            <button type="submit" id="cart" class="frameButton">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="" class="bi bi-cart-plus-fill" viewBox="0 0 16 16">
+                                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <button type="button" id="cart" class="frameButton">
+                        <span class="" style="color:gray;">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
                                     <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
                                     <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
                                 </svg>
                             }
                             else
                             {
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                                     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
                                 </svg>
                             }
                         </span>
-                    </a>
-                </li>
-            </ul>
+                    </button>
+                </div>        
         </div>
     </div>
     <header class="container-fluid navbar navbar-expand-lg bd-navbar sticky-top shadow-sm" id="elementToToggle" style="background-color:rgb(111, 66, 193);">
@@ -53,9 +86,7 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#">
-                <img src="~/media/primehkr24.png" height="42" alt="hkr24.pl - logo" />
-            </a>
+           
             <div class="navbar-collapse collapse d-sm-inline-flex">
 
                 <ul class="navbar-nav col-lg-8 flex-grow-1 fs-5 fw-semibold">
@@ -139,15 +170,15 @@
                 </ul>
 
             </div>
-            <div class="navbar-collapse ms-auto">
-                <form asp-controller="Cart" asp-action="Index" method="post">
-                    <button type="submit" class="btn btn-danger ms-4 me-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
-                            <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                        </svg>
-                    </button>
-                </form>
-            </div>
+            @*   <div class="navbar-collapse ms-auto">
+            <form asp-controller="Cart" asp-action="Index" method="post">
+            <button type="submit" class="btn btn-danger ms-4 me-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+            <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+            </svg>
+            </button>
+            </form>
+            </div>*@
             @* <div class="navbar-collapse ms-auto">
             <partial name="_LoginPartial" />
             </div>*@
@@ -208,6 +239,16 @@
 
             });
         });
+                                                                //$(document).ready(function () {
+                                                                //    $('#cart').hover(function () {
+                                                                //        $(this).toggleClass('btn btn-outline-secondary');
+                                                                //    },
+                                                                //        function () {
+
+                                                                //            $(this).toggleClass('btn btn-outline-secondary');
+                                                                //        }
+                                                                //    );
+                                                                //});
 
     </script>
     @await RenderSectionAsync("Scripts", required: false)
