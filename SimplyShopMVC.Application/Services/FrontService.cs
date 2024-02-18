@@ -16,6 +16,7 @@ using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Domain.Model.Order;
 using Microsoft.AspNetCore.Identity;
 using iText.Layout.Element;
+using SimplyShopMVC.Infrastructure.Migrations;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -29,9 +30,10 @@ namespace SimplyShopMVC.Application.Services
         private readonly ICategoryTagsRepository _categoryTagsRepo;
         private readonly IOmnibusHelper _omnibusHelper;
         private readonly IOrderRepository _orderRepo;
-      
+        private readonly IUserRepository _userRepo;
+
         public FrontService(ISupplierRepository supplierRepo, IMapper mapper, IWebHostEnvironment webHost, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ICategoryTagsRepository categoryTagsRep,
-            IOmnibusHelper omnibusHelper, IOrderRepository orderRepo)
+            IOmnibusHelper omnibusHelper, IOrderRepository orderRepo, IUserRepository userRepo)
         {
             _supplierRepo = supplierRepo;
             _mapper = mapper;
@@ -41,15 +43,16 @@ namespace SimplyShopMVC.Application.Services
             _categoryTagsRepo = categoryTagsRep;
             _omnibusHelper = omnibusHelper;
             _orderRepo = orderRepo;
+            _userRepo = userRepo;
         }
 
-        public FrontItemForList GetItemDetail(int id)
+        public FrontItemForList GetItemDetail(int id, string userId)
         {
             List<FrontItemForList> frontItemList = new List<FrontItemForList>();
             List<Item> itemList = new List<Item>();
             var itemToMap = _itemRepo.GetItemById(id);
             itemList.Add(itemToMap);
-            var mappedList = mapItemToList(itemList, frontItemList);
+            var mappedList = mapItemToList(itemList, frontItemList, userId);
             var frontItem = mappedList.FirstOrDefault();
             if (!string.IsNullOrEmpty(frontItem.eanCode))
             {
@@ -57,7 +60,7 @@ namespace SimplyShopMVC.Application.Services
             }
             return frontItem;
         }
-        public List<FrontItemForList> GetItemsToIndex(int quantityItem, string tagName) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
+        public List<FrontItemForList> GetItemsToIndex(int quantityItem, string tagName, string userId) //DO PRZEMYŚLENIA - można dodać zmienne takie jak List<int>tagId, CategoryId, int przedmiotów do pobrania i obsłużyć jedną funkcją wszystkie strony sklepu 
         {
             //IndexListVm indexList = new IndexListVm();
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
@@ -83,7 +86,7 @@ namespace SimplyShopMVC.Application.Services
                     }
                 }
             }
-            var mapedList = mapItemToList(itemList, frontItemForLists);
+            var mapedList = mapItemToList(itemList, frontItemForLists, userId);
             frontItemForLists.AddRange(mapedList);
             //indexList.frontItemForLists = frontItemForLists;
             return frontItemForLists;
@@ -108,7 +111,7 @@ namespace SimplyShopMVC.Application.Services
             {
                 itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
             }
-            var mappedItems = mapItemToList(itemList, frontItemForLists);
+            var mappedItems = mapItemToList(itemList, frontItemForLists, userId);
             var mappedItemsToShow = mappedItems.Skip(pageSize * (pageNo - 1)).Take(pageSize).ToList();
             listItem.count = mappedItems.Count;
             listItem.pageSize = pageSize;
@@ -123,7 +126,7 @@ namespace SimplyShopMVC.Application.Services
                 ItemTagsForListVm tagsForListVm = new ItemTagsForListVm();
                 var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));
                 listItem.tags.Add(itemTag);
-            }          
+            }
             var cart = GetCart(userId);
             var cartItems = GetCartItemsToCart(cart.Id);
             listItem.cart = cart;
@@ -151,10 +154,11 @@ namespace SimplyShopMVC.Application.Services
             decimal priceDetalB = netPurchasePrice * (1 + markupPercentage) * (1 + vatPercentage);
             return priceDetalB;
         }
-        public List<FrontItemForList> mapItemToList(List<Item> items, List<FrontItemForList> frontItems)
+        public List<FrontItemForList> mapItemToList(List<Item> items, List<FrontItemForList> frontItems, string userId)
         {
             IndexListVm indexList = new IndexListVm();
             List<FrontItemForList> frontItemForLists = new List<FrontItemForList>();
+            var userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId);
             foreach (var item in items)
             {
                 var checkDuplicateItem = frontItems.FirstOrDefault(f => f.id == item.Id);
@@ -173,7 +177,34 @@ namespace SimplyShopMVC.Application.Services
                     var warehouseResoult = _itemRepo.GetAllWarehouses().FirstOrDefault(w => w.Id == indexItemWare.WarehouseId);
                     //Można dodać sprawdzenie czy cena sprzedaży nie została nadana ręcznie w ItemWarehouse jeżeli nie to pobranie marży po grupie.              
                     var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
-                    indexItem.priceB = resultPriceB;
+                    var resultPriceLevelA = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
+                    var resultPriceLevelB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupB);
+                    var resultPriceLevelC = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupC);
+                    if (userDetail == null)
+                    {
+                        indexItem.priceB = resultPriceLevelA;
+                    }
+                    else
+                    {
+                        switch (userDetail.PriceLevel)
+                        {
+                            case ("A"):
+                                indexItem.priceB = resultPriceLevelA;
+                                break;
+                            case ("B"):
+                                indexItem.priceB = resultPriceLevelB;
+                                break;
+                            case ("C"):
+                                indexItem.priceB = resultPriceLevelC;
+                                break;
+                            default:
+                                indexItem.priceB = resultPriceB;
+                                break;
+                        }
+                    }
+                    indexItem.priceLevelA = resultPriceLevelA;
+                    indexItem.priceLevelB = resultPriceLevelB;
+                    indexItem.priceLevelC = resultPriceLevelC;
                     indexItem.quantity = indexItemWare.Quantity;
                     indexItem.deliveryTime = warehouseResoult.DeliveryTime;
                     indexItem.warehouseId = warehouseResoult.Id;
@@ -240,7 +271,7 @@ namespace SimplyShopMVC.Application.Services
         public CartForListVm GetCart(string userId)
         {
             CartForListVm cart = new CartForListVm();
-            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);        
+            var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.userId == userId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);
             if (actualCart != null)
             {
                 var mappedCart = _mapper.Map<CartForListVm>(actualCart);
@@ -251,8 +282,8 @@ namespace SimplyShopMVC.Application.Services
                 cart.userId = userId;
                 var mappedCart = _mapper.Map<Cart>(cart);
                 var cartId = _orderRepo.AddCart(mappedCart);
-                var getCart = _orderRepo.GetAllCarts().FirstOrDefault(a=>a.Id== cartId);
-                cart = _mapper.Map<CartForListVm>(getCart);             
+                var getCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.Id == cartId);
+                cart = _mapper.Map<CartForListVm>(getCart);
             }
             return cart;
         }

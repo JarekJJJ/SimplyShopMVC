@@ -7,6 +7,7 @@ using SimplyShopMVC.Application.ViewModels.user;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model.Order;
 using SimplyShopMVC.Domain.Model.users;
+using SimplyShopMVC.Infrastructure.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,8 @@ namespace SimplyShopMVC.Application.Services
         private readonly IItemRepository _itemRepo;
         private readonly IEmailService _sendEmail;
         private readonly IGeneratePdf _genPdf;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf)
+        private readonly IPriceCalculate priceCalc;
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf, IPriceCalculate priceCalculate)
         {
             _orderRepo = orderRepository;
             _mapper = mapper;
@@ -31,6 +33,7 @@ namespace SimplyShopMVC.Application.Services
             _userRepo = userRepository;
             _sendEmail = sendEmail;
             _genPdf = genPdf;
+            priceCalc = priceCalculate;
         }
 
         public ListCartItemsForListVm AddToCart(CartItemsForListVm cartItem)
@@ -84,6 +87,14 @@ namespace SimplyShopMVC.Application.Services
             {
                 cartItemsForList.AddRange(cartItems);
             }
+            foreach (var cartItem in cartItemsForList)
+            {
+                var item = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == cartItem.ItemId && i.WarehouseId == cartItem.WarehouseId);
+                if (item != null)
+                {
+                    cartItem.PriceN = priceCalc.priceCalc(cartItem.ItemId, cartItem.WarehouseId, userId);
+                }
+            }
             listCart.Add(cart);
             listCartItems.listCartItems = cartItemsForList;
             listCartItems.listCart = listCart;
@@ -95,11 +106,13 @@ namespace SimplyShopMVC.Application.Services
             CartForListVm cart = new CartForListVm();
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
             List<CartForListVm> listCart = new List<CartForListVm>();
+            UserDetail userDetail= new UserDetail();
             var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.Id == cartId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);
             if (actualCart != null)
             {
                 var mappedCart = _mapper.Map<CartForListVm>(actualCart);
                 cart = mappedCart;
+                userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == actualCart.userId);
             }
             List<CartItemsForListVm> cartItemsForList = new List<CartItemsForListVm>();
             var cartItems = _orderRepo.GetAllCartItems().Where(a => a.CartId == cart.Id)
@@ -107,6 +120,13 @@ namespace SimplyShopMVC.Application.Services
             if (cartItems != null)
             {
                 cartItemsForList.AddRange(cartItems);
+            }
+            foreach (var cartItem in cartItemsForList)
+            {
+                var item = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == cartItem.ItemId && i.WarehouseId == cartItem.WarehouseId);
+                if (item != null)
+                {
+                    cartItem.PriceN = priceCalc.priceCalc(cartItem.ItemId, cartItem.WarehouseId, userDetail.UserId);                }
             }
             listCart.Add(cart);
             listCartItems.listCartItems = cartItemsForList;
@@ -339,7 +359,7 @@ namespace SimplyShopMVC.Application.Services
             _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(result.userDetail));
             var mappedOrder = _mapper.Map<Orders>(result.ordersForListVm);
             _orderRepo.UpdateOrders(mappedOrder);
-            
+
         }
         public byte[] GetPdfDocumentFromService(int _orderId)
         {

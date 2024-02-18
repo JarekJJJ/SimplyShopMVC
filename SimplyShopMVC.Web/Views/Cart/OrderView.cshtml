@@ -36,7 +36,7 @@
                                 <input type="hidden" class="form-control" id="quantity_@item.Id" name="quantity" value="@item.Quantity" />
                             </div>
                         </td>
-                        <td>@item.PriceN</td>
+                        <td>@item.PriceN.ToString("N2")</td>
                         @{
                             var sumPrice = (decimal)item.PriceN * (decimal)item.Quantity;
                             totalPrice = totalPrice + sumPrice;

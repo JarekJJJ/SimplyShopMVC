@@ -18,6 +18,9 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public string imageFolder { get; set; }
         public decimal priceN { get; set; }
         public decimal priceB { get; set; }
+        public decimal priceLevelA { get; set; }
+        public decimal priceLevelB { get; set; }
+        public decimal priceLevelC { get; set; }
         public int quantity { get; set; }
         public int deliveryTime { get; set; }
         public int warehouseId { get; set; }

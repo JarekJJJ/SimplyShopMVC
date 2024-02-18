@@ -30,11 +30,7 @@ namespace SimplyShopMVC.Web.Controllers
 
         public IActionResult Index()
         {
-            IndexListVm listItems= new IndexListVm();
-            var items = _frontService.GetItemsToIndex(8, ("Polecamy"));
-           listItems.frontItemForLists = items;
-            var itemsNews = _frontService.GetItemsToIndex(8, ("Nowość"));
-            listItems.frontItemNews = itemsNews;
+            IndexListVm listItems= new IndexListVm();         
             var panel1Text = _articleService.GetArticleDetailsByTag("indexPanel1");
             if(panel1Text != null)
             {

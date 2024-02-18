@@ -21,5 +21,6 @@ namespace SimplyShopMVC.Domain.Model.users
         public string? PostalCode { get; set; }
         public string? Country { get; set; } = "Polska";
         public string? Street { get; set; }
+        public string? PriceLevel { get; set; }
     }
 }

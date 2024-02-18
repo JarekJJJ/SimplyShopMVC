@@ -46,7 +46,7 @@
 
                             </form>
                         </td>
-                        <td>@item.PriceN</td>
+                        <td>@item.PriceN.ToString("N2")</td>
                         @{
                             var sumPrice = (decimal)item.PriceN * (decimal)item.Quantity;
                             totalPrice = totalPrice + sumPrice;

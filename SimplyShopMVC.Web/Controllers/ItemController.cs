@@ -35,7 +35,7 @@ namespace SimplyShopMVC.Web.Controllers
             {
                 listCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categoryItems = new List<FrontItemForList>();
-                var newsItems = _frontService.GetItemsToIndex(16, "Nowość");
+                var newsItems = _frontService.GetItemsToIndex(16, "Nowość", iduser);
                 listCategories.newsItems = newsItems;
             }
             listCategories.itemToOrder = new FrontItemForList();
@@ -70,7 +70,7 @@ namespace SimplyShopMVC.Web.Controllers
             {
                 listCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categoryItems = new List<FrontItemForList>();
-                var newsItems = _frontService.GetItemsToIndex(16, "Nowość");
+                var newsItems = _frontService.GetItemsToIndex(16, "Nowość", iduser);
                 listCategories.newsItems = newsItems;
             }
             if (selectedView > 0)
@@ -82,14 +82,16 @@ namespace SimplyShopMVC.Web.Controllers
         [HttpGet]
         public IActionResult DetailItem(int selectedItem)
         {
-            var item = _frontService.GetItemDetail(selectedItem);
+            var iduser = _userManager.GetUserId(User);
+            var item = _frontService.GetItemDetail(selectedItem, iduser);
             return View(item);
         }
         [HttpPost]
         public IActionResult DetailItem(FrontItemForList result)
         {
+            var iduser = _userManager.GetUserId(User);
             var selectedItem = result.id;
-            var item = _frontService.GetItemDetail(selectedItem);
+            var item = _frontService.GetItemDetail(selectedItem, iduser);
             return View(item);
         }
     }

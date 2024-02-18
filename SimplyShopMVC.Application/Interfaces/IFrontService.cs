@@ -10,8 +10,8 @@ namespace SimplyShopMVC.Domain.Interface
 {
     public interface IFrontService
     {
-        FrontItemForList GetItemDetail(int id);
-        List<FrontItemForList> GetItemsToIndex(int quantityItem, string tagName);
+        FrontItemForList GetItemDetail(int id, string userId);
+        List<FrontItemForList> GetItemsToIndex(int quantityItem, string tagName, string userId);
         ListItemShopIndexVm GetAllCategories(string userId);
         ListItemShopIndexVm GetItemsByCategory(int categoryId, int pageSize, int pageNo, string searchString, int selectedTags, string userId);
     }
