@@ -1,12 +1,14 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Application;
 using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Infrastructure;
 using SimplyShopMVC.Infrastructure.Repositories;
+using SimplyShopMVC.Web.Services;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var emailConfiguration = new EmailConfiguration();
 builder.Configuration.GetSection("EmailSettings").Bind(emailConfiguration);
 builder.Services.AddSingleton<IEmailConfiguration>(emailConfiguration);
+builder.Services.AddScoped<IEmailSender, EmailSenderService>();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Context>();
 //Tutaj trzeba powiązać interfejsy z repository !!!

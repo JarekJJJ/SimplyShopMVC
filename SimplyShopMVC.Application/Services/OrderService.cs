@@ -40,7 +40,7 @@ namespace SimplyShopMVC.Application.Services
         {
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
             var itemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(a => a.ItemId == cartItem.ItemId);
-            if (cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0)
+            if (cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0 && itemWare.Quantity>0)
             {
                 var mappedCartItems = _mapper.Map<CartItems>(cartItem);
                 mappedCartItems.VatRateId = itemWare.VatRateId;
