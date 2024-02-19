@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SimplyShopMVC.Application.Helpers;
 using SimplyShopMVC.Application.Interfaces;
@@ -211,7 +212,7 @@ namespace SimplyShopMVC.Application.Services
                         if (resultTag == null)
                         {
                             tempListTag.Add(tempTag);
-                        }                        
+                        }
                     }
                 }
             }
@@ -221,12 +222,12 @@ namespace SimplyShopMVC.Application.Services
             foreach (var category in item.categories.Where(c => c.IsMainCategory == false))
             {
                 var parrentCategory = item.categories.FirstOrDefault(c => c.Id == category.MainCategoryId);
-                if(parrentCategory != null)
+                if (parrentCategory != null)
                 {
                     string categoryName = $"{parrentCategory.Name}->{category.Name}";
                     category.Name = categoryName;
                 }
-            
+
             }
             var ascendingListCategory = item.categories.OrderBy(i => i.Name).ToList();
             item.categories = ascendingListCategory;
@@ -235,15 +236,15 @@ namespace SimplyShopMVC.Application.Services
         public List<string> UpdateItemFromList(AddItemWarehouseVm listItem)
         {
             List<string> raport = new List<string>();
-            var selItemTag = _itemRepo.GetItemTagByTagId(listItem.selectedItemTag); 
+            var selItemTag = _itemRepo.GetItemTagByTagId(listItem.selectedItemTag);
             if (listItem.selectedItemId != null)
             {
                 foreach (var item in listItem.selectedItemId)
                 {
-                    if (selItemTag !=null)
+                    if (selItemTag != null)
                     {
                         var checkTag = _itemRepo.GetConnectItemTags(item).Where(i => i.ItemTagId == selItemTag.Id).Count();
-                        if(checkTag==0)
+                        if (checkTag == 0)
                         {
                             _itemRepo.AddConnectionItemTags(item, selItemTag);
                         }
@@ -251,11 +252,11 @@ namespace SimplyShopMVC.Application.Services
                         {
                             raport.Add($"Produkt o Id:{item} posiada już określony tag {selItemTag.Name}");
                         }
-                        
+
                     }
-                    if(listItem.selectDeleteItemTags > 0)
+                    if (listItem.selectDeleteItemTags > 0)
                     {
-                        _itemRepo.DeleteConnectionItemTagFromItem(item,listItem.selectDeleteItemTags);
+                        _itemRepo.DeleteConnectionItemTagFromItem(item, listItem.selectDeleteItemTags);
                     }
                     if (listItem.selectedNewCategory > 0)
                     {
@@ -269,7 +270,7 @@ namespace SimplyShopMVC.Application.Services
                         else
                         {
                             // raport błędu
-                        }                                                                     
+                        }
                     }
                 }
             }
@@ -539,6 +540,29 @@ namespace SimplyShopMVC.Application.Services
             {
                 var mapWarehouse = _mapper.Map<Warehouse>(updateWarehouse.warehouse);
                 _itemRepo.AddWarehouse(mapWarehouse);
+            }
+        }
+
+        public ListGroupItemForListVm GroupsItemsList(int options, GroupItemForListVm groupItem)
+        {
+            ListGroupItemForListVm listGroupItemForListVm= new ListGroupItemForListVm();
+            var groupItemList = _groupItemRepo.GetAllGroupItem()
+                .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider);
+            var mappedGroup = _mapper.Map<GroupItem>(groupItem);
+            switch (options)
+            {
+                case 1:// Dodanie grupy poprzez POST              
+                    _groupItemRepo.AddGroupItem(mappedGroup);                   
+                    return listGroupItemForListVm;
+                case 2: //Update grupy poprzez POST
+                    _groupItemRepo.UpdateGroupItem(mappedGroup);
+                    return listGroupItemForListVm;
+                case 3:// Usunięcie grupy
+                    _groupItemRepo.DeleteGroupItem(mappedGroup.Id);
+                    return listGroupItemForListVm;
+                default: // Pobranie grup do controlera GET
+                    listGroupItemForListVm.ListGroupItem = groupItemList.ToList();
+                    return listGroupItemForListVm;
             }
         }
     }

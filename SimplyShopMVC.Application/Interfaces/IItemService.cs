@@ -36,6 +36,8 @@ namespace SimplyShopMVC.Application.Interfaces
         UpdateWarehouseVm ListWarehouseToUpdate(string? searchWarehouse);
         UpdateWarehouseVm GetWarehouseToUpdate(int warehouseId);
         void UpdateWarehouse(UpdateWarehouseVm updateWarehouse, int options);
+        //GroupItem
+        ListGroupItemForListVm GroupsItemsList(int options, GroupItemForListVm groupItem);
 
         //ItemDetailVm GetItemDetails(int itemId);
         //ListItemForListVm GetAllItemsByTagId(int tagId);

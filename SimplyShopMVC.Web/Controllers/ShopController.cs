@@ -240,6 +240,20 @@ namespace SimplyShopMVC.Web.Controllers
             _orderService.AdminFinishOrder(result);
             return RedirectToAction("GetOrderForAdmin");
         }
+        [Authorize(Roles = "Admin"), HttpGet]
+        public IActionResult GroupItem()
+        {
+            GroupItemForListVm groupItem = new GroupItemForListVm();
+            var result = _itemService.GroupsItemsList(0, groupItem);
+            return View(result);
+        }
+        [Authorize(Roles = "Admin"), HttpPost]
+        public IActionResult GroupItem(ListGroupItemForListVm listGroupItemForList, int options)
+        {
+           
+            _itemService.GroupsItemsList(options, listGroupItemForList.GroupItem);
+            return RedirectToAction("GroupItem");
+        }
 
     }
 }
