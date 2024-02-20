@@ -24,6 +24,8 @@ namespace SimplyShopMVC.Application.ViewModels.user
         public string? Country { get; set; }
         public string? Street { get; set; }
         public string? PriceLevel { get; set; }
+        public bool IsActive { get; set; } = false;
+        public bool IsBlocked { get; set; } = false;
         public void Mapping(Profile profile)
         {
             profile.CreateMap<UserDetailForListVm, SimplyShopMVC.Domain.Model.users.UserDetail>().ReverseMap();

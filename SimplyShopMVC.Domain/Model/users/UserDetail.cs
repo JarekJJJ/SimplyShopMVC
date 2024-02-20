@@ -22,5 +22,7 @@ namespace SimplyShopMVC.Domain.Model.users
         public string? Country { get; set; } = "Polska";
         public string? Street { get; set; }
         public string? PriceLevel { get; set; }
+        public bool IsActive { get; set; } = false;
+        public bool IsBlocked { get; set; } = false;
     }
 }

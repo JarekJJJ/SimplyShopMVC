@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.user;
 using SimplyShopMVC.Domain.Interface;
@@ -14,11 +15,33 @@ namespace SimplyShopMVC.Application.Services
     public class SettingsService : ISettingsService
     {
         private readonly ICompanySettingsRepository _companySettingsRepo;
+        private readonly IUserRepository _userRepo;
         private readonly IMapper _mapper;
-        public SettingsService(ICompanySettingsRepository companySettingsRepo, IMapper mapper)
+        public SettingsService(ICompanySettingsRepository companySettingsRepo, IMapper mapper, IUserRepository userRepo)
         {
             _companySettingsRepo = companySettingsRepo;
             _mapper = mapper;
+            _userRepo = userRepo;
+        }
+
+        public ListUserDetailForListVm UserSettings(ListUserDetailForListVm vm, int options)
+        {
+            ListUserDetailForListVm listUserDetail = new ListUserDetailForListVm();
+            switch (options)
+            {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                default:
+                    listUserDetail.listUserDetail = _userRepo.GetAllUsers()
+                        .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).ToList();
+                    return listUserDetail;
+                  
+            }
+            return listUserDetail;
         }
 
         public CompanySettingsVm EditCompanySettings(int flag, CompanySettingsVm? companyName)

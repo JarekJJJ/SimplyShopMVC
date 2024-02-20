@@ -1,0 +1,68 @@
+﻿@model SimplyShopMVC.Application.ViewModels.user.ListUserDetailForListVm
+
+<h1>Ustawienia użytkowników</h1>
+@if (Model.userDetail != null)
+{
+    <p> edycja użytkownika</p>
+}
+<div class="container">
+    <table class="table table-hover">
+        <tr>
+            <th>Id</th>
+            <th>Pełna nazwa</th>
+            <th>Firma</th>
+            <th>Osoba kontaktowa</th>
+            <th>Telefon</th>
+            <th>Email</th>
+            <th>NIP</th>
+            <th>Poziom cen</th>
+            <th>Aktywny</th>
+            <th>Zablokowany</th>
+            <th>Edycja</th>
+        </tr>
+        @foreach (var userDet in Model.listUserDetail)
+        {
+            <tr>
+                <td>@userDet.Id</td>
+                <td><span class="text-truncate">@userDet.FullName</span></td>
+                <td>
+                    @if (userDet.IsClientBusiness == true)
+                    {
+                        <span class="badge text-bg-success">Tak</span>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-danger">Nie</span>
+                    }
+                </td>
+                <td>@userDet.ContactPerson</td>
+                <td>@userDet.PhoneNumber</td>
+                <td>@userDet.EmailAddress</td>
+                <td>@userDet.NIP</td>
+                <td>@userDet.PriceLevel</td>
+                <td>
+                    @if (userDet.IsActive == true)
+                    {
+                        <span class="badge text-bg-success">Tak</span>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-danger">Nie</span>
+                    }
+                </td>
+                    <td>
+                    @if (userDet.IsBlocked != true)
+                    {
+                                <span class="badge text-bg-primary">Nie</span>
+                    }
+                    else
+                    {
+                                <span class="badge text-bg-dark">Tak</span>
+                    }
+                    </td>
+            </tr>
+
+
+        }
+    </table>
+</div>

@@ -254,6 +254,13 @@ namespace SimplyShopMVC.Web.Controllers
             _itemService.GroupsItemsList(options, listGroupItemForList.GroupItem);
             return RedirectToAction("GroupItem");
         }
+        [Authorize(Roles = "Admin"), HttpGet]
+        public IActionResult UserSettings()
+        {
+
+            var userList = _settingsService.UserSettings( new ListUserDetailForListVm(), 0);
+            return View(userList);
+        }
 
     }
 }
