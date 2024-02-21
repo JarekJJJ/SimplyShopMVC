@@ -257,9 +257,28 @@ namespace SimplyShopMVC.Web.Controllers
         [Authorize(Roles = "Admin"), HttpGet]
         public IActionResult UserSettings()
         {
-
-            var userList = _settingsService.UserSettings( new ListUserDetailForListVm(), 0);
+            string searchString = string.Empty;
+            var userList = _settingsService.UserSettings( new ListUserDetailForListVm(), 0, searchString);
             return View(userList);
+        }
+        [Authorize(Roles = "Admin"), HttpPost]
+        public IActionResult UserSettings(ListUserDetailForListVm result, int options, string searchString)
+        {
+            if (String.IsNullOrEmpty(searchString))
+            {
+                searchString= string.Empty;
+            }
+            if(options >0)
+            {
+                var userList = _settingsService.UserSettings(result, options, searchString);
+                return View(userList);
+            }
+            else
+            {
+                var userList = _settingsService.UserSettings(result, options, searchString);
+            }
+            
+            return RedirectToAction("UserSettings");
         }
 
     }

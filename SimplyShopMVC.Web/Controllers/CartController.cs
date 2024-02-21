@@ -42,11 +42,11 @@ namespace SimplyShopMVC.Web.Controllers
                 result.searchItem = string.Empty;
             }          
             _orderService.AddToCart(result.cartItem);
-            var backResult = _frontService.GetItemsByCategory(result.selectedCategory, result.pageSize, result.currentPage, result.searchItem, result.selectedTag, userId);
-            var receivedCategories = _frontService.GetAllCategories(userId);
-            backResult.newsItems = _frontService.GetItemsToIndex(16, "Nowość", userId);
-            backResult.categories = receivedCategories.categories.ToList();
-            return View("~/Views/Item/Index.cshtml", backResult);
+            //var backResult = _frontService.GetItemsByCategory(result.selectedCategory, result.pageSize, result.currentPage, result.searchItem, result.selectedTag, userId);
+            //var receivedCategories = _frontService.GetAllCategories(userId);
+            //backResult.newsItems = _frontService.GetItemsToIndex(16, "Nowość", userId);
+            //backResult.categories = receivedCategories.categories.ToList();
+            return RedirectToAction("Index");
             // zrobić cenę netto
         }
         [HttpPost]

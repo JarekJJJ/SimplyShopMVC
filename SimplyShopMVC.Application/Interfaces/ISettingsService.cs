@@ -9,7 +9,8 @@ namespace SimplyShopMVC.Application.Interfaces
 {
     public interface ISettingsService
     {
-        ListUserDetailForListVm UserSettings(ListUserDetailForListVm vm, int options);
+        void AddUserSettings(string userId, string userName);
+        ListUserDetailForListVm UserSettings(ListUserDetailForListVm vm, int options, string searchString);
         CompanySettingsVm EditCompanySettings(int flag, CompanySettingsVm? companyName);
     }
 }

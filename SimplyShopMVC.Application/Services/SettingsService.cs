@@ -4,6 +4,7 @@ using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.ViewModels.user;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model.users;
+using SimplyShopMVC.Infrastructure.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,21 +24,37 @@ namespace SimplyShopMVC.Application.Services
             _mapper = mapper;
             _userRepo = userRepo;
         }
-
-        public ListUserDetailForListVm UserSettings(ListUserDetailForListVm vm, int options)
+        public void AddUserSettings(string userId, string userName)
+        {
+            var userSeetings = _userRepo.GetAllUsers().Where(x => x.UserId == userId);
+            if(!userSeetings.Any())
+            {
+                UserDetailForListVm userDetail= new UserDetailForListVm();
+                userDetail.UserId = userId;
+                userDetail.EmailAddress = userName;
+                var mappedUserDetail = _mapper.Map<UserDetail>(userDetail);
+                _userRepo.AddUserDetail(mappedUserDetail);
+            }
+        }
+        public ListUserDetailForListVm UserSettings(ListUserDetailForListVm vm, int options, string searchString)
         {
             ListUserDetailForListVm listUserDetail = new ListUserDetailForListVm();
+            listUserDetail.listUserDetail = _userRepo.GetAllUsers()
+                        .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).OrderByDescending(a=>a.Id).Take(100).ToList();
             switch (options)
             {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
+                case 1: // pobieranie danych użytkownika
+                    listUserDetail.userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u=>u.Id == vm.userDetail.Id));
+                    return listUserDetail;
+                case 2: // Zapis danych użytkownika
+                    _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(vm.userDetail));
+                    return listUserDetail;
+                case 3:// Wyszukiwanie użytkownika
+                    listUserDetail.listUserDetail = _userRepo.GetAllUsers().Where(u=>u.FullName.Contains(searchString) || u.NIP.Contains(searchString) || u.EmailAddress.Contains(searchString))
+                        .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).OrderByDescending(a => a.Id).Take(100).ToList();
                     break;
                 default:
-                    listUserDetail.listUserDetail = _userRepo.GetAllUsers()
-                        .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).ToList();
+                    
                     return listUserDetail;
                   
             }

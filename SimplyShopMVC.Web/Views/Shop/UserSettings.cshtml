@@ -1,9 +1,84 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.user.ListUserDetailForListVm
 
 <h1>Ustawienia użytkowników</h1>
+<div class="row">
+    <form asp-action="UserSettings" method="post">
+        <input type="search" name="searchString"/>
+        <input type="hidden" name="options" value="3"/>
+        <button type="submit" class="btn btn-bd-primary">szukaj</button>
+    </form>
+</div>
 @if (Model.userDetail != null)
 {
     <p> edycja użytkownika</p>
+     <div class="row m-1">
+         <form class="row" asp-action="UserSettings" method="post">
+                <div class="col-md-12">
+                    <label asp-for="userDetail.FullName" class="form-label">Nazwa firmy:</label>
+                    <input type="text" class="form-control" asp-for="userDetail.FullName" placeholder="Pełna nazwa firmy">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.NIP" class="form-label">Nip firmy:</label>
+                    <input type="text" class="form-control" asp-for="userDetail.NIP" placeholder="nip">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.EmailAddress" class="form-label">Adres email:</label>
+                    <input type="email" class="form-control" asp-for="userDetail.EmailAddress" placeholder="email">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.ContactPerson" class="form-label">Osoba kontaktowa:</label>
+                    <input type="text" class="form-control" asp-for="userDetail.ContactPerson" placeholder="imię i nazwisko">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.PhoneNumber" class="form-label">Telefon:</label>
+                    <input type="tel" class="form-control" asp-for="userDetail.PhoneNumber" placeholder="numer telefonu">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.City" class="form-label">Miejscowość: </label>
+                    <input type="text" class="form-control" asp-for="userDetail.City" placeholder="miasto">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.PostalCode" class="form-label">Kod pocztowy: </label>
+                    <input type="text" class="form-control" asp-for="userDetail.PostalCode" placeholder="kod pocztowy">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.Street" class="form-label">Ulica i nr. : </label>
+                    <input type="text" class="form-control" asp-for="userDetail.Street" placeholder="ulica i nr">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="userDetail.Region" class="form-label">Województwo : </label>
+                    <input type="text" class="form-control" asp-for="userDetail.Region" placeholder="województwo">
+                </div>
+                <div class="col-md-3"> 
+                    <label asp-for="userDetail.IsClientBusiness" class="form-label">Czy klient to firma:</label>
+                     <select class="form-select" asp-for="userDetail.IsClientBusiness">
+                      <option value="true" selected="@(Model.userDetail.IsClientBusiness == true ? "selected" : null)" >Tak</option>
+                      <option value="false" selected="@(Model.userDetail.IsClientBusiness != true ? "selected" : null)" >Nie</option>
+                    </select>
+                </div>
+                 <div class="col-md-3"> 
+                    <label asp-for="userDetail.IsActive" class="form-label">Czy aktywny:</label>
+                     <select class="form-select" asp-for="userDetail.IsActive">
+                      <option value="true" selected="@(Model.userDetail.IsActive == true ? "selected" : null)" >Tak</option>
+                      <option value="false" selected="@(Model.userDetail.IsActive != true ? "selected" : null)" >Nie</option>
+                    </select>
+                </div>
+                 <div class="col-md-3"> 
+                    <label asp-for="userDetail.IsBlocked" class="form-label">Czy klient posiada blokadę:</label>
+                     <select class="form-select" asp-for="userDetail.IsBlocked">
+                      <option value="true" selected="@(Model.userDetail.IsBlocked == true ? "selected" : null)" >Tak</option>
+                      <option value="false" selected="@(Model.userDetail.IsBlocked != true ? "selected" : null)" >Nie</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="hidden" name="options" value="2"/>
+                    <input type="hidden" asp-for="userDetail.Id" value="@Model.userDetail.Id"/>
+                    <input type="hidden" asp-for="userDetail.UserId" value="@Model.userDetail.UserId"/>
+                <button type="submit" class="btn btn-bd-primary">Zapisz</button>
+                </div>
+</form>
+            </div>
+
 }
 <div class="container">
     <table class="table table-hover">
@@ -59,6 +134,16 @@
                     {
                                 <span class="badge text-bg-dark">Tak</span>
                     }
+                    </td>
+                    <td>
+                        <form asp-action="UserSettings" method="post">
+                            <input type="hidden" asp-for="userDetail.Id" value="@userDet.Id"/>
+                            <input type="hidden" name="options" value="1" />
+                            <button type="submit" class="btn-danger text-bg-danger">
+                            <?xml version="1.0" ?>
+                            <svg fill="none" height="24" stroke="currentColor" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                            </button>
+                        </form>
                     </td>
             </tr>
 

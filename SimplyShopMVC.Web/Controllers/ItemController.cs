@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.Services;
 using SimplyShopMVC.Application.ViewModels.Front;
 using SimplyShopMVC.Domain.Interface;
@@ -12,22 +13,27 @@ namespace SimplyShopMVC.Web.Controllers
         private readonly ILogger<ItemController> _logger;
         private readonly IFrontService _frontService;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ISettingsService _settingsService;
 
-        public ItemController(ILogger<ItemController> logger, IFrontService frontService, UserManager<IdentityUser> userManager)
+        public ItemController(ILogger<ItemController> logger, IFrontService frontService, UserManager<IdentityUser> userManager, ISettingsService settingsService)
         {
             _logger = logger;
             _frontService = frontService;
             _userManager = userManager;
+            _settingsService = settingsService;
         }
         [Authorize]
         [HttpGet]
         public IActionResult Index(int? selectedCategory)
         {
+            var listCategories = new ListItemShopIndexVm();
             var iduser = _userManager.GetUserId(User);
-            var listCategories = new ListItemShopIndexVm();         
+            var userDetail = _userManager.GetUserName(User);
+            _settingsService.AddUserSettings(iduser, userDetail);
+
             if (selectedCategory != null && selectedCategory > 0)
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "",0, iduser);
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "", 0, iduser);
                 var receivedCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categories = receivedCategories.categories.ToList();
             }
@@ -41,25 +47,26 @@ namespace SimplyShopMVC.Web.Controllers
             listCategories.itemToOrder = new FrontItemForList();
             return View(listCategories);
         }
+
         [HttpPost]
         public IActionResult Index(ListItemShopIndexVm result, int pageSize, int? pageNo, string searchItem, int? selectedCategory, int? selectedView, int selectedTag)
-      // zrobić paginacje z aktywnym filtrem, oraz czyszczenie filtrów
+        // zrobić paginacje z aktywnym filtrem, oraz czyszczenie filtrów
         {
             var iduser = _userManager.GetUserId(User);
             if (!pageNo.HasValue)
             {
                 pageNo = 1;
             }
-            if(searchItem is null)
+            if (searchItem is null)
             {
                 searchItem = string.Empty;
             }
-            if(pageSize==0)
+            if (pageSize == 0)
             {
                 pageSize = 10;
             }
             var listCategories = new ListItemShopIndexVm();
-            
+
             if (selectedCategory != null && selectedCategory > 0)
             {
                 listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem, selectedTag, iduser);
