@@ -39,22 +39,26 @@ namespace SimplyShopMVC.Application.Services
         public ListUserDetailForListVm UserSettings(ListUserDetailForListVm vm, int options, string searchString)
         {
             ListUserDetailForListVm listUserDetail = new ListUserDetailForListVm();
-            listUserDetail.listUserDetail = _userRepo.GetAllUsers()
-                        .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).OrderByDescending(a=>a.Id).Take(100).ToList();
+           
             switch (options)
             {
                 case 1: // pobieranie danych użytkownika
+                    listUserDetail.listUserDetail = _userRepo.GetAllUsers()
+                       .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).OrderByDescending(a => a.Id).Take(100).ToList();
                     listUserDetail.userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u=>u.Id == vm.userDetail.Id));
                     return listUserDetail;
                 case 2: // Zapis danych użytkownika
                     _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(vm.userDetail));
+                    listUserDetail.listUserDetail = _userRepo.GetAllUsers()
+                       .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).OrderByDescending(a => a.Id).Take(100).ToList();
                     return listUserDetail;
                 case 3:// Wyszukiwanie użytkownika
                     listUserDetail.listUserDetail = _userRepo.GetAllUsers().Where(u=>u.FullName.Contains(searchString) || u.NIP.Contains(searchString) || u.EmailAddress.Contains(searchString))
                         .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).OrderByDescending(a => a.Id).Take(100).ToList();
                     break;
                 default:
-                    
+                    listUserDetail.listUserDetail = _userRepo.GetAllUsers().Where(u => u.FullName.Contains(searchString) || u.NIP.Contains(searchString) || u.EmailAddress.Contains(searchString))
+                       .ProjectTo<UserDetailForListVm>(_mapper.ConfigurationProvider).OrderByDescending(a => a.Id).Take(100).ToList();
                     return listUserDetail;
                   
             }

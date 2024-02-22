@@ -353,12 +353,33 @@ namespace SimplyShopMVC.Application.Services
 
             return ordersList;
         }
-        public void AdminFinishOrder(OrderForAdminListVm result)
+        public void AdminFinishOrder(OrderForAdminListVm result, int options)
         {
             OrderForAdminListVm newOrder = new OrderForAdminListVm();
-            _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(result.userDetail));
-            var mappedOrder = _mapper.Map<Orders>(result.ordersForListVm);
-            _orderRepo.UpdateOrders(mappedOrder);
+            switch (options)
+            {
+                case 1:
+                    if (result.orderItem != null)
+                    {
+                        var orderItem = _orderRepo.GetAllOrderItems().FirstOrDefault(o => o.Id == result.orderItem.Id);
+                        if (orderItem != null)
+                        {
+                            orderItem.Quantity = result.orderItem.Quantity;
+                            orderItem.PriceB = result.orderItem.PriceB;
+                            _orderRepo.UpdateOrderItems(orderItem);
+                        }
+            
+                    }
+                    break;
+                default:
+                    _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(result.userDetail));
+                    var mappedOrder = _mapper.Map<Orders>(result.ordersForListVm);
+                    _orderRepo.UpdateOrders(mappedOrder);
+                    break;
+            }
+          
+           
+           
 
         }
         public byte[] GetPdfDocumentFromService(int _orderId)

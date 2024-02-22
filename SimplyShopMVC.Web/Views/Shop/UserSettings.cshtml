@@ -70,11 +70,19 @@
                       <option value="false" selected="@(Model.userDetail.IsBlocked != true ? "selected" : null)" >Nie</option>
                     </select>
                 </div>
+                 <div class="col-md-3"> 
+                    <label asp-for="userDetail.PriceLevel" class="form-label">Poziom cen:</label>
+                     <select class="form-select" asp-for="userDetail.PriceLevel">
+                      <option value="A" selected="@(Model.userDetail.PriceLevel == "A" ? "selected" : null)" >A</option>
+                      <option value="B" selected="@(Model.userDetail.PriceLevel == "B" ? "selected" : null)" >B</option>
+                      <option value="C" selected="@(Model.userDetail.PriceLevel == "C" ? "selected" : null)" >C</option>
+                    </select>
+                </div>
                 <div class="col-md-2">
                     <input type="hidden" name="options" value="2"/>
                     <input type="hidden" asp-for="userDetail.Id" value="@Model.userDetail.Id"/>
                     <input type="hidden" asp-for="userDetail.UserId" value="@Model.userDetail.UserId"/>
-                <button type="submit" class="btn btn-bd-primary">Zapisz</button>
+                <button type="submit" class="btn btn-bd-primary mt-2">Zapisz</button>
                 </div>
 </form>
             </div>

@@ -235,9 +235,9 @@ namespace SimplyShopMVC.Web.Controllers
             return View(result);
         }
         [Authorize(Roles = "Admin"), HttpPost]
-        public IActionResult adminFinishOrder(OrderForAdminListVm result)
-        {
-            _orderService.AdminFinishOrder(result);
+        public IActionResult adminFinishOrder(OrderForAdminListVm result, int options)
+        {           
+            _orderService.AdminFinishOrder(result, options);
             return RedirectToAction("GetOrderForAdmin");
         }
         [Authorize(Roles = "Admin"), HttpGet]
@@ -270,7 +270,7 @@ namespace SimplyShopMVC.Web.Controllers
             }
             if(options >0)
             {
-                var userList = _settingsService.UserSettings(result, options, searchString);
+               var userList = _settingsService.UserSettings(result, options, searchString);              
                 return View(userList);
             }
             else
