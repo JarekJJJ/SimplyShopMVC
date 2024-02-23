@@ -165,6 +165,7 @@ namespace SimplyShopMVC.Application.Services
             else
             {
                 var modelMapped = _mapper.Map<ItemWarehouse>(model.itemWarehouse);
+                modelMapped.VatRateName = _itemRepo.GetAllVatRate().FirstOrDefault(i => i.Id == model.itemWarehouse.VatRateId).Name;
                 _itemRepo.AddItemWarehouse(modelMapped);
             }
             result.itemWarehouse = _mapper.Map<ItemWarehouseForListVm>(resultIW);

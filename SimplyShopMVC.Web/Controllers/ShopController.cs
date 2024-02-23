@@ -40,6 +40,7 @@ namespace SimplyShopMVC.Web.Controllers
 
             return View(newItem);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddItem(AddItemVm model, [FromServices] IWebHostEnvironment webHostFolder)
@@ -126,6 +127,7 @@ namespace SimplyShopMVC.Web.Controllers
                 var id = _itemService.AddCategory(model);
                 return RedirectToAction("ItemUpdate", new { selectedItem = model.Id });
             }
+            
             return RedirectToAction("AdminListItem");
         }
         public IActionResult ListItemTagToUpdate(string? searchTag)

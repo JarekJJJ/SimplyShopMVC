@@ -162,7 +162,12 @@ namespace SimplyShopMVC.Application.Services
             foreach (var item in items)
             {
                 var checkDuplicateItem = frontItems.FirstOrDefault(f => f.id == item.Id);
-                var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id);
+                var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id && i.WarehouseId == 1);
+                if(indexItemWare== null)
+                {
+                    indexItemWare = _itemRepo.GetAllItemWarehouses().Where(i => i.ItemId == item.Id && i.Quantity > 0).OrderBy(i=>i.NetPurchasePrice).FirstOrDefault();
+                }
+              
                 if (indexItemWare != null && checkDuplicateItem == null)
                 {
                     var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == indexItemWare.VatRateId);  //Dodać sprawdzenie czy istnieje przedmiot w itemWArehouse!

@@ -12,9 +12,10 @@
         <div class="col-md-3">
             <label  class="col-auto col-form-label" asp-for="warehouseId">Wybierz magazym: </label>
             <select class="form-select" asp-for="warehouseId">
+                <option selected>Wybierz magazyn:</option>
                 @foreach (var ware in Model.warehouseForListVm)
                 {
-                    <option value="@ware.Id" name="@ware.Name">@ware.Name</option>
+                    <option value="@ware.Id" name="@ware.Name">@ware.Name</option>                   
                 }
             </select>
         </div>

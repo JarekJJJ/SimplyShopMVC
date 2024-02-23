@@ -24,6 +24,7 @@ namespace SimplyShopMVC.Infrastructure
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ICompanySettingsRepository, CompanySettingsRepository>();
+            services.AddTransient<IOrinkRepository, OrinkRepository>();
             return services;
         }
 

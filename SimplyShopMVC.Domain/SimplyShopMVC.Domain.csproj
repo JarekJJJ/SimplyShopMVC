@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Model\Settings\" />
-    <Folder Include="Model\Suppliers\" />
   </ItemGroup>
 
 </Project>
