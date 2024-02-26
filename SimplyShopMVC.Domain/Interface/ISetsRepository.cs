@@ -1,4 +1,5 @@
 ﻿using SimplyShopMVC.Domain.Model.Order;
+using SimplyShopMVC.Domain.Model.Sets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,13 @@ namespace SimplyShopMVC.Domain.Interface
 {
     public interface ISetsRepository
     {
-        int AddPcSets(Cart cart);
-        IQueryable<Cart> GetAllPcSets();
-        void UpdatePcSets(Cart cart);
-        void DeletePcSets(int cartId);
-        int AddPcSetsItem(CartItems cartItem);
-        IQueryable<CartItems> GetAllPcSetsItems();
-        void UpdatePcSetsItem(CartItems cartItem);
-        void DeletePcSetsItem(int cartItemId);
+        int AddPcSets(PcSets set);
+        IQueryable<PcSets> GetAllPcSets();
+        void UpdatePcSets(PcSets set);
+        void DeletePcSets(int setId);
+        int AddPcSetsItem(PcSetsItems setItem);
+        IQueryable<PcSetsItems> GetAllPcSetsItems();
+        void UpdatePcSetsItem(PcSetsItems setItem);
+        void DeletePcSetsItem(int setItemId);
     }
 }

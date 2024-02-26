@@ -1,5 +1,6 @@
 ﻿using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model.Order;
+using SimplyShopMVC.Domain.Model.Sets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,44 +16,62 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             _context = context;
         }
-        public int AddPcSets(Cart cart)
+
+        public int AddPcSets(PcSets set)
         {
-            throw new NotImplementedException();
+            _context.PcSets.Add(set);
+            _context.SaveChanges();
+            return set.Id;
         }
 
-        public int AddPcSetsItem(CartItems cartItem)
+        public int AddPcSetsItem(PcSetsItems setItem)
         {
-            throw new NotImplementedException();
+            _context.PcSetsItems.Add(setItem);
+            _context.SaveChanges();
+            return setItem.Id;
         }
 
-        public void DeletePcSets(int cartId)
+        public void DeletePcSets(int setId)
         {
-            throw new NotImplementedException();
+            var pcset = _context.PcSets.FirstOrDefault(i=>i.Id == setId);
+            if (pcset != null)
+            {
+                _context.PcSets.Remove(pcset);
+                _context.SaveChanges();
+            }
         }
 
-        public void DeletePcSetsItem(int cartItemId)
+        public void DeletePcSetsItem(int setItemId)
         {
-            throw new NotImplementedException();
+           var setItem = _context.PcSetsItems.FirstOrDefault(i=>i.Id == setItemId);
+            if(setItem!=null)
+            {
+                _context.PcSetsItems.Remove(setItem);
+                _context.SaveChanges();
+            }
         }
 
-        public IQueryable<Cart> GetAllPcSets()
+        public IQueryable<PcSets> GetAllPcSets()
         {
-            throw new NotImplementedException();
+          var pcsets =  _context.PcSets;
+            return pcsets;
         }
 
-        public IQueryable<CartItems> GetAllPcSetsItems()
+        public IQueryable<PcSetsItems> GetAllPcSetsItems()
         {
-            throw new NotImplementedException();
+           return _context.PcSetsItems;
         }
 
-        public void UpdatePcSets(Cart cart)
+        public void UpdatePcSets(PcSets set)
         {
-            throw new NotImplementedException();
+            _context.Update(set);
+            _context.SaveChanges();
         }
 
-        public void UpdatePcSetsItem(CartItems cartItem)
+        public void UpdatePcSetsItem(PcSetsItems setItem)
         {
-            throw new NotImplementedException();
+           _context.Update(setItem);
+            _context.SaveChanges();
         }
     }
 }
