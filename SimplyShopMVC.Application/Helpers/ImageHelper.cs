@@ -8,6 +8,8 @@ using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using SimplyShopMVC.Domain.Model;
+using System.Net.Http;
+using System.Security.Authentication;
 
 namespace SimplyShopMVC.Application.Helpers
 {
@@ -67,6 +69,52 @@ namespace SimplyShopMVC.Application.Helpers
                 {
 
                     throw;
+                }
+            }
+            return result;
+        }
+        public static int SaveOrinkImageFromUrl(List<string> imageUrl, string folderName, IWebHostEnvironment webHost, IHttpClientFactory httpClientFactory)
+        {
+
+
+            int result = 0;
+            if (imageUrl != null)
+            {
+                try
+                {
+                    string newFolderPath = Path.Combine(webHost.WebRootPath, "media\\itemimg", folderName);
+                    Directory.CreateDirectory(newFolderPath);
+
+                
+                    var clientHandler = new HttpClientHandler();
+                    clientHandler.SslProtocols = SslProtocols.Tls13; // Ustawienie protokołu TLS na TLS 1.3
+
+                    var client = new HttpClient(clientHandler);
+
+                    foreach (string imageFromList in imageUrl)
+                    {
+                        try
+                        {
+                          //string newUrl =  imageFromList.Replace("https", "http");
+                            if (imageFromList != null)
+                            {
+                                HttpResponseMessage response = client.GetAsync(imageFromList).Result;
+                                response.EnsureSuccessStatusCode();
+
+                                byte[] imageData = response.Content.ReadAsByteArrayAsync().Result;
+                                string fileName = Guid.NewGuid().ToString() + ".jpg";
+                                string filePath = Path.Combine(newFolderPath, fileName);                             
+                                    File.WriteAllBytes(filePath, imageData);
+                                    result++;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
                 }
             }
             return result;

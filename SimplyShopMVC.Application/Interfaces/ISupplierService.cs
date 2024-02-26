@@ -10,10 +10,11 @@ namespace SimplyShopMVC.Application.Interfaces
 {
     public interface ISupplierService
     {
+        AddIncomItemsVm LoadOrinkItemsXML(AddIncomItemsVm orinkItems, XDocument xmlDocument);
         AddIncomItemsVm UpdateIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
         AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
         AddIncomGroupsVm AddIncomGroupsXML(AddIncomGroupsVm incomGroups, XDocument xmlDocument);
-        ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm();
-        ConnectItemsToSupplierVm AddConnectItemsToSupplierVm(ConnectItemsToSupplierVm connectedItems);
+        ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm(int options);
+        ConnectItemsToSupplierVm AddConnectItemsToSupplierVm(ConnectItemsToSupplierVm connectedItems, int options);
     }
 }

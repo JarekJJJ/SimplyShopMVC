@@ -1,5 +1,7 @@
-﻿using SimplyShopMVC.Domain.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model.Suppliers;
+using SimplyShopMVC.Infrastructure.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +45,11 @@ namespace SimplyShopMVC.Infrastructure.Repositories
                 _context.SaveChanges();
             }
         }
+        public void DeleteAllOrinkItem(IQueryable<Orink> orinks)
+        {
+            _context.Orinks.RemoveRange(orinks);
+            _context.SaveChanges();
+        }
 
         public IQueryable<Orink> GetAllOrink()
         {
@@ -58,6 +65,9 @@ namespace SimplyShopMVC.Infrastructure.Repositories
 
         public void UpdateOrink(Orink orink)
         {
+            var orinkItem = _context.Orinks.FirstOrDefault(i => i.ean == orink.ean);
+            orink.Id = orinkItem.Id;
+            _context.Entry(orinkItem).State = EntityState.Detached;
             _context.Orinks.Update(orink);
             _context.SaveChanges();
         }

@@ -30,7 +30,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\media\articleimg\mini\" />
     <Folder Include="wwwroot\media\articleimg\9\" />
-    <Folder Include="wwwroot\media\itemimg\" />
+    <Folder Include="wwwroot\media\itemimg\orink\" />
   </ItemGroup>
 
 </Project>

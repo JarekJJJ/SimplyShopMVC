@@ -16,5 +16,6 @@ namespace SimplyShopMVC.Domain.Interface
         int AddOrinkGroup(OrinkGroup orinkGroup);
         IQueryable<OrinkGroup> GetAllorinkGroup();
         void DeleteOrinkGroup(int orinkGroupId);
+        void DeleteAllOrinkItem(IQueryable<Orink> orinks);
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240226232658_pcsets")]
+    partial class pcsets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -745,8 +747,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupItemId");
-
                     b.ToTable("PcSets");
                 });
 
@@ -1372,17 +1372,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("SimplyShopMVC.Domain.Model.Sets.PcSets", b =>
-                {
-                    b.HasOne("SimplyShopMVC.Domain.Model.GroupItem", "GroupItem")
-                        .WithMany("PcSets")
-                        .HasForeignKey("GroupItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GroupItem");
-                });
-
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.Sets.PcSetsItems", b =>
                 {
                     b.HasOne("SimplyShopMVC.Domain.Model.Item", "Item")
@@ -1468,8 +1457,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.GroupItem", b =>
                 {
                     b.Navigation("Items");
-
-                    b.Navigation("PcSets");
                 });
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.Item", b =>

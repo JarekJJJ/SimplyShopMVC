@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Domain.Model.Sets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace SimplyShopMVC.Domain.Model
         public int PriceMarkupC { get;set; }
 
         public ICollection<Item> Items { get; set; }
+        public ICollection<PcSets> PcSets { get; set; }
     }
 }

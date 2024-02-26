@@ -20,6 +20,8 @@ using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using SimplyShopMVC.Domain.Model;
 using System.Net.Mail;
+using iText.StyledXmlParser.Jsoup.Nodes;
+using SimplyShopMVC.Infrastructure.Migrations;
 
 namespace SimplyShopMVC.Application.Services
 {
@@ -32,8 +34,11 @@ namespace SimplyShopMVC.Application.Services
         private readonly IGroupItemRepository _groupItemRepo;
         private readonly IOmnibusPriceRepository _omnibusPriceRepo;
         private readonly ICategoryTagsRepository _categoryTagsRepo;
+        private readonly IOrinkRepository _orinkRepo;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public SupplierService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost, ISupplierRepository supplierRepo, IGroupItemRepository groupItemRepo, IOmnibusPriceRepository omnibusPriceRepo, ICategoryTagsRepository categoryTagsRepo)
+        public SupplierService(IItemRepository itemRepo, IMapper mapper, IWebHostEnvironment webHost, ISupplierRepository supplierRepo,
+            IGroupItemRepository groupItemRepo, IOmnibusPriceRepository omnibusPriceRepo, ICategoryTagsRepository categoryTagsRepo, IOrinkRepository orinkRepo, IHttpClientFactory httpClientFactory)
         {
             _itemRepo = itemRepo;
             _mapper = mapper;
@@ -42,11 +47,140 @@ namespace SimplyShopMVC.Application.Services
             _groupItemRepo = groupItemRepo;
             _omnibusPriceRepo = omnibusPriceRepo;
             _categoryTagsRepo = categoryTagsRepo;
+            _orinkRepo = orinkRepo;
+            _httpClientFactory = httpClientFactory;
         }
+        //Orink
+        public AddIncomItemsVm LoadOrinkItemsXML(AddIncomItemsVm orinkItems, XDocument xmlDocument)
+        {
+            int countItemUpdate = 0;
+            int countItemAdd = 0;
+            int countItemRemove = 0;
+            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
+            List<string> list = new List<string>();
+            returnRaport.raportAddItem = new List<string>();
+            if (orinkItems.removeItems == true)
+            {
+                var items = _orinkRepo.GetAllOrink();
+                countItemRemove = items.Count();
+                _orinkRepo.DeleteAllOrinkItem(items);
+            }
+            if (orinkItems.warehouseId != 0)
+            {
+                CultureInfo cultureInfo = new CultureInfo("pl-PL");
+                cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
+                DateTime dateTime = DateTime.Now;
+                foreach (XElement elementXml in xmlDocument.Root.Elements("product"))
+                {
+                    //try
+                    //{
+                    XElement imgLink = elementXml.Element("img");
+                    XElement symbol_producenta = elementXml.Element("code");
+                    XElement cena = elementXml.Element("price");
+                    XElement ilosc = elementXml.Element("available");
+                    XElement name = elementXml.Element("description");
+                    XElement eanCode = elementXml.Element("ean_code");
+                    XElement color = elementXml.Element("color");
+                    OrinkItemForListVm orinkItem = new OrinkItemForListVm();
+                    orinkItem.name = !String.IsNullOrEmpty(name.Value) ? name.Value : string.Empty;
+                    orinkItem.description = !String.IsNullOrEmpty(name.Value) ? name.Value : string.Empty;
+                    orinkItem.color = !String.IsNullOrEmpty(color.Value) ? color.Value : string.Empty;
+                    var tusze = _orinkRepo.GetAllorinkGroup().FirstOrDefault(g => g.Name == "Tusze");
+                    var tonery = _orinkRepo.GetAllorinkGroup().FirstOrDefault(t => t.Name == "Tonery");
+                    if (orinkItem.name.Contains("Tusz") && tusze != null)
+                    {
+                        orinkItem.OrinkGroupId = tusze.Id;
+                    }
+                    if (orinkItem.name.Contains("Toner") && tonery != null)
+                    {
+                        orinkItem.OrinkGroupId = tonery.Id;
+                    }
+                    if (orinkItem.OrinkGroupId == 0)
+                    {
+                        orinkItem.OrinkGroupId = 3;
+                    }
+                    List<string> listProducents = new List<string>
+                        { "HP", "EPSON", "BROTHER", "XEROX", "LEXMARK", "CANON", "OKI", "SAMSUNG",
+                        "RICOH", "PANASONIC", "KONICA MINOLTA", "KYOCERA", "DELL"};
+                    StringBuilder producenci = new StringBuilder();
+                    foreach (var item in listProducents)
+                    {
+                        if (orinkItem.name.IndexOf(item, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            producenci.Append(item);
+                            producenci.Append(" ");
+                        }
+                    }
+                    orinkItem.printerProducent = !String.IsNullOrEmpty(producenci.ToString()) ? producenci.ToString() : string.Empty;
+                    orinkItem.symbol_producenta = !String.IsNullOrEmpty(symbol_producenta.Value) ? symbol_producenta.Value : string.Empty;
+                    orinkItem.ean = !String.IsNullOrEmpty(eanCode.Value) ? eanCode.Value : string.Empty;
+                    orinkItem.stan_magazynowy = int.Parse(ilosc.Value);
+                    orinkItem.cenaNetto = decimal.Parse(cena.Value, cultureInfo);
+                    orinkItem.imgLink = !String.IsNullOrEmpty(imgLink.Value) ? imgLink.Value : string.Empty;
+                    //orinkItem.createDate = DateTime.Now;
+                    var itemToCheck = _orinkRepo.GetAllOrink().FirstOrDefault(i => i.ean == orinkItem.ean);
+                    int itemId = 0;
+                    if (itemToCheck != null)
+                    {
+                        orinkItem.Id = itemToCheck.Id;
+                        orinkItem.updateTime = DateTime.Now;
+                        orinkItem.warehouseId = itemToCheck.warehouseId;
+                        var mappedItem = _mapper.Map<Orink>(orinkItem);
+                        _orinkRepo.UpdateOrink(mappedItem);
+                        var orinkItemWare = _itemRepo.GetAllItems().FirstOrDefault(i => i.EanCode == mappedItem.ean);
+                        if ((orinkItemWare != null) && (orinkItem.stan_magazynowy > 0))
+                        {
+                            var oItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == orinkItemWare.Id);
+                            if (oItemWare != null)
+                            {
+                                oItemWare.NetPurchasePrice = orinkItem.cenaNetto;
+                                oItemWare.Quantity = orinkItem.stan_magazynowy;
+                                _itemRepo.UpdateItemWarehouse(oItemWare);
+
+                                OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                                var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                                mapedOmnibusPrice.PriceN = orinkItem.cenaNetto;
+                                mapedOmnibusPrice.Ean = orinkItem.ean;
+                                mapedOmnibusPrice.ChangeTime = DateTime.Now;
+                                mapedOmnibusPrice.WarehouseId = orinkItems.warehouseId;
+                                _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);
+                                countItemUpdate++;
+                            }
+                        }
+                    }
+                    if (itemToCheck == null)
+                    {
+                        orinkItem.createDate = DateTime.Now;
+                        orinkItem.warehouseId = orinkItems.warehouseId;
+                        var mappedItem = _mapper.Map<Orink>(orinkItem);
+                        _orinkRepo.AddOrinkItem(mappedItem);
+                        countItemAdd++;
+                    }
+                    //}
+                    //    catch (Exception ex)
+                    //{
+                    //    throw;
+                    //}
+                }
+            }
+            if ((countItemAdd > 0) || (countItemUpdate > 0))
+            {
+                returnRaport.raportAddItem.Add($"Usunięto rekordów: {countItemRemove}");
+                returnRaport.raportAddItem.Add($"Dodano rekordów: {countItemAdd}");
+                returnRaport.raportAddItem.Add($"Zmodyfikowano rekordów: {countItemUpdate}");
+                // returnRaport.raportAddItem.Add($"Dodano zdjęć: {countImageAdd}");
+                returnRaport.raportAddItem.Add("ok");
+            }
+            returnRaport.warehouseForListVm = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+
+            return returnRaport;
+        }
+        //Incom
         public AddIncomItemsVm UpdateIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
             int countItemUpdate = 0;
             int countItemAdd = 0;
+            int removeCountItem = 0;
             AddIncomItemsVm returnRaport = new AddIncomItemsVm();
             List<string> list = new List<string>();
             returnRaport.raportAddItem = new List<string>();
@@ -105,6 +239,7 @@ namespace SimplyShopMVC.Application.Services
             }
             return returnRaport;
         }
+
         public AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
             int countItemUpdate = 0;
@@ -198,7 +333,7 @@ namespace SimplyShopMVC.Application.Services
                         if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
                         {
                             mapedItemVm.createDate = itemToCheck.createDate;
-                            mapedItemVm.updateTime= dateTime;
+                            mapedItemVm.updateTime = dateTime;
                             _supplierRepo.UpdateIncom(mapedItemVm);
                             UpdateItemInShop(mapedItemVm);
                             countItemUpdate++;
@@ -301,35 +436,74 @@ namespace SimplyShopMVC.Application.Services
             return 0;
         }
 
-        public ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm()
+        public ConnectItemsToSupplierVm LoadConnectItemsToSupplierVm(int options)
         {
             ConnectItemsToSupplierVm newConnectItem = new ConnectItemsToSupplierVm();
             List<CountSupplierItem> listCountItem = new List<CountSupplierItem>();
             newConnectItem.raport = new List<string>();
             newConnectItem.groupItems = _groupItemRepo.GetAllGroupItem()
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
-            newConnectItem.incomGroups = _supplierRepo.GetAllIncomGroup()
-                .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
-            foreach (var group in newConnectItem.incomGroups)
+            newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
+                     .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            var incomIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w=>w.Name.Contains("Incom")).Id;
+            var orinkIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w => w.Name.Contains("Orink")).Id;
+            if(options== incomIdWarehouse)
             {
-                CountSupplierItem countItem = new CountSupplierItem();
-                if (group.GroupIdHome != null && group.GroupIdHome != 0)
-                {
-                    var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
-                    string groupName = $"{parrentName}->{group.Name}";
-                    group.Name = groupName;
-                }
-                int count = _supplierRepo.GetAllIncom().Where(i => i.grupa_towarowa == group.GroupId.ToString()).Count();
-                if (count > 0)
-                {
-                    countItem.groupId = group.GroupId;
-                    countItem.countItem = count;
-                    listCountItem.Add(countItem);
-                }
+                options = 1;
             }
-            newConnectItem.countSupplierItems = listCountItem;
-            var ascendingList = newConnectItem.incomGroups.OrderBy(i => i.Name).ToList();
-            newConnectItem.incomGroups = ascendingList;
+            if(options == orinkIdWarehouse)
+            {
+                options = 2;
+            }          
+            switch (options)
+            {
+                case 1:
+                    newConnectItem.incomGroups = _supplierRepo.GetAllIncomGroup()
+              .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+                    foreach (var group in newConnectItem.incomGroups)
+                    {
+                        CountSupplierItem countItem = new CountSupplierItem();
+                        if (group.GroupIdHome != null && group.GroupIdHome != 0)
+                        {
+                            var parrentName = newConnectItem.incomGroups.FirstOrDefault(g => g.GroupId == group.GroupIdHome).Name;
+                            string groupName = $"{parrentName}->{group.Name}";
+                            group.Name = groupName;
+                        }
+                        int count = _supplierRepo.GetAllIncom().Where(i => i.grupa_towarowa == group.GroupId.ToString()).Count();
+                        if (count > 0)
+                        {
+                            countItem.groupId = group.GroupId;
+                            countItem.countItem = count;
+                            listCountItem.Add(countItem);
+                        }
+                    }
+                    newConnectItem.countSupplierItems = listCountItem;
+                    var ascendingList = newConnectItem.incomGroups.OrderBy(i => i.Name).ToList();
+                    newConnectItem.incomGroups = ascendingList;
+                    newConnectItem.selectedWarehouse = 3;
+                    break;
+                case 2:
+                    newConnectItem.orinkGroups = _orinkRepo.GetAllorinkGroup()
+                        .ProjectTo<OrinkGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+                    foreach (var group in newConnectItem.orinkGroups)
+                    {
+                        CountSupplierItem countItem = new CountSupplierItem();                                           
+                        int count = _orinkRepo.GetAllOrink().Where(i => i.OrinkGroupId == group.Id).Count();
+                        if (count > 0)
+                        {
+                            countItem.groupId = group.Id;
+                            countItem.countItem = count;
+                            listCountItem.Add(countItem);
+                        }
+                    }
+                    newConnectItem.countSupplierItems = listCountItem;
+                    var ascendingListOrink = newConnectItem.orinkGroups.OrderBy(i => i.Name).ToList();
+                    newConnectItem.orinkGroups = ascendingListOrink;
+                    newConnectItem.selectedWarehouse = 4;
+                    break;
+                default:
+                    break;
+            }         
             newConnectItem.categoryItems = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             foreach (var category in newConnectItem.categoryItems.Where(c => c.IsMainCategory == false))
@@ -342,22 +516,22 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
             var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
-            newConnectItem.categoryItems = ascendingListCategory;
-            newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
-                    .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            newConnectItem.categoryItems = ascendingListCategory;           
             newConnectItem.itemTagsForLists = _itemRepo.GetAllItemTags()
                 .ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
             return newConnectItem;
         }
 
-        public ConnectItemsToSupplierVm AddConnectItemsToSupplierVm(ConnectItemsToSupplierVm connectedItems)
+        public ConnectItemsToSupplierVm AddConnectItemsToSupplierVm(ConnectItemsToSupplierVm connectedItems, int options)
         {
             ConnectItemsToSupplierVm newConnectItem = new ConnectItemsToSupplierVm();
+            newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
+                    .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
             newConnectItem.raport = new List<string>();
             //Dodawanie
             if (connectedItems.groupItem != null && !string.IsNullOrEmpty(connectedItems.groupItem.Name))
             {
-                var mappedGroupItem = _mapper.Map<GroupItem>(connectedItems.groupItem);
+                var mappedGroupItem = _mapper.Map<Domain.Model.GroupItem>(connectedItems.groupItem);
                 _groupItemRepo.AddGroupItem(mappedGroupItem);
                 string raport = $"Dodano pomyślnie grupę : {mappedGroupItem.Name}";
                 newConnectItem.raport.Add(raport);
@@ -384,79 +558,181 @@ namespace SimplyShopMVC.Application.Services
                     newConnectItem.raport.Add(raport);
                 }
             }
-            //Add new or update item from supplier database
-            if (connectedItems.selectedGroupSupplier > 0 && connectedItems.selectedCategory != null
-                && connectedItems.selectedWarehouse != null)
+            if (options > 0)
             {
-                var supplierItemByGroupId = _supplierRepo.GetAllIncom().Where(s => s.grupa_towarowa == connectedItems.selectedGroupSupplier.ToString()).ToList();
-                foreach (var supItem in supplierItemByGroupId)
+                var incomIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w => w.Name.Contains("Incom")).Id;
+                var orinkIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w => w.Name.Contains("Orink")).Id;
+                if (options == incomIdWarehouse)
                 {
-                    var resultItem = _itemRepo.GetAllItems().FirstOrDefault(r => r.EanCode == supItem.ean);
-                    int newItemId = 0;
-                    if (resultItem == null && supItem.stan_magazynowy > 0)
-                    {
-                        ItemForListVm newItem = new ItemForListVm();
-                        newItem.Name = supItem.nazwa_produktu;
-                        newItem.ItemSymbol = supItem.symbol_produktu;
-                        newItem.Description = supItem.opis;
-                        newItem.CategoryId = (int)connectedItems.selectedCategory;
-                        newItem.EanCode = supItem.ean;
-                        newItem.ImageFolder = supItem.ean;
-                        newItem.ProducentName = supItem.nazwa_producenta;
-                        newItem.Lenght = supItem.dlugosc;
-                        newItem.Width = supItem.szerokosc;
-                        newItem.Height = supItem.wysokosc;
-                        newItem.Weight = supItem.waga;
-                        newItem.GroupItemId = connectedItems.selectedGroupItem;
-                        var mappedNewItem = _mapper.Map<Item>(newItem);
-                        newItemId = _itemRepo.AddItem(mappedNewItem);
-                        string selectedVatRate = "A";
-                        var idVatRate = _itemRepo.GetAllVatRate().FirstOrDefault(i => i.Name == selectedVatRate);
-                        ItemWarehouseForListVm itemWarehouse = new ItemWarehouseForListVm();
-                        itemWarehouse.WarehouseId = (int)connectedItems.selectedWarehouse;
-                        itemWarehouse.ItemId = newItemId;
-                        itemWarehouse.Quantity = supItem.stan_magazynowy;
-                        itemWarehouse.NetPurchasePrice = supItem.cena;
-                        itemWarehouse.VatRateName = selectedVatRate;
-                        itemWarehouse.VatRateId = idVatRate.Id;
-                        var mappedItemWare = _mapper.Map<ItemWarehouse>(itemWarehouse);
-                        _itemRepo.AddItemWarehouse(mappedItemWare);
-                    }
-                    if (resultItem != null)
-                    {
-                        newItemId = resultItem.Id;
-                    }
-                    if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
-                    {
-                        foreach (var tag in connectedItems.selectedItemTags)
+                    options = 1;
+                }
+                if (options == orinkIdWarehouse)
+                {
+                    options = 2;
+                }
+                switch (options)
+                {
+                    case 1:
+                        if (connectedItems.selectedGroupSupplier > 0 && connectedItems.selectedCategory != null
+                                        && connectedItems.selectedWarehouse != null)
                         {
-                            var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
-                            var resultItemTag = _itemRepo.GetAllConnectedItemTags().FirstOrDefault(r => r.ItemTagId == sTag.Id && r.ItemId == newItemId);
-                            if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (newItemId != 0) && (resultItemTag == null))
+                            var supplierItemByGroupId = _supplierRepo.GetAllIncom().Where(s => s.grupa_towarowa == connectedItems.selectedGroupSupplier.ToString()).ToList();
+                            foreach (var supItem in supplierItemByGroupId)
                             {
-                                //  _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
+                                var resultItem = _itemRepo.GetAllItems().FirstOrDefault(r => r.EanCode == supItem.ean);
+                                int newItemId = 0;
+                                if (resultItem == null && supItem.stan_magazynowy > 0)
+                                {
+                                    ItemForListVm newItem = new ItemForListVm();
+                                    newItem.Name = supItem.nazwa_produktu;
+                                    newItem.ItemSymbol = supItem.symbol_produktu;
+                                    newItem.Description = supItem.opis;
+                                    newItem.CategoryId = (int)connectedItems.selectedCategory;
+                                    newItem.EanCode = supItem.ean;
+                                    newItem.ImageFolder = supItem.ean;
+                                    newItem.ProducentName = supItem.nazwa_producenta;
+                                    newItem.Lenght = supItem.dlugosc;
+                                    newItem.Width = supItem.szerokosc;
+                                    newItem.Height = supItem.wysokosc;
+                                    newItem.Weight = supItem.waga;
+                                    newItem.GroupItemId = connectedItems.selectedGroupItem;
+                                    var mappedNewItem = _mapper.Map<Item>(newItem);
+                                    newItemId = _itemRepo.AddItem(mappedNewItem);
+                                    string selectedVatRate = "A";
+                                    var idVatRate = _itemRepo.GetAllVatRate().FirstOrDefault(i => i.Name == selectedVatRate);
+                                    ItemWarehouseForListVm itemWarehouse = new ItemWarehouseForListVm();
+                                    itemWarehouse.WarehouseId = (int)connectedItems.selectedWarehouse;
+                                    itemWarehouse.ItemId = newItemId;
+                                    itemWarehouse.Quantity = supItem.stan_magazynowy;
+                                    itemWarehouse.NetPurchasePrice = supItem.cena;
+                                    itemWarehouse.VatRateName = selectedVatRate;
+                                    itemWarehouse.VatRateId = idVatRate.Id;
+                                    var mappedItemWare = _mapper.Map<ItemWarehouse>(itemWarehouse);
+                                    _itemRepo.AddItemWarehouse(mappedItemWare);
+                                }
+                                if (resultItem != null)
+                                {
+                                    newItemId = resultItem.Id;
+                                }
+                                if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
+                                {
+                                    foreach (var tag in connectedItems.selectedItemTags)
+                                    {
+                                        var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
+                                        var resultItemTag = _itemRepo.GetAllConnectedItemTags().FirstOrDefault(r => r.ItemTagId == sTag.Id && r.ItemId == newItemId);
+                                        if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (newItemId != 0) && (resultItemTag == null))
+                                        {
+                                            //  _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
 
-                                _itemRepo.AddConnectionItemTags(newItemId, _mapper.Map<ItemTag>(sTag));
-                                string raport = $"Dodano pomyślnie Tag o nazwie: {sTag.Name} do produktów z kategorii";
-                                newConnectItem.raport.Add(raport);
+                                            _itemRepo.AddConnectionItemTags(newItemId, _mapper.Map<ItemTag>(sTag));
+                                            string raport = $"Dodano pomyślnie Tag o nazwie: {sTag.Name} do produktów z kategorii";
+                                            newConnectItem.raport.Add(raport);
+                                        }
+                                    }
+                                }
+                            }
+                            if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
+                            {
+                                foreach (var tag in connectedItems.selectedItemTags)
+                                {
+                                    var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
+                                    var sCategory = _itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == (int)connectedItems.selectedCategory);
+                                    var resultTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(r => r.ItemTagId == tag && r.CategoryId == sCategory.Id);
+                                    if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (resultTag == null))
+                                    {
+                                        _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-                if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
-                {
-                    foreach (var tag in connectedItems.selectedItemTags)
-                    {
-                        var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
-                        var sCategory = _itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == (int)connectedItems.selectedCategory);
-                        var resultTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(r => r.ItemTagId == tag && r.CategoryId == sCategory.Id);
-                        if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (resultTag == null))
+                        break;
+                    case 2:
+                        if (connectedItems.selectedGroupSupplier > 0 && connectedItems.selectedCategory != null
+                                      && connectedItems.selectedWarehouse == orinkIdWarehouse)
                         {
-                            _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
+                            var supplierItemByGroupId = _orinkRepo.GetAllOrink().Where(s => s.OrinkGroupId == connectedItems.selectedGroupSupplier).ToList();
+                            foreach (var supItem in supplierItemByGroupId)
+                            {
+                                var resultItem = _itemRepo.GetAllItems().FirstOrDefault(r => r.EanCode == supItem.ean);
+                                int newItemId = 0;
+                                if (resultItem == null && supItem.stan_magazynowy > 0)
+                                {
+                                    ItemForListVm newItem = new ItemForListVm();
+                                    newItem.Name = supItem.name;
+                                    newItem.ItemSymbol = supItem.symbol_producenta;
+                                    newItem.Description = supItem.description;
+                                    newItem.CategoryId = (int)connectedItems.selectedCategory;
+                                    newItem.EanCode = supItem.ean;
+                                    newItem.ImageFolder = "Orink";
+                                    newItem.ProducentName = "Orink";
+                                    newItem.Lenght = 0;
+                                    newItem.Width = 0;
+                                    newItem.Height = 0;
+                                    newItem.Weight = 0;
+                                    newItem.GroupItemId = connectedItems.selectedGroupItem;
+                                    var mappedNewItem = _mapper.Map<Item>(newItem);
+                                    newItemId = _itemRepo.AddItem(mappedNewItem);
+                                    string selectedVatRate = "A";
+                                    var idVatRate = _itemRepo.GetAllVatRate().FirstOrDefault(i => i.Name == selectedVatRate);
+                                    ItemWarehouseForListVm itemWarehouse = new ItemWarehouseForListVm();
+                                    itemWarehouse.WarehouseId = (int)connectedItems.selectedWarehouse;
+                                    itemWarehouse.ItemId = newItemId;
+                                    itemWarehouse.Quantity = supItem.stan_magazynowy;
+                                    itemWarehouse.NetPurchasePrice = supItem.cenaNetto;
+                                    itemWarehouse.VatRateName = selectedVatRate;
+                                    itemWarehouse.VatRateId = idVatRate.Id;
+                                    var mappedItemWare = _mapper.Map<ItemWarehouse>(itemWarehouse);
+                                    //List<string> imgLink = new List<string>();
+                                    //imgLink.Add(supItem.imgLink);
+                                    //var result = ImageHelper.SaveOrinkImageFromUrl(imgLink, supItem.ean, _webHost, _httpClientFactory);
+                                    _itemRepo.AddItemWarehouse(mappedItemWare);
+                                }
+                                if (resultItem != null)
+                                {
+                                    //List<string> imgLink = new List<string>();
+                                    //imgLink.Add(supItem.imgLink);
+                                    //var result = ImageHelper.SaveOrinkImageFromUrl(imgLink, supItem.ean, _webHost, _httpClientFactory);
+                                    newItemId = resultItem.Id;
+                                }
+                                if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
+                                {
+                                    foreach (var tag in connectedItems.selectedItemTags)
+                                    {
+                                        var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
+                                        var resultItemTag = _itemRepo.GetAllConnectedItemTags().FirstOrDefault(r => r.ItemTagId == sTag.Id && r.ItemId == newItemId);
+                                        if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (newItemId != 0) && (resultItemTag == null))
+                                        {
+                                            //  _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
+
+                                            _itemRepo.AddConnectionItemTags(newItemId, _mapper.Map<ItemTag>(sTag));
+                                            string raport = $"Dodano pomyślnie Tag o nazwie: {sTag.Name} do produktów z kategorii";
+                                            newConnectItem.raport.Add(raport);
+                                        }
+                                    }
+                                }
+                            }
+                            if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
+                            {
+                                foreach (var tag in connectedItems.selectedItemTags)
+                                {
+                                    var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == tag);
+                                    var sCategory = _itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == (int)connectedItems.selectedCategory);
+                                    var resultTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(r => r.ItemTagId == tag && r.CategoryId == sCategory.Id);
+                                    if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (resultTag == null))
+                                    {
+                                        _categoryTagsRepo.AddConnectCategoryTags(sTag, (int)connectedItems.selectedCategory);
+                                    }
+                                }
+                            }
                         }
-                    }
+                        break;
+                    default:
+                        break;
                 }
             }
+            //Add new or update item from supplier database
+           
+
             return newConnectItem;
         }
         public bool UpdateItemInShop(Incom incomItems)
@@ -479,11 +755,11 @@ namespace SimplyShopMVC.Application.Services
                     {
                         throw;
                     }
-                   
+
                 }
-               
+
             }
-           return false;
+            return false;
         }
     }
 }

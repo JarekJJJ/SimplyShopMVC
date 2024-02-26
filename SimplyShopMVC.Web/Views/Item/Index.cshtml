@@ -12,19 +12,22 @@
                 <span class="text-center h5 "> Wyświetl kategorie </span>
             </a>
     </div>
-    <div class="col-md-12">
-        <div class="row collapse" id="listCategories">
+    <div class="collapse" id="listCategories">
+        <div class="d-flex align-items-start flex-md-column mb-1 flex-sm-row flex-wrap" style="height:450px">
             @foreach (var mainCategory in mainCategories)
             {
-                <div class="col-md-3">
-                    <div class="pt-2 pb-1 h5">@mainCategory.Name</div>
+                <div class="col-md-3 col-sm-6">
+                <ol class="list-group">
+                    <li class="list-group-item">
+                        <span class="pt-2 pb-1 h6">@mainCategory.Name</span></li>
                     @{
                         var subCategory = Model.categories.Where(i => i.MainCategoryId == mainCategory.Id);
                     }
                     @foreach (var subCat in subCategory)
                     {
-                        <div class="h7">  <span class="">@Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span> </div>
+                         <li class="list-group-item"><span class="">@Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span></li>
                     }
+                </ol>
                 </div>
             }
         </div>

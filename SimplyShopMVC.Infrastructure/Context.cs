@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Domain.Model;
 using SimplyShopMVC.Domain.Model.Order;
+using SimplyShopMVC.Domain.Model.Sets;
 using SimplyShopMVC.Domain.Model.Suppliers;
 using SimplyShopMVC.Domain.Model.users;
 using System;
@@ -37,6 +38,8 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<CompanySettings> CompanySettings { get; set; }
         public DbSet<Orink> Orinks { get; set; }
         public DbSet<OrinkGroup> OrinkGroups { get; set; }
+        public DbSet<PcSets> PcSets { get; set; }
+        public DbSet<PcSetsItems> PcSetsItems { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }

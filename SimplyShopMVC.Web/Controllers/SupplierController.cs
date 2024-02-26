@@ -60,6 +60,7 @@ namespace SimplyShopMVC.Web.Controllers
                     {
 
                         var listItemsXML = XDocument.Load(incomItems.formFile.OpenReadStream());
+                        returnRaport = _supplierService.LoadOrinkItemsXML(incomItems, listItemsXML);
                         //returnRaport = _supplierService.LoadIncomItemsXML(incomItems, listItemsXML);
                         return View(returnRaport);
                     }
@@ -114,17 +115,17 @@ namespace SimplyShopMVC.Web.Controllers
             return View();
         }
         [HttpGet]
-        public IActionResult AddGroupItems()
+        public IActionResult AddGroupItems(int options)
         {
-            //ConnectItemsToSupplierVm _connectItems = new ConnectItemsToSupplierVm();
-            var connectItems = _supplierService.LoadConnectItemsToSupplierVm();
+            //ConnectItemsToSupplierVm _connectItems = new ConnectItemsToSupplierVm();          
+            var connectItems = _supplierService.LoadConnectItemsToSupplierVm(options);
             return View(connectItems);
         }
         [HttpPost]
-        public IActionResult AddGroupItems(ConnectItemsToSupplierVm connectItems)
+        public IActionResult AddGroupItems(ConnectItemsToSupplierVm connectItems, int options)
         {
-            var returnRaport = _supplierService.AddConnectItemsToSupplierVm(connectItems);
-            var newconnectItems = _supplierService.LoadConnectItemsToSupplierVm();
+            var returnRaport = _supplierService.AddConnectItemsToSupplierVm(connectItems, options);
+            var newconnectItems = _supplierService.LoadConnectItemsToSupplierVm(options);
             newconnectItems.raport = returnRaport.raport;
 
             return View(newconnectItems);

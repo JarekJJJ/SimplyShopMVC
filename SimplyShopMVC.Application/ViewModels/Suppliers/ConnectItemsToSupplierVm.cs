@@ -12,6 +12,7 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
         public List<ItemWarehouseForListVm> itemsWarehouse { get; set; }
         public List<WarehouseForListVm> warehouseForLists { get; set; }
         public List<IncomGroupForListVm> incomGroups { get; set; }
+        public List<OrinkGroupForListVm> orinkGroups { get; set; }
         public List<GroupItemForListVm> groupItems { get; set; }
         public List<CategoryForListVm> categoryItems { get; set; }
         public List<ItemTagsForListVm> itemTagsForLists { get; set; }

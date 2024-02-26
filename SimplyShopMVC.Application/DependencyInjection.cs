@@ -38,6 +38,7 @@ namespace SimplyShopMVC.Application
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<IPriceCalculate, PriceCalculate>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddHttpClient();
             return services;
         }
     }
