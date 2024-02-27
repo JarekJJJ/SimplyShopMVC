@@ -19,6 +19,7 @@ namespace SimplyShopMVC.Application.ViewModels.PcSets
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public bool IsActive { get; set; }
+        public bool IsSaved { get; set; }
         public bool IsDeleted { get; set; }
         public void Mapping(Profile profile)
         {
