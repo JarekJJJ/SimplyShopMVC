@@ -1,5 +1,6 @@
 ﻿using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Order;
+using SimplyShopMVC.Application.ViewModels.PcSets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,5 +32,7 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public int currentPage { get; set; }
         public int pageSize { get; set; }
         public string searchItem { get; set; }
+        // zestaw
+        public ListSetsItemForListVm listPcSets { get; set; }
     }
 }

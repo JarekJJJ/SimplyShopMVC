@@ -14,14 +14,16 @@ namespace SimplyShopMVC.Web.Controllers
         private readonly IFrontService _frontService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ISettingsService _settingsService;
+        private readonly ISetService _setService;
 
-        public ItemController(ILogger<ItemController> logger, IFrontService frontService, UserManager<IdentityUser> userManager, ISettingsService settingsService)
+        public ItemController(ILogger<ItemController> logger, IFrontService frontService, UserManager<IdentityUser> userManager, ISettingsService settingsService, ISetService setService)
         {
             _logger = logger;
             _frontService = frontService;
             _userManager = userManager;
             _settingsService = settingsService;
-        }
+            _setService = setService;
+        }     
         [Authorize]
         [HttpGet]
         public IActionResult Index(int? selectedCategory)
@@ -100,6 +102,13 @@ namespace SimplyShopMVC.Web.Controllers
             var selectedItem = result.id;
             var item = _frontService.GetItemDetail(selectedItem, iduser);
             return View(item);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult AddPcSet(ListItemShopIndexVm result, int options)
+        {
+            _setService.SetHandling(result, options);
+            return RedirectToAction("Index");
         }
     }
 }
