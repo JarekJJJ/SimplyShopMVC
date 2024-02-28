@@ -1,0 +1,60 @@
+﻿@model SimplyShopMVC.Application.ViewModels.PcSets.ListPcSetsForListVm
+
+<table class="table table-hover">
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>Tytuł</th>
+        <th>Utworzono</th>
+        <th>Modyfikacja</th>
+        <th>IsActive</th>
+        <th>IsSaved</th>
+        <th>IsDeleted</th>
+        <th>Działania</th>
+
+    </tr>
+    @if (Model.listSets != null)
+    {
+        @foreach (var setPc in Model.listSets)
+        {
+            <tr>
+                <td>@setPc.Id</td>
+                <td>@setPc.Title</td>
+                <td>@setPc.CreatedDate.Date</td>
+                <td>@setPc.UpdatedDate.Date</td>
+                <td>
+                    @if (setPc.IsActive)
+                    {
+                        <span class="badge rounded-pill text-bg-success">Tak</span>
+                    }
+                    else
+                    {
+                        <span class="badge rounded-pill text-bg-dark">Nie</span>
+                    }
+                </td>
+                <td>
+                    @if (setPc.IsSaved)
+                    {
+                        <span class="badge rounded-pill text-bg-success">Tak</span>
+                    }
+                    else
+                    {
+                        <span class="badge rounded-pill text-bg-dark">Nie</span>
+                    }
+                </td>
+                        <td>
+                    @if (setPc.IsDeleted)
+                    {
+                        <span class="badge rounded-pill text-bg-dark">Tak</span>
+                    }
+                    else
+                    {
+                                    <span class="badge rounded-pill text-bg-success">Nie</span>
+                    }
+                        </td>
+            </tr>
+        }
+    }
+
+</table>

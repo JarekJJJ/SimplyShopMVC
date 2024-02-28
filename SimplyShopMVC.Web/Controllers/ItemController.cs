@@ -23,7 +23,7 @@ namespace SimplyShopMVC.Web.Controllers
             _userManager = userManager;
             _settingsService = settingsService;
             _setService = setService;
-        }     
+        }
         [Authorize]
         [HttpGet]
         public IActionResult Index(int? selectedCategory)
@@ -109,6 +109,14 @@ namespace SimplyShopMVC.Web.Controllers
         {
             _setService.SetHandling(result, options);
             return RedirectToAction("Index");
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult AdminViewPcSet()
+        {
+            ListItemShopIndexVm result = new ListItemShopIndexVm();
+            var listPcSet = _setService.SetHandling(result, 0);
+            return View(listPcSet);
         }
     }
 }

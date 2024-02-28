@@ -40,6 +40,7 @@ namespace SimplyShopMVC.Application.Services
                 newListPcSets.pcSet = basePcSets;
                 if(setsItemsForSet.Any())
                 {
+                    newListPcSets.setsItems = new List<SetsItemForListVm>();
                     newListPcSets.setsItems.AddRange(setsItemsForSet);
                 }              
             }
@@ -87,11 +88,13 @@ namespace SimplyShopMVC.Application.Services
                 case 3: // edycja i zapisywanie zestawu
                     break;
                 default:
+                    newListPcSets.listSets = _setsRepo.GetAllPcSets().ProjectTo<PcSetsForListVm>(_mapper.ConfigurationProvider).ToList();
                     break;
             }
           
             
             return newListPcSets;
         }
+
     }
 }
