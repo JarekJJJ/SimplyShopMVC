@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.Services;
 using SimplyShopMVC.Application.ViewModels.Front;
+using SimplyShopMVC.Application.ViewModels.PcSets;
 using SimplyShopMVC.Domain.Interface;
 
 namespace SimplyShopMVC.Web.Controllers
@@ -116,6 +117,14 @@ namespace SimplyShopMVC.Web.Controllers
         {
             ListItemShopIndexVm result = new ListItemShopIndexVm();
             var listPcSet = _setService.SetHandling(result, 0);
+            return View(listPcSet);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult AdminViewPcSet(ListPcSetsForListVm resultSet,int options )
+        {
+            ListItemShopIndexVm result = new ListItemShopIndexVm();
+            var listPcSet = _setService.SetHandling(result, options);
             return View(listPcSet);
         }
     }
