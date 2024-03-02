@@ -1,0 +1,98 @@
+﻿@model SimplyShopMVC.Application.ViewModels.PcSets.ListPcSetsForListVm
+
+
+
+<h2>Edit PcSet</h2>
+<div>
+    <form asp-action="AdminEditPcSet" method="post">
+        <input type="hidden" asp-for="pcSet.Id" value="@Model.pcSet.Id" />
+        <table class="table table-borderless">
+
+            <tr>
+                <td colspan="3">
+                    <label asp-for="pcSet.Title" class="control-label">Nazwa zestawu</label>
+                    <input type="text" class="form-control shadow-sm rounded" asp-for="pcSet.Title" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <label asp-for="pcSet.ShortDescription" class="control-label">Nazwa zestawu</label>
+                    <textarea class="form-control shadow-sm rounded" asp-for="pcSet.ShortDescription"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <label asp-for="Image" class="form-label">Dodaj zdjęcia:</label>
+                    <input asp-for="Image" class="form-control" type="file" id="Image" multiple>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label asp-for="pcSet.IsActive" class="form-label">Produkt aktywny?</label>
+                    <select class="form-select mb-2" asp-for="pcSet.IsActive">
+                        <option value="true" selected="@(Model.pcSet.IsActive == true ? "selected" : null)">Zestaw aktywny</option>
+                        <option value="false" selected="@(Model.pcSet.IsActive == false ? "selected" : null)">Zestaw nieaktywny</option>
+                    </select>
+                </td>
+                <td>
+                    <label asp-for="pcSet.IsSaved" class="form-label">Produkt zapisany?</label>
+                    <select class="form-select mb-2" asp-for="pcSet.IsSaved">
+                        <option value="true" selected="@(Model.pcSet.IsSaved == true ? "selected" : null)">Zestaw zapisany</option>
+                        <option value="false" selected="@(Model.pcSet.IsSaved == false ? "selected" : null)">Zestaw niezapisany</option>
+                    </select>
+                </td>
+                <td>
+                    <label asp-for="pcSet.IsDeleted" class="form-label">Produkt archiwalny?</label>
+                    <select class="form-select mb-2" asp-for="pcSet.IsSaved">
+                        <option value="true" selected="@(Model.pcSet.IsDeleted == true ? "selected" : null)">archiwalny</option>
+                        <option value="false" selected="@(Model.pcSet.IsDeleted == false ? "selected" : null)">aktywny</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <label asp-for="pcSet.Description" class="control-label">Dodaj pełny opis produktu</label>
+                    <textarea asp-for="pcSet.Description" id="mytextarea" class="shadow-sm rounded">Wpisz tekst</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><button type="submit" class="btn btn-bd-primary mt-2">Zapisz</button></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Nazwa</th>
+                <th scope="col">Ilość</th>
+                <th scope="col">Cena zakupu</th>
+                <th scope="col">Kod Ean</th>
+                <th scope="col">Akcja</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+    @foreach(var setItem in Model.setsItems)
+    {
+        <tr>
+        <th scope="row">@setItem.Id</th>
+        <td>@setItem.Name</td>
+        <td>@setItem.Quantity</td>
+        <td>@setItem.NetPurchasePrice.ToString("N2")</td>
+        <td>@setItem.EanCode</td>
+        <td>Zapisz</td>
+        </tr>
+    }
+    </tbody>
+    </table>
+</div>
+<div>
+    <p class="text-bg-danger">
+        Po zapisaniu zestawu, pozycje można edytować tylko po zmianie na status "niezapisany". Należy się upewnić czy inny zestaw nie ma takiego statusu wtedy dodawane części mogą trafić do innego zestawu. 
+        Dotyczy to tylko dodawania pozycji ,zmianę ilości oraz usuwać można bez względu na status zestawu.
+    </p>
+</div>

@@ -86,7 +86,8 @@ namespace SimplyShopMVC.Application.Services
                 case 2: //usuwanie z zestawu itemu
                     break;
                 case 3: // edycja i zapisywanie zestawu
-
+                    var selectedSet =_mapper.Map<PcSetsForListVm>(_setsRepo.GetAllPcSets().FirstOrDefault(s => s.Id == result.pcSets.Id));
+                    newListPcSets.pcSet = selectedSet;
                     break;
                 default:
                     newListPcSets.listSets = _setsRepo.GetAllPcSets().ProjectTo<PcSetsForListVm>(_mapper.ConfigurationProvider).ToList();

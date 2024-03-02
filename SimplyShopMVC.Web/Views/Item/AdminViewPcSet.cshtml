@@ -54,7 +54,7 @@
                     }
                         </td>
                         <td>
-                    <form asp-action="AdminViewPcSet" method="post">
+                    <form asp-action="AdminEditPcSet" method="get">
                         <input type="hidden" asp-for="pcSet.Id" value="@setPc.Id" />
                         <input type="hidden" name="options" value="3" />
                         <button type="submit" class="btn-danger text-bg-danger">

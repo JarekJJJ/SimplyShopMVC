@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using SimplyShopMVC.Application.ViewModels.Item;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +14,7 @@ namespace SimplyShopMVC.Application.ViewModels.PcSets
         public PcSetsForListVm pcSet { get; set; }
         public List<SetsItemForListVm> setsItems { get; set; }
         public SetsItemForListVm setItem { get; set; }
+        public List<IFormFile>? Image { get; set; }
+        public List<PhotoItemVm> listImages { get; set; }
     }
 }

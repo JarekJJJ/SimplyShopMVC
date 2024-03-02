@@ -120,10 +120,12 @@ namespace SimplyShopMVC.Web.Controllers
             return View(listPcSet);
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public IActionResult AdminViewPcSet(ListPcSetsForListVm resultSet,int options )
+        [HttpGet]
+        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet,int options )
         {
             ListItemShopIndexVm result = new ListItemShopIndexVm();
+            result.pcSets = new PcSetsForListVm();
+            result.pcSets.Id = resultSet.pcSet.Id;
             var listPcSet = _setService.SetHandling(result, options);
             return View(listPcSet);
         }

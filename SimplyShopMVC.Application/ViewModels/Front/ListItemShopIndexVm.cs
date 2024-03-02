@@ -34,5 +34,6 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public string searchItem { get; set; }
         // zestaw
         public ListSetsItemForListVm listPcSets { get; set; }
+        public PcSetsForListVm pcSets { get; set; }
     }
 }
