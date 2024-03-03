@@ -38,5 +38,6 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public SetsItemForListVm setItem { get; set; }
         public PcSetsForListVm pcSets { get; set; }
         public List<IFormFile>? Image { get; set; }
+        public PhotoItemVm selectedImage { get; set; }
     }
 }

@@ -128,7 +128,10 @@ namespace SimplyShopMVC.Web.Controllers
             if(resultSet.pcSet == null)
             {
                 var idPc = TempData["pcsetId"]; //Dane z post
-                result.pcSets.Id = (int)idPc;
+                if(idPc != null)
+                {
+                    result.pcSets.Id = (int)idPc;
+                }              
             }
             else
             {
@@ -145,9 +148,9 @@ namespace SimplyShopMVC.Web.Controllers
             result.pcSets = new PcSetsForListVm();
             result.pcSets = resultSet.pcSet;
             result.setItem = resultSet.setItem;
-            TempData["pcsetId"] = resultSet.setItem.PcSetsId;
+            result.selectedImage = resultSet.selectedImg;
+            TempData["pcsetId"] = resultSet.pcSet.Id;
             result.Image = resultSet.Image;
-           // result.
             var listPcSet = _setService.SetHandling(result, options);
             return RedirectToAction("AdminEditPcSet");
         }

@@ -167,6 +167,23 @@ namespace SimplyShopMVC.Application.Helpers
                 File.Delete(filePath);
                 result = true;
             }
+            else
+            {
+                try
+                {
+                   filePath = Path.Combine(path);
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                        result = true;
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
 
             return result;
         }
