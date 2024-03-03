@@ -1,4 +1,5 @@
-﻿using SimplyShopMVC.Application.ViewModels.Item;
+﻿using Microsoft.AspNetCore.Http;
+using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Application.ViewModels.PcSets;
 using System;
@@ -33,7 +34,9 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public int pageSize { get; set; }
         public string searchItem { get; set; }
         // zestaw
-        public ListSetsItemForListVm listPcSets { get; set; }
+        public ListSetsItemForListVm listItemsSets { get; set; }
+        public SetsItemForListVm setItem { get; set; }
         public PcSetsForListVm pcSets { get; set; }
+        public List<IFormFile>? Image { get; set; }
     }
 }

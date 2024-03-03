@@ -1,4 +1,5 @@
-﻿using SimplyShopMVC.Domain.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model.Order;
 using SimplyShopMVC.Domain.Model.Sets;
 using System;

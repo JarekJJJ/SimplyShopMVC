@@ -121,13 +121,35 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet,int options )
+        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet)
         {
             ListItemShopIndexVm result = new ListItemShopIndexVm();
             result.pcSets = new PcSetsForListVm();
-            result.pcSets.Id = resultSet.pcSet.Id;
-            var listPcSet = _setService.SetHandling(result, options);
+            if(resultSet.pcSet == null)
+            {
+                var idPc = TempData["pcsetId"]; //Dane z post
+                result.pcSets.Id = (int)idPc;
+            }
+            else
+            {
+                result.pcSets.Id = resultSet.pcSet.Id;
+            }         
+            var listPcSet = _setService.SetHandling(result, 0);
             return View(listPcSet);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet, int options)
+        {
+            ListItemShopIndexVm result = new ListItemShopIndexVm();
+            result.pcSets = new PcSetsForListVm();
+            result.pcSets = resultSet.pcSet;
+            result.setItem = resultSet.setItem;
+            TempData["pcsetId"] = resultSet.setItem.PcSetsId;
+            result.Image = resultSet.Image;
+           // result.
+            var listPcSet = _setService.SetHandling(result, options);
+            return RedirectToAction("AdminEditPcSet");
         }
     }
 }
