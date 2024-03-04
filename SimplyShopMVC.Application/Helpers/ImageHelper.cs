@@ -123,9 +123,13 @@ namespace SimplyShopMVC.Application.Helpers
         public static List<string> AllImageFromPath(string path) // pobiera nazwy plików
         {
             string folderPath = path;
-            List<string> imagePaths = Directory.GetFiles(folderPath)
-                .Where(file => IsImageFile(file)).ToList();
-            var listFile = imagePaths.Select(f => Path.GetFileName(f)).ToList();
+            List<string> listFile = new List<string>();
+            if (Directory.Exists(folderPath))
+            {
+                List<string> imagePaths = Directory.GetFiles(folderPath)
+          .Where(file => IsImageFile(file)).ToList();
+                listFile = imagePaths.Select(f => Path.GetFileName(f)).ToList();
+            }       
             return listFile;
         }
         public static List<string> AllImageUrlFromPath(string path) // pobiera pliki wraz ze ścieżką
@@ -139,7 +143,7 @@ namespace SimplyShopMVC.Application.Helpers
         public static string GetMainImageUrlFromPath(string folderName, IWebHostEnvironment webHost) // pobiera pliki wraz ze ścieżką
         {
             string folderPath = $"{webHost.WebRootPath}\\media\\itemimg\\{folderName}\\";
-            string imagePaths = Directory.GetFiles(folderPath)
+                string imagePaths = Directory.GetFiles(folderPath)
                 .FirstOrDefault(file => IsImageFile(file));
             var listFile = Path.GetFileName(imagePaths);
             imagePaths = $"\\media\\itemimg\\{folderName}\\{listFile}";

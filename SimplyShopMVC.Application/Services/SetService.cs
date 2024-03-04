@@ -39,25 +39,36 @@ namespace SimplyShopMVC.Application.Services
 
         public ListPcSetsForListVm SetHandling(ListItemShopIndexVm result, int options)
         {
-            ListPcSetsForListVm newListPcSets = new ListPcSetsForListVm();
-            var basePcSets = _mapper.Map<PcSetsForListVm>(_setsRepo.GetAllPcSets().FirstOrDefault(s => s.IsSaved == false));
-            if (basePcSets != null)
+            string _catalog = "";
+            if (result.pcSets !=null)
             {
-                var setsItemsForSet = _setsRepo.GetAllPcSetsItems().Where(s => s.PcSetsId == basePcSets.Id)
-                    .ProjectTo<SetsItemForListVm>(_mapper.ConfigurationProvider).ToList();
-                newListPcSets.pcSet = basePcSets;
-                if (setsItemsForSet.Any())
-                {
-                    newListPcSets.setsItems = new List<SetsItemForListVm>();
-                    newListPcSets.setsItems.AddRange(setsItemsForSet);
-                }
+                _catalog = result.pcSets.Id.ToString();
             }
-            else
+            ListPcSetsForListVm newListPcSets = new ListPcSetsForListVm();
+            newListPcSets.pcSet = new PcSetsForListVm();
+            var basePcSets = _mapper.Map<PcSetsForListVm>(_setsRepo.GetAllPcSets().FirstOrDefault(s => s.IsSaved == false));
+            if (basePcSets == null && options <= 1)
             {
                 newListPcSets.pcSet = new PcSetsForListVm();
                 newListPcSets.setsItems = new List<SetsItemForListVm>();
             }
-            var _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{newListPcSets.pcSet.Id.ToString()}\\";
+            if (basePcSets != null && options <= 1)
+            {
+                newListPcSets.pcSet = basePcSets;
+                _catalog = basePcSets.Id.ToString();
+            }
+            if(result.pcSets !=null && options == 0)
+            {
+                _catalog = result.pcSets.Id.ToString();
+
+                options = 6;
+            }
+            string _pathImage = "";
+            if((result.pcSets!=null && result.pcSets.Id > 0) ||(newListPcSets.pcSet!= null && newListPcSets.pcSet.Id >0))
+            {
+             _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{_catalog}\\";
+            }
+            
             switch (options)
             {
                 case 1://Dodawanie do zestawu itemu
@@ -71,7 +82,9 @@ namespace SimplyShopMVC.Application.Services
                         newListPcSets.pcSet.IsActive = false;
                         newListPcSets.pcSet.IsSaved = false;
                         newListPcSets.pcSet.IsDeleted = false;
-                        _setsRepo.AddPcSets(_mapper.Map<PcSets>(newListPcSets.pcSet));
+                       var pcsetId = _setsRepo.AddPcSets(_mapper.Map<PcSets>(newListPcSets.pcSet));
+                        basePcSets = new PcSetsForListVm();
+                        basePcSets.Id= pcsetId;
                     }
                     var itemToSet = _itemRepo.GetAllItems().FirstOrDefault(i => i.Id == result.listItemsSets.setsItem.ItemId);
                     if (itemToSet != null)
@@ -97,19 +110,27 @@ namespace SimplyShopMVC.Application.Services
                     break;
                 case 3: // edycja i zapisywanie zestawu
                     var selectedSet = _setsRepo.GetAllPcSets().FirstOrDefault(s => s.Id == result.pcSets.Id);
+                    var setsItemsForSet = _setsRepo.GetAllPcSetsItems().Where(s => s.PcSetsId == result.pcSets.Id)
+                       .ProjectTo<SetsItemForListVm>(_mapper.ConfigurationProvider).ToList();
+                    if (setsItemsForSet.Any())
+                    {
+                        newListPcSets.setsItems = new List<SetsItemForListVm>();
+                        newListPcSets.setsItems.AddRange(setsItemsForSet);
+                    }
+                    selectedSet.GroupItemId = result.pcSets.GroupItemId;
                     selectedSet.Title = result.pcSets.Title;
                     selectedSet.Description = result.pcSets.Description;
-                    selectedSet.ShortDescription= result.pcSets.ShortDescription;
-                    selectedSet.IsActive= result.pcSets.IsActive;
-                    selectedSet.IsSaved= result.pcSets.IsSaved;
-                    selectedSet.IsDeleted= result.pcSets.IsDeleted;
-                    selectedSet.UpdatedDate= DateTime.Now;
+                    selectedSet.ShortDescription = result.pcSets.ShortDescription;
+                    selectedSet.IsActive = result.pcSets.IsActive;
+                    selectedSet.IsSaved = result.pcSets.IsSaved;
+                    selectedSet.IsDeleted = result.pcSets.IsDeleted;
+                    selectedSet.UpdatedDate = DateTime.Now;
                     _setsRepo.UpdatePcSets(selectedSet);
                     var pcSetoToSave = result.pcSets;
                     //_setsRepo.UpdatePcSets(_mapper.Map<PcSets>(pcSetoToSave));
                     //Dodawanie zdjęć 
-                    string folderName;                
-                        folderName = result.pcSets.Id.ToString();
+                    string folderName;
+                    folderName = result.pcSets.Id.ToString();
                     string newFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "media\\pcsetimg", folderName);
                     try
                     {
@@ -137,33 +158,52 @@ namespace SimplyShopMVC.Application.Services
                     newListPcSets.pcSet = pcSetoToSave;
 
                     break;
-                case 4:
-                    _setsRepo.UpdatePcSetsItem(_mapper.Map<PcSetsItems>(result.setItem));                  
+                case 4: 
+                    newListPcSets.pcSet.Id = result.setItem.PcSetsId;
+                    _setsRepo.UpdatePcSetsItem(_mapper.Map<PcSetsItems>(result.setItem));
+                  
                     break;
-                    case 5:
-                   // string newFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "media\\pcimg", folderName);
+                case 5:
+                    // string newFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "media\\pcimg", folderName);
                     ImageHelper.DeleteImage(result.selectedImage.Name, _pathImage);
+                    newListPcSets.pcSet = result.pcSets;
+                    break;
+                case 6: //wczytywanie zestawu do edycji
+                    selectedSet = _setsRepo.GetAllPcSets().FirstOrDefault(s => s.Id == result.pcSets.Id);
+                    setsItemsForSet = _setsRepo.GetAllPcSetsItems().Where(s => s.PcSetsId == result.pcSets.Id)
+                       .ProjectTo<SetsItemForListVm>(_mapper.ConfigurationProvider).ToList();
+                    if (setsItemsForSet.Any())
+                    {
+                        newListPcSets.setsItems = new List<SetsItemForListVm>();
+                        newListPcSets.setsItems.AddRange(setsItemsForSet);
+                    }
+                    newListPcSets.pcSet = _mapper.Map<PcSetsForListVm>(selectedSet);
+                    _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{_catalog}\\";
                     break;
                 default:
                     newListPcSets.listSets = _setsRepo.GetAllPcSets().ProjectTo<PcSetsForListVm>(_mapper.ConfigurationProvider).ToList();
                     break;
             }
-           // var _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{newListPcSets.pcSet.Id.ToString()}\\";
-            var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+            // var _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{newListPcSets.pcSet.Id.ToString()}\\";
             var listImage = new List<PhotoItemVm>();
-            int photoId = 0;
-            foreach (var imageUrl in imageToList)
+            if (newListPcSets.pcSet.Id != 0)
             {
-                var photoDetail = new PhotoItemVm();
-                photoDetail.Id = photoId;
-                photoId++;
-                photoDetail.Name = imageUrl;
-                var _imgFullUrl = $"/media/pcsetimg/{newListPcSets.pcSet.Id.ToString()}/{imageUrl}";
-                photoDetail.ImageUrl = _imgFullUrl;
-                photoDetail.IsSelected = false;
-                listImage.Add(photoDetail);
+                var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+                int photoId = 0;
+                foreach (var imageUrl in imageToList)
+                {
+                    var photoDetail = new PhotoItemVm();
+                    photoDetail.Id = photoId;
+                    photoId++;
+                    photoDetail.Name = imageUrl;
+                    var _imgFullUrl = $"/media/pcsetimg/{newListPcSets.pcSet.Id.ToString()}/{imageUrl}";
+                    photoDetail.ImageUrl = _imgFullUrl;
+                    photoDetail.IsSelected = false;
+                    listImage.Add(photoDetail);
+                }
             }
-            newListPcSets.listImages= listImage;
+            newListPcSets.listGroupItem = _groupItemRepo.GetAllGroupItem().ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
+            newListPcSets.listImages = listImage;
 
             return newListPcSets;
         }

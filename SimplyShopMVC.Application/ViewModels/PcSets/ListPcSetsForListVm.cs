@@ -15,6 +15,7 @@ namespace SimplyShopMVC.Application.ViewModels.PcSets
         public List<SetsItemForListVm> setsItems { get; set; }
         public SetsItemForListVm setItem { get; set; }
         public List<GroupItemForListVm> listGroupItem { get; set; }
+        public GroupItemForListVm groupItem { get; set; }
         public List<IFormFile>? Image { get; set; }
         public List<PhotoItemVm> listImages { get; set; }
         public PhotoItemVm selectedImg { get; set; }

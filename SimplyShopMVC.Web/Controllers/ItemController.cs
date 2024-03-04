@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.Services;
 using SimplyShopMVC.Application.ViewModels.Front;
@@ -121,7 +122,7 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet)
+        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet, int options)
         {
             ListItemShopIndexVm result = new ListItemShopIndexVm();
             result.pcSets = new PcSetsForListVm();
@@ -137,12 +138,12 @@ namespace SimplyShopMVC.Web.Controllers
             {
                 result.pcSets.Id = resultSet.pcSet.Id;
             }         
-            var listPcSet = _setService.SetHandling(result, 0);
+            var listPcSet = _setService.SetHandling(result, options);
             return View(listPcSet);
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet, int options)
+        public IActionResult AdminEditPcSet(ListPcSetsForListVm resultSet, int options, int back)
         {
             ListItemShopIndexVm result = new ListItemShopIndexVm();
             result.pcSets = new PcSetsForListVm();

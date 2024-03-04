@@ -57,9 +57,19 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    <label asp-for="pcSet.GroupItemId" class="control-label">Wybierz grupę (obliczenie marży)</label>
+                    <select class="form-select mb-2" asp-for="pcSet.GroupItemId">
+                        @foreach (var groupItem in Model.listGroupItem)
+                        {
+                            <option value="@groupItem.Id" selected="@(Model.pcSet.GroupItemId == groupItem.Id ? "selected" : null)">@groupItem.Name</option>
+                        }
+                    </select>
+                </td>
+                <td colspan="1"></td>
                 <td><button type="submit" class="btn btn-bd-primary mt-2">Zapisz</button></td>
-                <td></td>
-                <td></td>
+
+
             </tr>
         </table>
     </form>
@@ -67,9 +77,7 @@
 <div class="">
     @foreach (var images in Model.listImages)
     {
-
         <div class="row">
-
             <div class="col-md-4" style="max-height:350px">
                 <div class="text-center" style="max-height:200px">
                     <img src="@images.ImageUrl" class=" object-fit-contain borderrounded" style="max-height:200px" alt="@images.Name">
@@ -92,7 +100,6 @@
                 </form>
             </div>
         </div>
-
     }
 </div>
 <div>
@@ -106,57 +113,60 @@
                 <th scope="col">Kod Ean</th>
                 <th scope="col">Zapisz</th>
                 <th scope="col">Usuń</th>
-
             </tr>
         </thead>
         <tbody class="table-group-divider">
             @{
                 decimal sumaItem = 0;
             }
-            @foreach (var setItem in Model.setsItems)
+            @if (Model.setsItems != null)
             {
 
-                <tr>
-                    <form asp-action="AdminEditPcSet" method="post">
-                        <input type="hidden" asp-for="setItem.PcSetsId" value="@Model.pcSet.Id" />
-                        <input type="hidden" asp-for="setItem.Id" value="@setItem.Id" />
-                        <input type="hidden" asp-for="setItem.ItemId" value="@setItem.ItemId" />
-                        <input type="hidden" asp-for="setItem.WarehouseId" value="@setItem.WarehouseId" />
-                        <input type="hidden" asp-for="setItem.VatRateId" value="@setItem.VatRateId" />
-                        <input type="hidden" asp-for="pcSet.Id" value="@Model.pcSet.Id" />
-
-                        <input type="hidden" name="options" value="4" />
-                    <th scope="row">@setItem.Id</th>
-                    <td><input type="text" class="form-control-plaintext" asp-for="setItem.Name" value="@setItem.Name" readonly></td>
-                    <td><input type="number" asp-for="setItem.Quantity" value="@setItem.Quantity" /></td>
-                    <td>
-                        <input type="text" class="form-control-plaintext" asp-for="setItem.NetPurchasePrice" value="@setItem.NetPurchasePrice.ToString("N2")" readonly>
-                    <td>
-                        <input type="text" class="form-control-plaintext" asp-for="setItem.EanCode" value="@setItem.EanCode" readonly>
-                    </td>
-                    <td>
-                        <button type="submit" class="btn btn-danger ms-1 me-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
-                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                                <path d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.235.235 0 0 1 .02-.022z" />
-                            </svg>
-                        </button>
-                    </td>
-                    </form>
-                    <td>
+                @foreach (var setItem in Model.setsItems)
+                {
+                    <tr>
                         <form asp-action="AdminEditPcSet" method="post">
-                            <input type="hidden" asp-for="setItem.Id" value="@setItem.Id" />
                             <input type="hidden" asp-for="setItem.PcSetsId" value="@Model.pcSet.Id" />
-                            <input type="hidden" name="options" value="2" />
+                            <input type="hidden" asp-for="setItem.Id" value="@setItem.Id" />
+                            <input type="hidden" asp-for="setItem.ItemId" value="@setItem.ItemId" />
+                            <input type="hidden" asp-for="setItem.WarehouseId" value="@setItem.WarehouseId" />
+                            <input type="hidden" asp-for="setItem.VatRateId" value="@setItem.VatRateId" />
+                            <input type="hidden" asp-for="pcSet.Id" value="@Model.pcSet.Id" />
+                            <input type="hidden" name="options" value="4" />
+                        <th scope="row">@setItem.Id</th>
+                        <td><input type="text" class="form-control-plaintext" asp-for="setItem.Name" value="@setItem.Name" readonly></td>
+                        <td><input type="number" asp-for="setItem.Quantity" value="@setItem.Quantity" /></td>
+                        <td>
+                            <input type="text" class="form-control-plaintext" asp-for="setItem.NetPurchasePrice" value="@setItem.NetPurchasePrice.ToString("N2")" readonly>
+                        <td>
+                            <input type="text" class="form-control-plaintext" asp-for="setItem.EanCode" value="@setItem.EanCode" readonly>
+                        </td>
+                        <td>
                             <button type="submit" class="btn btn-danger ms-1 me-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
+                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                    <path d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.235.235 0 0 1 .02-.022z" />
                                 </svg>
                             </button>
+                        </td>
                         </form>
-                    </td>
-                </tr>
-                @(sumaItem += (decimal)(setItem.NetPurchasePrice * setItem.Quantity))               
+                        <td>
+                            <form asp-action="AdminEditPcSet" method="post">
+                                <input type="hidden" asp-for="setItem.Id" value="@setItem.Id" />
+                                <input type="hidden" asp-for="setItem.PcSetsId" value="@Model.pcSet.Id" />
+                                <input type="hidden" name="options" value="2" />
+                                <input type="hidden" asp-for="pcSet.Id" value="@Model.pcSet.Id" />
+                                <button type="submit" class="btn btn-danger ms-1 me-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @(sumaItem += (decimal)(setItem.NetPurchasePrice * setItem.Quantity))
+                }
+
             }
             <tr>
                 <td colspan="3"><span class="ms-auto">Suma :</span></td>
