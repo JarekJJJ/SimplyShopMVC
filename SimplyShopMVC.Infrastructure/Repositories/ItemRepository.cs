@@ -51,9 +51,18 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         }
 
         public void UpdateItem(Item item)
-        {        
-               _context.Items.Update(item);
-                _context.SaveChanges();          
+        {
+            var existingItem = _context.Items.FirstOrDefault(i => i.Id == item.Id);
+            if (existingItem != null)
+            {
+                _context.Entry(existingItem).CurrentValues.SetValues(item);
+                _context.SaveChanges();
+            }
+            else
+            {
+                _context.Update(item);
+                _context.SaveChanges();
+            }
         }
 
         public IQueryable<ItemTag> GetAllItemTags()

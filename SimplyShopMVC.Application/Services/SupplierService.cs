@@ -445,9 +445,19 @@ namespace SimplyShopMVC.Application.Services
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
             newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
                      .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
-            var incomIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w=>w.Name.Contains("Incom")).Id;
-            var orinkIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w => w.Name.Contains("Orink")).Id;
-            if(options== incomIdWarehouse)
+            var _incomIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w=>w.Name.Contains("Incom"));
+            var _orinkIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w => w.Name.Contains("Orink"));
+            int incomIdWarehouse = 0;
+            int orinkIdWarehouse = 0;
+            if (_incomIdWarehouse != null)
+            {
+                incomIdWarehouse = _incomIdWarehouse.Id;
+            }
+            if(_orinkIdWarehouse!= null)
+            {
+                orinkIdWarehouse= _orinkIdWarehouse.Id;
+            }
+            if (options== incomIdWarehouse)
             {
                 options = 1;
             }
@@ -581,6 +591,7 @@ namespace SimplyShopMVC.Application.Services
                             {
                                 var resultItem = _itemRepo.GetAllItems().FirstOrDefault(r => r.EanCode == supItem.ean);
                                 int newItemId = 0;
+                                
                                 if (resultItem == null && supItem.stan_magazynowy > 0)
                                 {
                                     ItemForListVm newItem = new ItemForListVm();
@@ -612,7 +623,23 @@ namespace SimplyShopMVC.Application.Services
                                 }
                                 if (resultItem != null)
                                 {
+                                    ItemForListVm newItem = new ItemForListVm();
                                     newItemId = resultItem.Id;
+                                    newItem.Id= newItemId;
+                                    newItem.Name = supItem.nazwa_produktu;
+                                    newItem.ItemSymbol = supItem.symbol_produktu;
+                                    newItem.Description = supItem.opis;
+                                    newItem.CategoryId = (int)connectedItems.selectedCategory;
+                                    newItem.EanCode = supItem.ean;
+                                    newItem.ImageFolder = supItem.ean;
+                                    newItem.ProducentName = supItem.nazwa_producenta;
+                                    newItem.Lenght = supItem.dlugosc;
+                                    newItem.Width = supItem.szerokosc;
+                                    newItem.Height = supItem.wysokosc;
+                                    newItem.Weight = supItem.waga;
+                                    newItem.GroupItemId = connectedItems.selectedGroupItem;
+                                    var mappedNewItem = _mapper.Map<Item>(newItem);
+                                    _itemRepo.UpdateItem(mappedNewItem);
                                 }
                                 if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
                                 {
@@ -689,9 +716,22 @@ namespace SimplyShopMVC.Application.Services
                                 }
                                 if (resultItem != null)
                                 {
-                                    //List<string> imgLink = new List<string>();
-                                    //imgLink.Add(supItem.imgLink);
-                                    //var result = ImageHelper.SaveOrinkImageFromUrl(imgLink, supItem.ean, _webHost, _httpClientFactory);
+                                    ItemForListVm newItem = new ItemForListVm();
+                                    newItem.Id= resultItem.Id;
+                                    newItem.Name = supItem.name;
+                                    newItem.ItemSymbol = supItem.symbol_producenta;
+                                    newItem.Description = supItem.description;
+                                    newItem.CategoryId = (int)connectedItems.selectedCategory;
+                                    newItem.EanCode = supItem.ean;
+                                    newItem.ImageFolder = "Orink";
+                                    newItem.ProducentName = "Orink";
+                                    newItem.Lenght = 0;
+                                    newItem.Width = 0;
+                                    newItem.Height = 0;
+                                    newItem.Weight = 0;
+                                    newItem.GroupItemId = connectedItems.selectedGroupItem;
+                                    var mappedNewItem = _mapper.Map<Item>(newItem);
+                                    _itemRepo.UpdateItem(mappedNewItem);
                                     newItemId = resultItem.Id;
                                 }
                                 if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
