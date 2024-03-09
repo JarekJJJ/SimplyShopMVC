@@ -244,16 +244,17 @@ namespace SimplyShopMVC.Application.Services
                     }
                     indexItem.tags = ListTagsForItem(item.Id);
                     indexItem.images = listImage;
-                    frontItemForLists.Add(indexItem);
-                }
+                    frontItemForLists.Add(indexItem);                   
+                }              
             }
-            return frontItemForLists;
+            var orderingItem = frontItemForLists.OrderBy(i => i.priceLevelA).ToList();
+            return orderingItem;
         }
         public List<ItemTagsForListVm> ListTagsForItem(int itemId) //Dodaje do vm listę tagów do konkretnego itema
         {
             List<ItemTagsForListVm> itemTagsToList = new List<ItemTagsForListVm>();
 
-            var listTag = _itemRepo.GetAllConnectedItemTags().Where(i => i.ItemId == itemId);
+            var listTag = _itemRepo.GetAllConnectedItemTags().Where(i => i.ItemId == itemId).ToList();
             if (listTag.Any())
             {
                 foreach (var tags in listTag)

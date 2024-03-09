@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SimplyShopMVC.Application.Interfaces;
+using SimplyShopMVC.Application.ViewModels;
 using SimplyShopMVC.Application.ViewModels.Front;
 using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Domain.Interface;
@@ -15,11 +16,13 @@ namespace SimplyShopMVC.Web.Controllers
         private readonly IOrderService _orderService;
         private readonly IFrontService _frontService;
         private readonly UserManager<IdentityUser> _userManager;
-        public CartController(IOrderService orderService, UserManager<IdentityUser> userManager, IFrontService frontService)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public CartController(IOrderService orderService, UserManager<IdentityUser> userManager, IFrontService frontService, IWebHostEnvironment webHostEnvironment)
         {
             _orderService = orderService;
             _userManager = userManager;
             _frontService = frontService;
+            _webHostEnvironment = webHostEnvironment;
         }
         [Authorize]
         public IActionResult Index()
@@ -79,11 +82,18 @@ namespace SimplyShopMVC.Web.Controllers
         [Authorize]
         public IActionResult finishOrder(OrderFromCartVm _orderForList)
         {
-            var newOrderId = _orderService.AddOrder(_orderForList);
-            var orderFinished = _orderService.FinishOrder(_orderForList,newOrderId);
-
-
-            return RedirectToAction("Index");
+            var userId = _userManager.GetUserId(User);
+            var userDetail = _orderService.GetUserDetailById(userId);
+            if(userDetail.IsActive == true)
+            {
+                var newOrderId = _orderService.AddOrder(_orderForList);
+                var orderFinished = _orderService.FinishOrder(_orderForList, newOrderId);
+                return RedirectToAction("Index");
+            }
+           
+            string message = "Konto nieaktywne, prosimy o kontakt z obsługą sklepu.";
+            TempData["messageError"] = message;
+           return RedirectToAction("ErrorPage");          
         }
         [HttpGet,Authorize]
         public IActionResult listOrderForUser()
@@ -98,6 +108,14 @@ namespace SimplyShopMVC.Web.Controllers
         {
             var orderPdf = _orderService.GetPdfDocumentFromService(orderId);
             return File(orderPdf, "application/pdf", $"zamowienie_{orderId}.pdf");
+        }
+        public IActionResult ErrorPage(string message)
+        {
+            ErrorPageVm errorMessage = new ErrorPageVm();
+            errorMessage.errorMessage = TempData["messageError"].ToString();
+            errorMessage.imageUrl = $"\\media\\error.png";
+
+            return View(errorMessage);
         }
     }
 

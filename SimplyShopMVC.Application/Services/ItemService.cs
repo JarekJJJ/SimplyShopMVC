@@ -203,7 +203,7 @@ namespace SimplyShopMVC.Application.Services
             List<ItemTagsForListVm> tempListTag = new List<ItemTagsForListVm>();
             foreach (var _item in item.items) // dodawanie tagów występujących w wybranych produktach
             {
-                var listTags = _itemRepo.GetAllConnectedItemTags().Where(i => i.ItemId == _item.Id);
+                var listTags = _itemRepo.GetAllConnectedItemTags().Where(i => i.ItemId == _item.Id).ToList();
                 if (listTags.Any())
                 {
                     foreach (var tag in listTags)

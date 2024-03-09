@@ -350,11 +350,15 @@
             if (wartosc >= 1) {
                 var tabela = document.getElementById("produktyLista");
                 tabela.style.display = "";  // Pokazanie tabeli
+            } else {
+                var panel = document.getElementById("produktyPanel");
+                panel.style.display = "contents";  // Pokazanie div-a
             }
             if (wartosc == 0) {
                 var panel = document.getElementById("produktyPanel");
                 panel.style.display = "";  // Pokazanie div-a
             }
+            
         };
     </script>
 }

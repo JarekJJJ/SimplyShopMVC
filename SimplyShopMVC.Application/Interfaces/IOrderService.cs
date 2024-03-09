@@ -1,4 +1,5 @@
 ﻿using SimplyShopMVC.Application.ViewModels.Order;
+using SimplyShopMVC.Application.ViewModels.user;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,6 @@ namespace SimplyShopMVC.Application.Interfaces
         OrderForAdminListVm GetOrdersForAdmin(int status, string? userId, int? orderId, int options, string searchString);
         OrderForAdminListVm ViewOrderForAdmin(int? orderId, string? userId);
         void AdminFinishOrder(OrderForAdminListVm result, int options);
+        UserDetailForListVm GetUserDetailById(string userId);
     }
 }

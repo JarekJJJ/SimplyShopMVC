@@ -411,5 +411,10 @@ namespace SimplyShopMVC.Application.Services
             }
             return true;
         }
+        public UserDetailForListVm GetUserDetailById(string userId)
+        {
+            var userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u=>u.UserId == userId));
+            return userDetail;
+        }
     }
 }
