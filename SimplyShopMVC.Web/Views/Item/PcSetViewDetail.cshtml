@@ -1,0 +1,59 @@
+﻿@model SimplyShopMVC.Application.ViewModels.PcSets.PcSetDetailVm
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    <div class="row col-md-12">
+        <div class="col-md-12 pt-3">
+            @Html.Raw(Model.pcSet.Description)
+        </div>
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>ilość</th>
+                    </tr>
+                </thead>
+                @foreach (var setItem in Model.listSetItem)
+                {                
+                    <tr>
+                        <td>
+                            <button type="button" class="searchButton" data-bs-toggle="modal" data-bs-target="#modal_@setItem.Id">
+                                <span class="text-black">@setItem.Name</span>
+                            </button>
+                        </td>
+                        <td>@setItem.Quantity</td>
+                    </tr>
+                   
+                }
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="text-end fs-4 fw-bold">Cena: @Model.pcSet.TotalCost.ToString("N2") zł</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+@foreach(var setItem in Model.listSetItem)
+{
+    var itemDetail = Model.listItem.FirstOrDefault(i => i.Id == setItem.ItemId);
+    <div class="modal fade" id="modal_@setItem.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">@setItem.Name</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        @Html.Raw(itemDetail.Description)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

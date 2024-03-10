@@ -126,18 +126,18 @@ namespace SimplyShopMVC.Web.Controllers
         {
             ListItemShopIndexVm result = new ListItemShopIndexVm();
             result.pcSets = new PcSetsForListVm();
-            if(resultSet.pcSet == null)
+            if (resultSet.pcSet == null)
             {
                 var idPc = TempData["pcsetId"]; //Dane z post
-                if(idPc != null)
+                if (idPc != null)
                 {
                     result.pcSets.Id = (int)idPc;
-                }              
+                }
             }
             else
             {
                 result.pcSets.Id = resultSet.pcSet.Id;
-            }         
+            }
             var listPcSet = _setService.SetHandling(result, options);
             return View(listPcSet);
         }
@@ -154,6 +154,22 @@ namespace SimplyShopMVC.Web.Controllers
             result.Image = resultSet.Image;
             var listPcSet = _setService.SetHandling(result, options);
             return RedirectToAction("AdminEditPcSet");
+        }
+        [HttpGet]
+        public IActionResult PcSetViewForUser()
+        {
+            ListPcSetsForListVm pcSetView = new ListPcSetsForListVm();
+            var iduser = _userManager.GetUserId(User);
+            pcSetView = _setService.ListSetForUser(iduser);
+            return View(pcSetView);
+        }
+        [HttpGet]
+        public IActionResult PcSetViewDetail(int pcSetId)
+        {
+            PcSetDetailVm pcSetDetail= new PcSetDetailVm();
+            var iduser = _userManager.GetUserId(User);
+            pcSetDetail = _setService.PcSetDetailForUser(pcSetId, iduser);
+            return View(pcSetDetail);
         }
     }
 }

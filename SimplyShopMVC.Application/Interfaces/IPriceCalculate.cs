@@ -9,5 +9,6 @@ namespace SimplyShopMVC.Application.Interfaces
     public interface IPriceCalculate
     {
         decimal priceCalc(int itemId, int warehouseId, string userId);
+        decimal priceCalc(int itemId, int groupItemId, int warehouseId, string userId);
     }
 }

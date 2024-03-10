@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SimplyShopMVC.Application.Mapping;
+using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Domain.Model.Sets;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,13 @@ namespace SimplyShopMVC.Application.ViewModels.PcSets
         public bool IsActive { get; set; }
         public bool IsSaved { get; set; }
         public bool IsDeleted { get; set; }
+        public decimal TotalCost { get; set; }
+        public string mainImage { get; set; }
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PcSetsForListVm, SimplyShopMVC.Domain.Model.Sets.PcSets>().ReverseMap();
+            profile.CreateMap<PcSetsForListVm, SimplyShopMVC.Domain.Model.Sets.PcSets>().ReverseMap()
+             .ForMember(s => s.TotalCost, opt => opt.Ignore())
+            .ForMember(s => s.mainImage, opt => opt.Ignore());
         }
     }
 }

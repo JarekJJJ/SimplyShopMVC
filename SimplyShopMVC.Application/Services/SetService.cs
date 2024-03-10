@@ -11,6 +11,7 @@ using SimplyShopMVC.Application.ViewModels.PcSets;
 using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
 using SimplyShopMVC.Domain.Model.Sets;
+using SimplyShopMVC.Infrastructure.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,8 @@ namespace SimplyShopMVC.Application.Services
         private readonly ISetsRepository _setsRepo;
         private readonly IPriceCalculate _priceCalc;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public SetService(IMapper mapper, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ISetsRepository setsRepo, IPriceCalculate priceCalc, IWebHostEnvironment webHostEnvironment)
+        private readonly IUserRepository _userRepo;
+        public SetService(IMapper mapper, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ISetsRepository setsRepo, IPriceCalculate priceCalc, IWebHostEnvironment webHostEnvironment, IUserRepository userRepository)
         {
             _mapper = mapper;
             _itemRepo = itemRepo;
@@ -35,12 +37,13 @@ namespace SimplyShopMVC.Application.Services
             _setsRepo = setsRepo;
             _priceCalc = priceCalc;
             _webHostEnvironment = webHostEnvironment;
+            _userRepo = userRepository;
         }
 
         public ListPcSetsForListVm SetHandling(ListItemShopIndexVm result, int options)
         {
             string _catalog = "";
-            if (result.pcSets !=null)
+            if (result.pcSets != null)
             {
                 _catalog = result.pcSets.Id.ToString();
             }
@@ -57,18 +60,18 @@ namespace SimplyShopMVC.Application.Services
                 newListPcSets.pcSet = basePcSets;
                 _catalog = basePcSets.Id.ToString();
             }
-            if(result.pcSets !=null && options == 0)
+            if (result.pcSets != null && options == 0)
             {
                 _catalog = result.pcSets.Id.ToString();
 
                 options = 6;
             }
             string _pathImage = "";
-            if((result.pcSets!=null && result.pcSets.Id > 0) ||(newListPcSets.pcSet!= null && newListPcSets.pcSet.Id >0))
+            if ((result.pcSets != null && result.pcSets.Id > 0) || (newListPcSets.pcSet != null && newListPcSets.pcSet.Id > 0))
             {
-             _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{_catalog}\\";
+                _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{_catalog}\\";
             }
-            
+
             switch (options)
             {
                 case 1://Dodawanie do zestawu itemu
@@ -82,9 +85,9 @@ namespace SimplyShopMVC.Application.Services
                         newListPcSets.pcSet.IsActive = false;
                         newListPcSets.pcSet.IsSaved = false;
                         newListPcSets.pcSet.IsDeleted = false;
-                       var pcsetId = _setsRepo.AddPcSets(_mapper.Map<PcSets>(newListPcSets.pcSet));
+                        var pcsetId = _setsRepo.AddPcSets(_mapper.Map<PcSets>(newListPcSets.pcSet));
                         basePcSets = new PcSetsForListVm();
-                        basePcSets.Id= pcsetId;
+                        basePcSets.Id = pcsetId;
                     }
                     var itemToSet = _itemRepo.GetAllItems().FirstOrDefault(i => i.Id == result.listItemsSets.setsItem.ItemId);
                     if (itemToSet != null)
@@ -158,10 +161,10 @@ namespace SimplyShopMVC.Application.Services
                     newListPcSets.pcSet = pcSetoToSave;
 
                     break;
-                case 4: 
+                case 4:
                     newListPcSets.pcSet.Id = result.setItem.PcSetsId;
                     _setsRepo.UpdatePcSetsItem(_mapper.Map<PcSetsItems>(result.setItem));
-                  
+
                     break;
                 case 5:
                     // string newFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "media\\pcimg", folderName);
@@ -206,6 +209,84 @@ namespace SimplyShopMVC.Application.Services
             newListPcSets.listImages = listImage;
 
             return newListPcSets;
+        }
+        public ListPcSetsForListVm ListSetForUser(string userId)
+        {
+            ListPcSetsForListVm listPcSetsForUser = new ListPcSetsForListVm();
+            listPcSetsForUser.listSets = new List<PcSetsForListVm>();
+            var listPcset = _setsRepo.GetAllPcSets().Where(i => i.IsActive == true && i.IsSaved == true && i.IsDeleted == false)
+                .ProjectTo<PcSetsForListVm>(_mapper.ConfigurationProvider).ToList();
+            if (listPcset != null)
+            {
+                foreach (var set in listPcset)
+                {
+                    // PcSetsForListVm setsVm = new PcSetsForListVm();
+                    decimal TotalCost = 0;
+                    var listItemPcSEt = _setsRepo.GetAllPcSetsItems().Where(i => i.PcSetsId == set.Id).ToList();
+                    if (listItemPcSEt != null)
+                    {
+                        foreach (var item in listItemPcSEt)
+                        {
+                            var itemCost = _priceCalc.priceCalc(item.ItemId, set.GroupItemId, item.WarehouseId, userId);
+                            itemCost = itemCost * item.Quantity;
+                            TotalCost += itemCost;
+                        }
+                        var _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{set.Id}\\";
+                        var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList().FirstOrDefault();
+                        if (!String.IsNullOrEmpty(imageToList))
+                        {
+                            set.mainImage = $"\\media\\pcsetimg\\{set.Id}\\{imageToList}";
+                        }
+                        else
+                        {
+                            set.mainImage = "\\media\\nophoto.png";
+                        }
+                        set.TotalCost = TotalCost;
+                    }
+                    listPcSetsForUser.listSets.Add(set);
+                }
+            }
+
+            return listPcSetsForUser;
+        }
+        public PcSetDetailVm PcSetDetailForUser(int pcSetId, string userId) // zastanowić się czy nie zrobić nowego vm żeby zdjęcia poszególnych itemów wyśwsietlać
+        {
+            PcSetDetailVm pcSetVM = new PcSetDetailVm();
+            pcSetVM.listSetItem = new List<SetsItemForListVm>();
+            pcSetVM.pcSet = new PcSetsForListVm();
+            pcSetVM.listItem = new List<ItemForListVm>();
+            var listPcset = _mapper.Map<PcSetsForListVm>(_setsRepo.GetAllPcSets().FirstOrDefault(i => i.Id == pcSetId));
+            if (listPcset != null)
+            {           
+                decimal TotalCost = 0;
+                var listItemPcSEt = _setsRepo.GetAllPcSetsItems().Where(i => i.PcSetsId == listPcset.Id)
+                    .ProjectTo<SetsItemForListVm>(_mapper.ConfigurationProvider).ToList();
+                if (listItemPcSEt != null)
+                {
+                    foreach (var item in listItemPcSEt)
+                    {
+                        var itemCost = _priceCalc.priceCalc(item.ItemId, listPcset.GroupItemId, item.WarehouseId, userId);
+                        itemCost = itemCost * item.Quantity;
+                        TotalCost += itemCost;
+                        pcSetVM.listSetItem.Add(item);
+                        pcSetVM.listItem.Add(_mapper.Map<ItemForListVm>(_itemRepo.GetAllItems().FirstOrDefault(i => i.Id == item.ItemId)));
+                    }
+                    var _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{listPcset.Id}\\";
+                    var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList().FirstOrDefault();
+                    if (!String.IsNullOrEmpty(imageToList))
+                    {
+                        listPcset.mainImage = $"\\media\\pcsetimg\\{listPcset.Id}\\{imageToList}";
+                    }
+                    else
+                    {
+                        listPcset.mainImage = "\\media\\nophoto.png";
+                    }
+                    listPcset.TotalCost = TotalCost;
+                    pcSetVM.pcSet = listPcset;
+                }
+            }
+
+            return pcSetVM;
         }
 
     }

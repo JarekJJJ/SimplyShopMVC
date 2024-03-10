@@ -18,14 +18,14 @@
             {
                 <div class="col-md-3 col-sm-6">
                 <ol class="list-group">
-                    <li class="list-group-item">
+                    <li class="list-group-item p-1">
                         <span class="pt-2 pb-1 h6">@mainCategory.Name</span></li>
                     @{
                         var subCategory = Model.categories.Where(i => i.MainCategoryId == mainCategory.Id);
                     }
                     @foreach (var subCat in subCategory)
                     {
-                         <li class="list-group-item"><span class="">@Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span></li>
+                         <li class="list-group-item p-1"><span class="">@Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span></li>
                     }
                 </ol>
                 </div>

@@ -11,6 +11,8 @@ namespace SimplyShopMVC.Application.Interfaces
     public interface ISetService
     {
         ListPcSetsForListVm SetHandling(ListItemShopIndexVm result, int options);
+        ListPcSetsForListVm ListSetForUser(string userId);
+        PcSetDetailVm PcSetDetailForUser(int pcSetId, string userId);
 
     }
 }

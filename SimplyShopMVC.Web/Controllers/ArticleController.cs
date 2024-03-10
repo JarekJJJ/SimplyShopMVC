@@ -55,6 +55,12 @@ namespace SimplyShopMVC.Web.Controllers
             TempData["tagName"] = "GamingPC";
             return RedirectToAction("Index");
         }
+        [HttpGet]
+        public IActionResult GetSerwisArticle()
+        {
+            TempData["tagName"] = "Serwis";
+            return RedirectToAction("Index");
+        }
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult AddArticle([FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment)

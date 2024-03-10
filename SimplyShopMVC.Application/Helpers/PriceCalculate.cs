@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Validators;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Domain.Interface;
+using SimplyShopMVC.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,53 @@ namespace SimplyShopMVC.Application.Helpers
             var itemDetail = _itemRepo.GetAllItems().FirstOrDefault(it => it.Id == itemId);
             var groupDetail = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == itemDetail.GroupItemId);
             var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v=>v.Id==itemWareDetail.VatRateId);
+            var resultPriceLevelA = GetPriceDetalB((decimal)itemWareDetail.NetPurchasePrice.Value, vatRateResoult.Value, groupDetail.PriceMarkupA);
+            var resultPriceLevelB = GetPriceDetalB((decimal)itemWareDetail.NetPurchasePrice.Value, vatRateResoult.Value, groupDetail.PriceMarkupB);
+            var resultPriceLevelC = GetPriceDetalB((decimal)itemWareDetail.NetPurchasePrice.Value, vatRateResoult.Value, groupDetail.PriceMarkupC);
+            decimal price = 0;
+            if (userDetail == null)
+            {
+                price = resultPriceLevelA;
+            }
+            else
+            {
+                switch (userDetail.PriceLevel)
+                {
+                    case ("A"):
+                        price = resultPriceLevelA;
+                        break;
+                    case ("B"):
+                        price = resultPriceLevelB;
+                        break;
+                    case ("C"):
+                        price = resultPriceLevelC;
+                        break;
+                    default:
+                        price = resultPriceLevelA;
+                        break;
+                }
+            }
+            return price;
+        }
+        public decimal priceCalc(int itemId,int groupItemId, int warehouseId, string userId)
+        {
+            var userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId);
+            var itemWareDetail = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == itemId && i.WarehouseId == warehouseId);
+            var itemDetail = _itemRepo.GetAllItems().FirstOrDefault(it => it.Id == itemId);
+            GroupItem groupDetail= new GroupItem();
+            if(groupItemId == 0)
+            {
+                groupDetail = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == itemDetail.GroupItemId);
+            }
+            else
+            {
+                groupDetail = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == groupItemId);
+            }
+            if(groupDetail == null)
+            {
+                groupDetail = _groupItemRepo.GetAllGroupItem().FirstOrDefault(i=>i.Id==1);
+            }           
+            var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == itemWareDetail.VatRateId);
             var resultPriceLevelA = GetPriceDetalB((decimal)itemWareDetail.NetPurchasePrice.Value, vatRateResoult.Value, groupDetail.PriceMarkupA);
             var resultPriceLevelB = GetPriceDetalB((decimal)itemWareDetail.NetPurchasePrice.Value, vatRateResoult.Value, groupDetail.PriceMarkupB);
             var resultPriceLevelC = GetPriceDetalB((decimal)itemWareDetail.NetPurchasePrice.Value, vatRateResoult.Value, groupDetail.PriceMarkupC);

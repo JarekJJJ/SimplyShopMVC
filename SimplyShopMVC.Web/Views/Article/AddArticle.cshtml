@@ -41,10 +41,12 @@
                 <div class="form-group">
                     <p class="mt-1 mb-0">Wybierz Tag (kategorię) artykułu</p>
                     <select class="form-select" id="SelectedTags" name="SelectedTags" multiple>
-                        
-                        @foreach (var tags in Model.Tags)
+                        @if (Model.Tags != null)
                         {
-                            <option value="@tags.Id" name="@tags.Name">@tags.Name</option>
+                            @foreach (var tags in Model.Tags)
+                            {
+                                <option value="@tags.Id" name="@tags.Name">@tags.Name</option>
+                            }
                         }
                         <span asp-validation-for="SelectedTags" class="text-danger"></span>
                     </select>

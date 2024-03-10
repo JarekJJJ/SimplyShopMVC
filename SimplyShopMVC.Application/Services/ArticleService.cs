@@ -92,10 +92,13 @@ namespace SimplyShopMVC.Application.Services
         public void AddTagsToArticle(List<int> tags, int articleId)
         {
             _articleRepo.DeleteConnectionArticleTags(articleId);
-            foreach (var stags in tags)
+            if (tags != null)
             {
-                var element = _articleRepo.GetArticleTagByTagId(stags);
-                _articleRepo.AddConnectionArticleTags(articleId, element);
+                foreach (var stags in tags)
+                {
+                    var element = _articleRepo.GetArticleTagByTagId(stags);
+                    _articleRepo.AddConnectionArticleTags(articleId, element);
+                }
             }
         }
 
@@ -136,7 +139,6 @@ namespace SimplyShopMVC.Application.Services
 
         public ListArticleForListVm GetAllArticleForList()
         {
-            //.projectTo - stosujemy przy kolekcjacj Iquerable
             var articles = _articleRepo.GetAllArticles()
                   .ProjectTo<ArticleForListVm>(_mapper.ConfigurationProvider).ToList();
 
@@ -172,7 +174,7 @@ namespace SimplyShopMVC.Application.Services
             if (tagForList != null)
             {
                 articlesList = GetAllArticlesByTagId(tagForList.Id);
-            }         
+            }
             return articlesList;
         }
 
