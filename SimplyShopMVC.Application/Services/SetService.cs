@@ -214,6 +214,7 @@ namespace SimplyShopMVC.Application.Services
         {
             ListPcSetsForListVm listPcSetsForUser = new ListPcSetsForListVm();
             listPcSetsForUser.listSets = new List<PcSetsForListVm>();
+            listPcSetsForUser.setsItems = new List<SetsItemForListVm>();
             var listPcset = _setsRepo.GetAllPcSets().Where(i => i.IsActive == true && i.IsSaved == true && i.IsDeleted == false)
                 .ProjectTo<PcSetsForListVm>(_mapper.ConfigurationProvider).ToList();
             if (listPcset != null)
@@ -222,7 +223,8 @@ namespace SimplyShopMVC.Application.Services
                 {
                     // PcSetsForListVm setsVm = new PcSetsForListVm();
                     decimal TotalCost = 0;
-                    var listItemPcSEt = _setsRepo.GetAllPcSetsItems().Where(i => i.PcSetsId == set.Id).ToList();
+                    var listItemPcSEt = _setsRepo.GetAllPcSetsItems().Where(i => i.PcSetsId == set.Id)
+                        .ProjectTo<SetsItemForListVm>(_mapper.ConfigurationProvider).ToList();
                     if (listItemPcSEt != null)
                     {
                         foreach (var item in listItemPcSEt)
@@ -230,6 +232,7 @@ namespace SimplyShopMVC.Application.Services
                             var itemCost = _priceCalc.priceCalc(item.ItemId, set.GroupItemId, item.WarehouseId, userId);
                             itemCost = itemCost * item.Quantity;
                             TotalCost += itemCost;
+                            listPcSetsForUser.setsItems.Add(item);
                         }
                         var _pathImage = $"{_webHostEnvironment.WebRootPath}\\media\\pcsetimg\\{set.Id}\\";
                         var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList().FirstOrDefault();

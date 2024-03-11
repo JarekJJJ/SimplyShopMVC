@@ -229,6 +229,8 @@ body {
     overflow: hidden;
 }
 
-div.article-list {
-    height: 350px;
+.horizontal-list li {
+    
+    display: inline-block;
+    margin-right: 10px;
 }

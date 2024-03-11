@@ -7,27 +7,39 @@
 <div>
     @foreach (var pcSet in Model.listSets)
     {
-        <div class="row col-md-12 mt-1 pt-1">
+        <div class="row col-md-12 mt-1 p-1">
             <div class="col-md-12 text-center">
-                <span class="text-center fw-bold fs-3 p-1">@pcSet.Title</span>
+                <span class="text-center fw-bold fs-4 p-1">@pcSet.Title</span>
             </div>
             <div class="col-md-3 align-items-center text-center">
                 <img src="@pcSet.mainImage" style="max-height:200px">
             </div>
-            <div class="col-md-9 d-flex align-items-end flex-column">
+            <div class="col-md-9 d-flex align-items-end flex-column border-top border-1 border-dark-subtle p-2">
                 <div class="mb-auto pt-2">
-                    <span class="fs-4 text-center">@pcSet.ShortDescription</span>
+                    <span class="fs-5 text-center">@pcSet.ShortDescription</span>
                 </div>
-                <div>
-                    <form asp-action="PcSetViewDetail" method="get"> 
-                        <input type="hidden" name="pcSetId" value="@pcSet.Id"/>
-                        <button class="btn btn-outline-secondary" type="submit">Zobacz więcej</button>
-                    </form>
+                <div class="border border-secondary-subtle border-1 rounded-4">
+                    <ul class="horizontal-list">
+                        @foreach (var itemSet in Model.setsItems)
+                        {
+                            <li class="text-dark-emphasis"> - @itemSet.Name.Substring(0,33)</li>
+                        }
+                    </ul>
                 </div>
-                <div class="mt-auto">
-                    <span class="fs-3 fw-bold text-info text-center ms-auto">Cena: </span>
-                    <span class="fs-3 fw-bold text-danger text-center ms-auto pe-3 pb-2">@pcSet.TotalCost.ToString("N2") zł</span>
-                </div>               
+                <div class="col-md-10 row ms-auto">
+                    <div class="col-md-6 p-2">
+                        <form asp-action="PcSetViewDetail" method="get">
+                            <input type="hidden" name="pcSetId" value="@pcSet.Id" />
+                            <button class="btn btn-outline-secondary" type="submit">Szczegóły</button>
+                        </form>
+                    </div>
+                    <div class="col-md-4 mt-auto pe-2">
+                        <div>
+                            <span class="fs-4 fw-bold text-dark text-center ms-auto">Cena: </span>
+                            <span class="fs-4 fw-bold text-danger text-center ms-auto pe-3 pb-2">@pcSet.TotalCost.ToString("N2") zł</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     }
