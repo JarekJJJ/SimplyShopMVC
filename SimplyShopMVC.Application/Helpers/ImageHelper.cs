@@ -72,6 +72,64 @@ namespace SimplyShopMVC.Application.Helpers
             }
             return result;
         }
+        public static async Task<int> SaveImageFromUrlAsync(List<string> imageUrl, string folderName, IWebHostEnvironment webHost)
+        {
+            int result = 0;
+            if (imageUrl != null)
+            {
+
+
+
+                try
+                {
+                    string newFolderPath = Path.Combine(webHost.WebRootPath, "media\\itemimg", folderName);
+                    try
+                    {
+                        Directory.CreateDirectory(newFolderPath);
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    using (WebClient client = new WebClient())
+                    {
+                        foreach (string imageFromList in imageUrl)
+                        {
+                            try
+                            {
+                                if (!String.IsNullOrEmpty(imageFromList) && imageFromList.Length > 10)
+                                {
+                                    byte[] imageData = client.DownloadData(imageFromList);
+                                    string fileName = Guid.NewGuid().ToString() + ".jpg";
+                                    string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                                    if (imageData.Length > 2048)
+                                    {
+                                       await System.IO.File.WriteAllBytesAsync(filePath, imageData);
+                                        result++;
+                                    }
+                                }
+
+
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return result;
+        }
+
         public static int SaveOrinkImageFromUrl(List<string> imageUrl, string folderName, IWebHostEnvironment webHost, IHttpClientFactory httpClientFactory)
         {
 

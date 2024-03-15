@@ -64,6 +64,20 @@ namespace SimplyShopMVC.Infrastructure.Repositories
                 _context.SaveChanges();
             }
         }
+        public async Task UpdateItemAsync(Item item)
+        {
+            var existingItem = _context.Items.FirstOrDefault(i => i.Id == item.Id);
+            if (existingItem != null)
+            {
+                _context.Entry(existingItem).CurrentValues.SetValues(item);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                _context.Update(item);
+             await _context.SaveChangesAsync();
+            }
+        }
 
         public IQueryable<ItemTag> GetAllItemTags()
         {
@@ -94,6 +108,12 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.SaveChanges();
             return itemTag.Id;
         }
+        public async Task<int> AddItemTagAsync(ItemTag itemTag)
+        {
+            _context.ItemTags.Add(itemTag);
+            await _context.SaveChangesAsync();
+            return itemTag.Id;
+        }
 
         public ItemTag GetItemTagByTagId(int tagId)
         {
@@ -110,6 +130,16 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.Entry(item).State = EntityState.Detached;
             _context.ConnectItemTag.Add(con);
             _context.SaveChanges();
+        }
+        public async Task AddConnectionItemTagsAsync(int itemId, ItemTag tags)
+        {
+            var item = GetItemById(itemId);
+            ConnectItemTag con = new ConnectItemTag();
+            con.ItemId = item.Id;
+            con.ItemTagId = tags.Id;
+            _context.Entry(item).State = EntityState.Detached;
+            _context.ConnectItemTag.Add(con);
+           await _context.SaveChangesAsync();
         }
         public void UpdateItemTag(ItemTag itemTag)
         {
@@ -151,6 +181,12 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             _context.Categories.Add(category);
             _context.SaveChanges();
+            return category.Id;
+        }
+        public async Task<int> AddCategoryAsync(Category category)
+        {
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
             return category.Id;
         }
 
@@ -205,6 +241,12 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.SaveChanges();
             return itemWarehouse.Id;
         }
+        public async Task<int> AddItemWarehouseAsync(ItemWarehouse itemWarehouse)
+        {
+            _context.ItemWarehouses.Add(itemWarehouse);
+            await _context.SaveChangesAsync();
+            return itemWarehouse.Id;
+        }
         public IQueryable<ItemWarehouse> GetAllItemWarehouses()
         {
             var result = _context.ItemWarehouses;
@@ -226,6 +268,17 @@ namespace SimplyShopMVC.Infrastructure.Repositories
                 //_context.Entry(itemToUpdate).State = EntityState.Detached;
                 _context.Update(itemWarehouse);
                 _context.SaveChanges();
+            //}                 
+        }
+        public async Task UpdateItemWarehouseAsync(ItemWarehouse itemWarehouse)
+        {
+            //var itemToUpdate = _context.ItemWarehouses.FirstOrDefault(i=>i.ItemId==itemWarehouse.ItemId || i.WarehouseId==itemWarehouse.WarehouseId);
+            //if (itemToUpdate != null)
+            //{
+            //itemWarehouse.Id = itemToUpdate.Id;
+            //_context.Entry(itemToUpdate).State = EntityState.Detached;
+            _context.Update(itemWarehouse);
+           await _context.SaveChangesAsync();
             //}                 
         }
         public IQueryable<VatRate> GetAllVatRate()

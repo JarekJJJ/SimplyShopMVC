@@ -22,6 +22,13 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             return omnibusPrice.Id;
 
         }
+        public async Task<int> AddOmnibusPriceAsync(OmnibusPrice omnibusPrice)
+        {
+            var id = _context.Add(omnibusPrice);
+            await _context.SaveChangesAsync();
+            return omnibusPrice.Id;
+
+        }
 
         public void DeleteOmnibusPrice(int id)
         {

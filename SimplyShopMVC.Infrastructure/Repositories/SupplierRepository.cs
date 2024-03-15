@@ -23,7 +23,13 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.SaveChanges();
             return incom.Id;
         }
-      
+        public async Task<int> AddIncomItemAsync(Incom incom)
+        {
+            _context.Add(incom);
+            await _context.SaveChangesAsync();
+            return incom.Id;
+        }
+
 
         public void DeleteIncomItem(int incomId)
         {
@@ -31,10 +37,21 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.Remove(result);
             _context.SaveChanges();
         }
+        public async Task DeleteIncomItemAsync(int incomId)
+        {
+            var result = _context.Incoms.FirstOrDefault(x => x.Id == incomId);
+            _context.Remove(result);
+            await _context.SaveChangesAsync();
+        }
 
         public IQueryable<Incom> GetAllIncom()
         {
             var result = _context.Incoms;
+            return result;
+        }
+        public async Task<List<Incom>> GetAllIncomAsync()
+        {
+            var result = await _context.Incoms.ToListAsync();
             return result;
         }
         public void UpdateIncom(Incom incom)
@@ -44,6 +61,14 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.Entry(incomItem).State = EntityState.Detached;
             _context.Update(incom);
             _context.SaveChanges();
+        }
+        public async Task UpdateIncomAsync(Incom incom)
+        {
+            var incomItem = _context.Incoms.FirstOrDefault(i => i.symbol_produktu == incom.symbol_produktu);
+            incom.Id = incomItem.Id;
+            _context.Entry(incomItem).State = EntityState.Detached;
+            _context.Update(incom);
+           await _context.SaveChangesAsync();
         }
         public int AddIncomGroup(IncomGroup incomGroup)
         {

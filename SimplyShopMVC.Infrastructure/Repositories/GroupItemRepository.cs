@@ -18,7 +18,13 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         public int AddGroupItem(GroupItem groupItem)
         {
             _context.Add(groupItem);
-            _context.SaveChanges();
+           _context.SaveChangesAsync();
+            return groupItem.Id;
+        }
+        public async Task<int> AddGroupItemAsync(GroupItem groupItem)
+        {
+            _context.Add(groupItem);
+            await _context.SaveChangesAsync();
             return groupItem.Id;
         }
 

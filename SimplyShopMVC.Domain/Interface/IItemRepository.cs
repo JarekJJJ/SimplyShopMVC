@@ -12,6 +12,7 @@ namespace SimplyShopMVC.Domain.Interface
         //podstawowy crud
         void DeleteItem(int itemid);
         void UpdateItem(Item item);
+        Task UpdateItemAsync(Item item);
         int AddItem(Item item);
         IQueryable<Item> GetAllItems();
         Item GetItemById(int id);
@@ -21,8 +22,10 @@ namespace SimplyShopMVC.Domain.Interface
         IQueryable<ConnectItemTag> GetConnectItemTags(int itemId);
         IQueryable<ConnectItemTag> GetAllConnectedItemTags();
         int AddItemTag(ItemTag itemTag);
+        Task<int> AddItemTagAsync(ItemTag itemTag);
         ItemTag GetItemTagByTagId(int tagId);
         void AddConnectionItemTags(int itemId, ItemTag tags);
+        Task AddConnectionItemTagsAsync(int itemId, ItemTag tags);
         void UpdateItemTag(ItemTag itemTag);
         void DeleteItemTag(int itemTagId);
         void DeleteConnectionItemTags(int itemId);
@@ -31,6 +34,7 @@ namespace SimplyShopMVC.Domain.Interface
         IQueryable<Category> GetAllCategories();
         IQueryable<Item> GetItemsByCategoryId(int categoryId);  
         int AddCategory(Category category);
+        Task<int> AddCategoryAsync(Category category);
         Category GetCategoryById(int id);
         void UpdateCategory(Category category);
         void DeleteCategory(int categoryId);
@@ -41,7 +45,9 @@ namespace SimplyShopMVC.Domain.Interface
         void DeleteWarehouse(int warehouseId);
         // ItemWarehouse
         int AddItemWarehouse(ItemWarehouse itemWarehouse);
+        Task<int> AddItemWarehouseAsync(ItemWarehouse itemWarehouse);
         void UpdateItemWarehouse(ItemWarehouse itemWarehouse);
+        Task UpdateItemWarehouseAsync(ItemWarehouse itemWarehouse);
         IQueryable<ItemWarehouse> GetAllItemWarehouses();
         // Vat Rate
         IQueryable<VatRate> GetAllVatRate();

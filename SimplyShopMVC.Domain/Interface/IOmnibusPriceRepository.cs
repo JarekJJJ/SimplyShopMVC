@@ -10,6 +10,7 @@ namespace SimplyShopMVC.Domain.Interface
     public interface IOmnibusPriceRepository
     {
         int AddOmnibusPrice(OmnibusPrice omnibusPrice);
+        Task<int> AddOmnibusPriceAsync(OmnibusPrice omnibusPrice);
         void UpdateOmnibusPrice(OmnibusPrice omnibusPrice);
         IQueryable<OmnibusPrice> GetAllOmnibusPrice();
         void DeleteOmnibusPrice(int id);

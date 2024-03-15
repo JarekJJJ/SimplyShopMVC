@@ -38,7 +38,7 @@ namespace SimplyShopMVC.Web.Controllers
             {
 
                 var listItemsXML = XDocument.Load(incomItems.formFile.OpenReadStream());
-                returnRaport = _supplierService.LoadNewIncomItemsXML(incomItems, listItemsXML);
+                returnRaport = await _supplierService.LoadNewIncomItemsXML(incomItems, listItemsXML);
                 return View(returnRaport);
             }
             if (!string.IsNullOrEmpty(incomItems.urlXml))
@@ -47,7 +47,7 @@ namespace SimplyShopMVC.Web.Controllers
                 {
                     string xmlString = await client.GetStringAsync(incomItems.urlXml);
                     var listItemXmlfromUrl = XDocument.Parse(xmlString);
-                    returnRaport = _supplierService.LoadNewIncomItemsXML(incomItems, listItemXmlfromUrl);
+                    returnRaport = await _supplierService.LoadNewIncomItemsXML(incomItems, listItemXmlfromUrl);
                 }
                 return View(returnRaport);
             }
@@ -121,7 +121,7 @@ namespace SimplyShopMVC.Web.Controllers
                 {
                     string xmlString = await client.GetStringAsync(incomItems.urlXml);
                     var listItemXmlfromUrl = XDocument.Parse(xmlString);
-                    returnRaport = _supplierService.UpdateIncomItemsXML(incomItems, listItemXmlfromUrl);
+                    returnRaport = await _supplierService.UpdateIncomItemsXMLAsync(incomItems, listItemXmlfromUrl);
                 }
                 AddIncomItemsVm _incomItem = new AddIncomItemsVm();
                 XDocument _doc = new XDocument();
@@ -155,9 +155,9 @@ namespace SimplyShopMVC.Web.Controllers
             return View(connectItems);
         }
         [HttpPost]
-        public IActionResult AddGroupItems(ConnectItemsToSupplierVm connectItems, int options)
+        public async Task<IActionResult> AddGroupItems(ConnectItemsToSupplierVm connectItems, int options)
         {
-            var returnRaport = _supplierService.AddConnectItemsToSupplierVm(connectItems, options);
+            var returnRaport = await _supplierService.AddConnectItemsToSupplierVm(connectItems, options);
             var newconnectItems = _supplierService.LoadConnectItemsToSupplierVm(options);
             newconnectItems.raport = returnRaport.raport;
 

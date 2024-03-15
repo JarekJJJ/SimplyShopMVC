@@ -11,6 +11,7 @@ namespace SimplyShopMVC.Domain.Interface
     public interface ICategoryTagsRepository
     {
        void AddConnectCategoryTags(ItemTag sTag, int CategoryId);
-       IQueryable<ConnectCategoryTag> GetAllCategoryTags();
+        Task AddConnectCategoryTagsAsync(ItemTag sTag, int CategoryId);
+        IQueryable<ConnectCategoryTag> GetAllCategoryTags();
     }
 }

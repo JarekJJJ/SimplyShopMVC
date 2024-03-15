@@ -10,6 +10,7 @@ namespace SimplyShopMVC.Domain.Interface
     public interface IGroupItemRepository
     {
         int AddGroupItem(GroupItem groupItem);
+        Task<int> AddGroupItemAsync(GroupItem groupItem);
         void UpdateGroupItem(GroupItem groupItem);
         IQueryable<GroupItem> GetAllGroupItem();
         void DeleteGroupItem(int groupItemId);
