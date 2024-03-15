@@ -17,17 +17,18 @@
             @foreach (var mainCategory in mainCategories)
             {
                 <div class="col-md-3 col-sm-6">
-                <ol class="list-group">
-                    <li class="list-group-item p-1">
-                        <span class="pt-2 pb-1 h6">@mainCategory.Name</span></li>
+                    <div>
+                        <span class="fw-bold">@mainCategory.Name</span>
+                    </div>
                     @{
                         var subCategory = Model.categories.Where(i => i.MainCategoryId == mainCategory.Id);
                     }
                     @foreach (var subCat in subCategory)
                     {
-                         <li class="list-group-item p-1"><span class="">@Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span></li>
+                        <div class="ms-2">
+                            <span class="">- @Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 text-black link-underline link-underline-opacity-0 link-underline-opacity-50-hover"})</span>
+                        </div>
                     }
-                </ol>
                 </div>
             }
         </div>
@@ -171,18 +172,18 @@
                                 <input type="hidden" asp-for="cartItem.WarehouseId" value="@sItem.warehouseId" />
                                 <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id">
                                 <input type="hidden" min="0" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
-                              
-                                    <button type="submit" class="btn btn-danger ms-4 me-4 @(sItem.quantity>0 ? null : "disabled")">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
-                                            <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                                        </svg> <span class="text-light link-underline link-underline-opacity-0"></span>
-                                    </button>
+
+                                <button type="submit" class="btn btn-danger ms-4 me-4 @(sItem.quantity>0 ? null : "disabled")">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                    </svg> <span class="text-light link-underline link-underline-opacity-0"></span>
+                                </button>
 
                             </form>
                             @if (User.IsInRole("Admin"))
                             {
                                 <form asp-controller="Item" asp-action="AddPcSet" method="post">
-                                   <input type="hidden" name="options" value="1"/>
+                                    <input type="hidden" name="options" value="1" />
                                     <input type="hidden" id="@sItem.id" asp-for="listItemsSets.setsItem.ItemId" value="@sItem.id">
                                     <input type="hidden" min="0" asp-for="listItemsSets.setsItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
                                     <button type="submit" class="btn btn-dark ms-4 me-4">
@@ -358,7 +359,7 @@
                 var panel = document.getElementById("produktyPanel");
                 panel.style.display = "";  // Pokazanie div-a
             }
-            
+
         };
     </script>
 }

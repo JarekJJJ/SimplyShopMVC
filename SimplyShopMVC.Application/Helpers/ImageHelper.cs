@@ -41,17 +41,16 @@ namespace SimplyShopMVC.Application.Helpers
                         {
                             try
                             {
-                                if(imageFromList != null)
-                                {
-                                    byte[] imageData = client.DownloadData(imageFromList);
-                                    string fileName = Guid.NewGuid().ToString() + ".jpg";
-                                    string filePath = System.IO.Path.Combine(newFolderPath, fileName);
-                                    if (imageData.Length > 2048)
-                                    {
-                                        System.IO.File.WriteAllBytes(filePath, imageData);
-                                        result++;
-                                    }
-                                   
+                                if(!String.IsNullOrEmpty(imageFromList) && imageFromList.Length > 10)
+                                {                                  
+                                        byte[] imageData = client.DownloadData(imageFromList);
+                                        string fileName = Guid.NewGuid().ToString() + ".jpg";
+                                        string filePath = System.IO.Path.Combine(newFolderPath, fileName);
+                                        if (imageData.Length > 2048)
+                                        {
+                                            System.IO.File.WriteAllBytes(filePath, imageData);
+                                            result++;
+                                        }                                                                                            
                                 }
                               
                                

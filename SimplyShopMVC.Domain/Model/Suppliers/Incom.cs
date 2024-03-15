@@ -20,6 +20,7 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
         public string ean { get; set; }
         public string nazwa_producenta { get; set; }
         public string opis { get; set; }
+        public string urlImage { get; set; }
         public int stan_magazynowy { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal cena { get; set; }

@@ -50,6 +50,193 @@ namespace SimplyShopMVC.Application.Services
             _orinkRepo = orinkRepo;
             _httpClientFactory = httpClientFactory;
         }
+        //newIncom
+        public AddIncomItemsVm LoadNewIncomGroupForView()
+        {
+            AddIncomItemsVm resoultListGroup= new AddIncomItemsVm();
+            var mapedResoultVm = _supplierRepo.GetAllIncomGroup().ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+            var mappedWare = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            resoultListGroup.listIncomGroup = mapedResoultVm;
+            resoultListGroup.warehouseForListVm= mappedWare;
+
+            return resoultListGroup;
+        }
+        public  AddIncomItemsVm LoadNewIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
+        {
+            int countItemUpdate = 0;
+            int countItemAdd = 0;
+            int countItemRemove = 0;
+            int countImageAdd = 0;
+            int _categoryNr;
+            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
+            List<string> list = new List<string>();
+            returnRaport.raportAddItem = new List<string>();
+            List<int> idSelectedCategory= new List<int>();
+            foreach (var categoryNr in incomItems.selectedCategory)
+            {
+                List<IncomGroup> listCategoryToAddIncomItems = new List<IncomGroup>();
+                int.TryParse(categoryNr, out _categoryNr);
+                listCategoryToAddIncomItems = _supplierRepo.GetAllIncomGroup().Where(a => a.GroupId == _categoryNr || a.GroupIdHome == _categoryNr).ToList();
+                if (listCategoryToAddIncomItems != null)
+                {
+                    foreach(var listCategory in listCategoryToAddIncomItems)
+                    {
+                        idSelectedCategory.Add(listCategory.GroupId);
+                    }
+                }
+               
+            }
+            
+            if (incomItems.warehouseId != 0)
+            {
+                if (incomItems.removeItems == true)
+                {
+                    var itemFromSelectedWarehouse = _supplierRepo.GetAllIncom().Where(i => i.warehouseId == incomItems.warehouseId).ToList();
+                    foreach (var item in itemFromSelectedWarehouse)
+                    {
+                        _supplierRepo.DeleteIncomItem(item.Id);
+                        countItemRemove++;
+                    }
+                }
+                CultureInfo cultureInfo = new CultureInfo("pl-PL");
+                cultureInfo.NumberFormat.NumberDecimalSeparator = ",";
+                DateTime dateTime = DateTime.Now;
+
+                foreach (XElement elementXml in xmlDocument.Root.Elements("produkt"))
+                {
+                    bool continueTemp = false;
+                    try
+                    {
+                        XElement grupa_towarowa = elementXml.Element("grupa_towarowa");
+                        if (grupa_towarowa.Value != null)
+                        {
+                            int tempXmlGroupId;
+                          bool okParse = int.TryParse(grupa_towarowa.Value, out tempXmlGroupId);
+                            if (okParse)
+                            {
+                                foreach (var _selectedGroup in idSelectedCategory)
+                                {
+                                    if (_selectedGroup == tempXmlGroupId)
+                                    {
+                                        continueTemp = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (continueTemp)
+                        {
+                            XElement nazwa_grupy_towarowej = elementXml.Element("nazwa_grupy_towarowej");
+                            XElement symbol_produktu = elementXml.Element("symbol_produktu");
+                            XElement nazwa_produktu = elementXml.Element("nazwa_produktu");
+                            XElement symbol_producenta = elementXml.Element("symbol_producenta");
+                            XElement ean = elementXml.Element("ean");
+                            XElement nazwa_producenta = elementXml.Element("nazwa_producenta");
+                            XElement opisProduktu = elementXml.Element("opis");
+                            string firstLineDescription = "<table class=\"table table-striped-columns\">";
+                            string lastLineDescription = "</table>";
+                            string lineDescription = string.Empty;
+                            string fullDescription = ("");
+                            if (opisProduktu != null)
+                            {
+                                foreach (XElement parametrOpisu in opisProduktu.Elements("parametr"))
+                                {
+                                    string paramName = parametrOpisu.Element("nazwa")?.Value;
+                                    string paramValue = parametrOpisu.Element("wartosc")?.Value;
+                                    string newLineDescription = $"<tr><td>{paramName}</td><td>{paramValue}</td></tr>";
+                                    lineDescription = lineDescription + newLineDescription;
+                                }
+                                fullDescription = firstLineDescription + lineDescription + lastLineDescription;
+                            }
+                            else
+                            {
+                                fullDescription = ("brak opisu");
+                            }
+                            List<string> linkImage = new List<string>();
+                            string link = elementXml.Element("link_do_zdjecia_produktu")?.Value;
+                            linkImage.Add(link);
+                            foreach (XElement addLink in elementXml.Elements("media"))
+                            {
+                                string newLink = addLink.Element("url")?.Value;
+                                linkImage.Add(newLink);
+                            }
+                            XElement stan_magazynowy = elementXml.Element("stan_magazynowy");
+                            XElement cena = elementXml.Element("cena");
+                            XElement opakowanie = elementXml.Element("opakowanie");
+                            XElement dlugosc = opakowanie.Element("dlugosc");
+                            XElement szerokosc = opakowanie.Element("szerokosc");
+                            XElement wysokosc = opakowanie.Element("wyskosc");
+                            XElement waga = opakowanie.Element("waga");
+                            IncomItemsForListVm itemVm = new IncomItemsForListVm();
+                            itemVm.warehouseId = incomItems.warehouseId;
+                            itemVm.grupa_towarowa = grupa_towarowa.Value;
+                            itemVm.nazwa_grupy_towarowej = nazwa_grupy_towarowej.Value;
+                            itemVm.symbol_produktu = symbol_produktu.Value;
+                            itemVm.nazwa_produktu = nazwa_produktu.Value;
+                            itemVm.symbol_producenta = symbol_producenta.Value;
+                            itemVm.ean = xmlHelpers.eanController(ean.Value);
+                            itemVm.nazwa_producenta = nazwa_producenta.Value;
+                            itemVm.opis = fullDescription;
+                            itemVm.urlImage = linkImage.FirstOrDefault();
+                            if (String.IsNullOrEmpty(itemVm.urlImage))
+                            {
+                                itemVm.urlImage = " ";
+                            }
+                            //string cleanedText = new string(stan_magazynowy.Value.Where(char.IsDigit).ToArray());                             
+                            itemVm.stan_magazynowy = changeToInt(stan_magazynowy.Value);
+                            itemVm.cena = decimal.Parse(cena.Value, cultureInfo);
+                            itemVm.dlugosc = changeToDecimal(dlugosc.Value);
+                            itemVm.szerokosc = changeToDecimal(szerokosc.Value);
+                            itemVm.wysokosc = changeToDecimal(wysokosc.Value);
+                            itemVm.waga = changeToDecimal(waga.Value);
+                            itemVm.createDate = dateTime; // Tutaj zrobić podział na update i Add !!!
+                            var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
+                            var mapedItemVm = _mapper.Map<Incom>(itemVm);
+                            int itemId = 0;
+                            if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
+                            {
+                                mapedItemVm.createDate = itemToCheck.createDate;
+                                mapedItemVm.updateTime = dateTime;
+                                _supplierRepo.UpdateIncom(mapedItemVm);
+                                UpdateItemInShop(mapedItemVm);
+                                countItemUpdate++;
+                                itemId = itemToCheck.Id;
+                            }
+                            if (itemToCheck == null && !string.IsNullOrEmpty(itemVm.ean))
+                            {
+                                itemId = _supplierRepo.AddIncomItem(mapedItemVm);
+                                //var result = ImageHelper.SaveImageFromUrl(linkImage, itemVm.ean, _webHost);
+                                //countImageAdd = countImageAdd + result;
+                                //countItemAdd++;
+                            }
+                            OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                            var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                            mapedOmnibusPrice.PriceN = itemVm.cena;
+                            mapedOmnibusPrice.Ean = itemVm.ean;
+                            mapedOmnibusPrice.ChangeTime = dateTime;
+                            mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
+                            _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+            }
+            if (countItemAdd > 0 || countItemUpdate > 0)
+            {
+                returnRaport.raportAddItem.Add($"Usunięto rekordów: {countItemRemove}");
+                returnRaport.raportAddItem.Add($"Dodano rekordów: {countItemAdd}");
+                returnRaport.raportAddItem.Add($"Zmodyfikowano rekordów: {countItemUpdate}");
+                returnRaport.raportAddItem.Add($"Dodano zdjęć: {countImageAdd}");
+                returnRaport.raportAddItem.Add("ok");
+            }
+            returnRaport.warehouseForListVm = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
+            var mapedResoultVm = _supplierRepo.GetAllIncomGroup().ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+            returnRaport.listIncomGroup = mapedResoultVm;
+            return returnRaport;
+        }
+
         //Orink
         public AddIncomItemsVm LoadOrinkItemsXML(AddIncomItemsVm orinkItems, XDocument xmlDocument)
         {
@@ -445,7 +632,7 @@ namespace SimplyShopMVC.Application.Services
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
             newConnectItem.warehouseForLists = _itemRepo.GetAllWarehouses()
                      .ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
-            var _incomIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w=>w.Name.Contains("Incom"));
+            var _incomIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w => w.Name.Contains("Incom"));
             var _orinkIdWarehouse = newConnectItem.warehouseForLists.FirstOrDefault(w => w.Name.Contains("Orink"));
             int incomIdWarehouse = 0;
             int orinkIdWarehouse = 0;
@@ -453,18 +640,18 @@ namespace SimplyShopMVC.Application.Services
             {
                 incomIdWarehouse = _incomIdWarehouse.Id;
             }
-            if(_orinkIdWarehouse!= null)
+            if (_orinkIdWarehouse != null)
             {
-                orinkIdWarehouse= _orinkIdWarehouse.Id;
+                orinkIdWarehouse = _orinkIdWarehouse.Id;
             }
-            if (options== incomIdWarehouse)
+            if (options == incomIdWarehouse)
             {
                 options = 1;
             }
-            if(options == orinkIdWarehouse)
+            if (options == orinkIdWarehouse)
             {
                 options = 2;
-            }          
+            }
             switch (options)
             {
                 case 1:
@@ -497,7 +684,7 @@ namespace SimplyShopMVC.Application.Services
                         .ProjectTo<OrinkGroupForListVm>(_mapper.ConfigurationProvider).ToList();
                     foreach (var group in newConnectItem.orinkGroups)
                     {
-                        CountSupplierItem countItem = new CountSupplierItem();                                           
+                        CountSupplierItem countItem = new CountSupplierItem();
                         int count = _orinkRepo.GetAllOrink().Where(i => i.OrinkGroupId == group.Id).Count();
                         if (count > 0)
                         {
@@ -513,7 +700,7 @@ namespace SimplyShopMVC.Application.Services
                     break;
                 default:
                     break;
-            }         
+            }
             newConnectItem.categoryItems = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             foreach (var category in newConnectItem.categoryItems.Where(c => c.IsMainCategory == false))
@@ -526,7 +713,7 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
             var ascendingListCategory = newConnectItem.categoryItems.OrderBy(i => i.Name).ToList();
-            newConnectItem.categoryItems = ascendingListCategory;           
+            newConnectItem.categoryItems = ascendingListCategory;
             newConnectItem.itemTagsForLists = _itemRepo.GetAllItemTags()
                 .ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
             return newConnectItem;
@@ -591,7 +778,7 @@ namespace SimplyShopMVC.Application.Services
                             {
                                 var resultItem = _itemRepo.GetAllItems().FirstOrDefault(r => r.EanCode == supItem.ean);
                                 int newItemId = 0;
-                                
+
                                 if (resultItem == null && supItem.stan_magazynowy > 0)
                                 {
                                     ItemForListVm newItem = new ItemForListVm();
@@ -618,14 +805,20 @@ namespace SimplyShopMVC.Application.Services
                                     itemWarehouse.NetPurchasePrice = supItem.cena;
                                     itemWarehouse.VatRateName = selectedVatRate;
                                     itemWarehouse.VatRateId = idVatRate.Id;
+                                    var linkImage = supItem.urlImage;
+                                    List<string> links = new List<string>();
+                                    links.Add(linkImage);
                                     var mappedItemWare = _mapper.Map<ItemWarehouse>(itemWarehouse);
+                                    //List<string> imgLink = new List<string>();
+                                    //imgLink.Add(supItem.imgLink);
+                                    var result = ImageHelper.SaveImageFromUrl(links, supItem.ean, _webHost);
                                     _itemRepo.AddItemWarehouse(mappedItemWare);
                                 }
                                 if (resultItem != null)
                                 {
                                     ItemForListVm newItem = new ItemForListVm();
                                     newItemId = resultItem.Id;
-                                    newItem.Id= newItemId;
+                                    newItem.Id = newItemId;
                                     newItem.Name = supItem.nazwa_produktu;
                                     newItem.ItemSymbol = supItem.symbol_produktu;
                                     newItem.Description = supItem.opis;
@@ -717,7 +910,7 @@ namespace SimplyShopMVC.Application.Services
                                 if (resultItem != null)
                                 {
                                     ItemForListVm newItem = new ItemForListVm();
-                                    newItem.Id= resultItem.Id;
+                                    newItem.Id = resultItem.Id;
                                     newItem.Name = supItem.name;
                                     newItem.ItemSymbol = supItem.symbol_producenta;
                                     newItem.Description = supItem.description;
@@ -771,7 +964,7 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
             //Add new or update item from supplier database
-           
+
 
             return newConnectItem;
         }

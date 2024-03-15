@@ -21,6 +21,39 @@ namespace SimplyShopMVC.Web.Controllers
         {
             return View();
         }
+        //newIncom
+        [HttpGet]
+        public IActionResult AddNewIncomXml()
+        {
+            var newIncomresoult = _supplierService.LoadNewIncomGroupForView();
+            return View(newIncomresoult);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddNewIncomXml(AddIncomItemsVm incomItems, List<string> selectedCategoryId, IFormFile formFileXml)
+        {
+            AddIncomItemsVm returnRaport = new AddIncomItemsVm();
+            incomItems.selectedCategory= selectedCategoryId;
+            if (incomItems.formFile != null && incomItems.formFile.Length > 0)
+            {
+
+                var listItemsXML = XDocument.Load(incomItems.formFile.OpenReadStream());
+                returnRaport = _supplierService.LoadNewIncomItemsXML(incomItems, listItemsXML);
+                return View(returnRaport);
+            }
+            if (!string.IsNullOrEmpty(incomItems.urlXml))
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string xmlString = await client.GetStringAsync(incomItems.urlXml);
+                    var listItemXmlfromUrl = XDocument.Parse(xmlString);
+                    returnRaport = _supplierService.LoadNewIncomItemsXML(incomItems, listItemXmlfromUrl);
+                }
+                return View(returnRaport);
+            }
+            return View();
+
+        }
         //Incom
         [HttpGet]
         public IActionResult AddIncomItemsXML()

@@ -20,9 +20,9 @@
                 </div>
                 <div class="border border-secondary-subtle border-1 rounded-4">
                     <ul class="horizontal-list">
-                        @foreach (var itemSet in Model.setsItems)
+                        @foreach (var itemSet in Model.setsItems.Where(i=>i.PcSetsId==pcSet.Id))
                         {
-                            <li class="text-dark-emphasis"> - @itemSet.Name.Substring(0,33)</li>
+                            <li class="text-dark-emphasis"> - @itemSet.Name.Substring(0,34)</li>
                         }
                     </ul>
                 </div>

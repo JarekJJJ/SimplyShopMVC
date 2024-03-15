@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\media\itemimg\**" />
+    <Content Remove="wwwroot\media\itemimg\**" />
+    <EmbeddedResource Remove="wwwroot\media\itemimg\**" />
+    <None Remove="wwwroot\media\itemimg\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="itext7" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.13" />
@@ -30,7 +37,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\media\articleimg\mini\" />
     <Folder Include="wwwroot\media\articleimg\9\" />
-    <Folder Include="wwwroot\media\itemimg\orink\" />
   </ItemGroup>
 
 </Project>

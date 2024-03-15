@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SimplyShopMVC.Application.ViewModels.Suppliers
 {
-    public class AddIncomItemsVm
+    public class AddActionItemsVm
     {
         public List<WarehouseForListVm> warehouseForListVm { get; set; }
         public int warehouseId { get; set; }
@@ -16,7 +16,6 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
         public List<string> raportAddItem { get; set; }
         public string urlXml { get; set; }
         public bool removeItems { get; set; }
-        public List<IncomGroupForListVm> listIncomGroup { get; set; }
         public List<string> selectedCategory { get; set; }
     }
 }

@@ -10,6 +10,8 @@ namespace SimplyShopMVC.Application.Interfaces
 {
     public interface ISupplierService
     {
+        AddIncomItemsVm LoadNewIncomGroupForView();
+        AddIncomItemsVm LoadNewIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
         AddIncomItemsVm LoadOrinkItemsXML(AddIncomItemsVm orinkItems, XDocument xmlDocument);
         AddIncomItemsVm UpdateIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
         AddIncomItemsVm LoadIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
