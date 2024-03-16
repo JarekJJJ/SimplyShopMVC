@@ -27,9 +27,9 @@
             </a>
          </div>
                 <div class="d-flex d-inline-block align-items-center justify-content-center flex-fill">
-                    <form class="row g-3 me-5 w-100">
+                    <form class="row g-3 me-5 w-100" asp-controller="Item" asp-action="Index" method="get">
                         <div class="d-flex flex-row input-group border border-secondary rounded-4">
-                            <input class="searchInput p-1 rounded-4 col-10" type="text" placeholder="search..." aria-label="input search">
+                        <input class="searchInput p-1 rounded-4 col-10" type="text" pattern=".{3,}" name="searchString" placeholder="search...min.3 znaki" aria-label="input search">
                             <div class="input-group-append ms-auto">
                                 <button type="submit" id="" class="searchButton col-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">

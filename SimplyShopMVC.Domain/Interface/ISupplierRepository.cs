@@ -13,7 +13,7 @@ namespace SimplyShopMVC.Domain.Interface
         int AddIncomItem(Incom incom);
         Task<int> AddIncomItemAsync(Incom incom);
         IQueryable<Incom> GetAllIncom();
-        Task<List<Incom>> GetAllIncomAsync();
+        Task<IQueryable<Incom>> GetAllIncomAsync();
         void UpdateIncom(Incom incom);
         Task UpdateIncomAsync(Incom incom);
         void DeleteIncomItem(int incomId);

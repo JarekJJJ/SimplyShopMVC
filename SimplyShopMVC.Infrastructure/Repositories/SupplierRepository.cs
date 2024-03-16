@@ -49,9 +49,9 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             var result = _context.Incoms;
             return result;
         }
-        public async Task<List<Incom>> GetAllIncomAsync()
+        public async Task<IQueryable<Incom>> GetAllIncomAsync()
         {
-            var result = await _context.Incoms.ToListAsync();
+            var result = _context.Incoms;
             return result;
         }
         public void UpdateIncom(Incom incom)

@@ -113,7 +113,7 @@ namespace SimplyShopMVC.Web.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateArticle(UpdateArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IHostingEnvironment oHostingEnvironment, List<string> SelectedImage)
+        public IActionResult UpdateArticle(UpdateArticleVm model, [FromServices] Microsoft.AspNetCore.Hosting.IWebHostEnvironment oHostingEnvironment, List<string> SelectedImage)
         {
             ValidationResult result = _updateArticleValidator.Validate(model);
             if (!result.IsValid)

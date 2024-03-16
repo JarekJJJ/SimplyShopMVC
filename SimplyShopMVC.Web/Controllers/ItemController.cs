@@ -28,16 +28,23 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult Index(int? selectedCategory)
+        public IActionResult Index(int? selectedCategory, string searchString)
         {
             var listCategories = new ListItemShopIndexVm();
             var iduser = _userManager.GetUserId(User);
             var userDetail = _userManager.GetUserName(User);
             _settingsService.AddUserSettings(iduser, userDetail);
-
-            if (selectedCategory != null && selectedCategory > 0)
+            if (String.IsNullOrEmpty(searchString))
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, "", 0, iduser);
+                searchString= string.Empty;
+            }
+            if(selectedCategory == null)
+            {
+                selectedCategory = 0;
+            }
+            if (( selectedCategory > 0) || (!String.IsNullOrEmpty(searchString)))
+            {
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, searchString, 0, iduser);
                 var receivedCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categories = receivedCategories.categories.ToList();
             }
@@ -69,9 +76,13 @@ namespace SimplyShopMVC.Web.Controllers
             {
                 pageSize = 10;
             }
+            if (selectedCategory == null)
+            {
+                selectedCategory = 0;
+            }
             var listCategories = new ListItemShopIndexVm();
 
-            if (selectedCategory != null && selectedCategory > 0)
+            if ( (selectedCategory > 0) || (!String.IsNullOrEmpty(searchItem)))
             {
                 listCategories = _frontService.GetItemsByCategory((int)selectedCategory, pageSize, pageNo.Value, searchItem, selectedTag, iduser);
                 var receivedCategories = _frontService.GetAllCategories(iduser);

@@ -111,6 +111,10 @@ namespace SimplyShopMVC.Application.Services
             {
                 itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).Take(200).ToList();
             }
+            if(itemList.Count == 0 && !String.IsNullOrEmpty(searchItem))
+            {
+                itemList = _itemRepo.GetAllItems().Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).Take(200).ToList();
+            }
             var mappedItems = mapItemToList(itemList, frontItemForLists, userId);
             var mappedItemsToShow = mappedItems.Skip(pageSize * (pageNo - 1)).Take(pageSize).ToList();
             listItem.count = mappedItems.Count;

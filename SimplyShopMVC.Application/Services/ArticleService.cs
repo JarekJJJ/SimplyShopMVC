@@ -22,8 +22,8 @@ namespace SimplyShopMVC.Application.Services
     {
         private readonly IArticleRepository _articleRepo;
         private readonly IMapper _mapper;
-        private readonly IHostingEnvironment _hosting;
-        public ArticleService(IArticleRepository articleRepo, IMapper mapper, IHostingEnvironment hostingEnvironment)
+        private readonly IWebHostEnvironment _hosting;
+        public ArticleService(IArticleRepository articleRepo, IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             _articleRepo = articleRepo;
             _mapper = mapper;
@@ -231,13 +231,21 @@ namespace SimplyShopMVC.Application.Services
             return articleVm;
         }
 
-        public void UpdateArticle(UpdateArticleVm model, [FromServices] IHostingEnvironment oHostingEnvironment, List<string> selectedImage)
+        public void UpdateArticle(UpdateArticleVm model, [FromServices] IWebHostEnvironment oHostingEnvironment, List<string> selectedImage)
         {
             var article = _mapper.Map<Article>(model);
             _articleRepo.UpdateArticle(article);
             var folderName = article.Id.ToString();
             string newFolderPath = Path.Combine(oHostingEnvironment.WebRootPath, "media\\articleimg", folderName);
-            // Directory.CreateDirectory(newFolderPath);
+
+            try
+            {
+                Directory.CreateDirectory(newFolderPath);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             if (model.Image != null)
             {
                 foreach (var image in model.Image)
