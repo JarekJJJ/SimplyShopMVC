@@ -6,15 +6,36 @@
 @{
     string thumbImage = Model.imagePath.FirstOrDefault();
 }
-<div class="container row">
-    <div class="col-8">
-       <!-- <img src="~/media/articleimg/@(Model.Id)/@thumbImage" class="card-img-top object-fit-scale border rounded" height="200px" width="auto" alt="..."> -->
+<div class="row justify-content-center ">
+    <div class="col-md-8 col-sm-12 mt-4 border border-1 border-dark rounded rounded-3">
         <div class="card-body">
             <h5 class="card-title">@(Html.DisplayFor(m => m.Title))</h5>
             <p class="card-text">@(Html.Raw(Model.Content))</p>
             <p class="card-text"><small class="text-body-secondary">Utworzono: @(Model.Created.ToShortDateString())</small></p>
         </div>
-
     </div>
-    <div class="col-4"></div>
+    <div class="row col-md-3 col-sm-12 justify-content-center mt-4 ms-2 border border-1 border-dark rounded rounded-3">
+        <div class="col-md-12 " style="max-height:30px"><span class="fs-6 fw-bold"> Pozostałe artykuły w tej kategorii:</span></div>
+        @if (Model.listArticle != null)
+        {
+            @foreach (var item in Model.listArticle)
+            {
+                thumbImage = item.imagePath.FirstOrDefault();
+                <div class="col-md-12 justify-content-center ">
+                    <div class="col-md-12 p-1 position-relative overflow-x-hidden justify-content-center">
+                        <img src="~/media/articleimg/@(item.Id)/@thumbImage" class="object-fit-cover border rounded" style="max-height:250px">
+                        <div class="col-md-12 position-absolute top-0 start-0 text-center" style="background-color: rgba(255, 255, 255, 0.2);">
+                            <span class="ps-1 pt-1 fs-5 fw-bold mt-1 text-black">@(item.Title)</span>
+                        </div>
+                        <div class="col-md-12 position-absolute top-50 start-0 text-center" style="background-color: rgba(255, 255, 255, 0.2);">
+                            <p class="mb-auto mt-1 text-container">@(item.ShortDescription)</p>
+                        </div>
+                        <div class="col-md-12 position-absolute bottom-0 start-0 text-center" style="background-color: rgba(255, 255, 255, 0.2);">
+                            <a href="/Article/ArticleDetail/@item.Id" class="icon-link gap-1 text-white fw-bold pb-2 icon-link-hover stretched-link">Więcej</a>
+                        </div>
+                    </div>
+                </div>              
+            }
+        }
+    </div>
 </div>

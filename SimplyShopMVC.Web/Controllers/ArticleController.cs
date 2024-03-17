@@ -137,7 +137,8 @@ namespace SimplyShopMVC.Web.Controllers
         }
         public IActionResult ArticleDetail(int id)
         {
-            var articleDetail = _articleService.GetArticleDetails(id);
+            var articleDetail = _articleService.GetArticleDetails(id);         
+
             return View(articleDetail);
         }
         public IActionResult ListArticle(int idTag)

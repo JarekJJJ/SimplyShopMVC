@@ -4,36 +4,38 @@
 *@
 @{
 }
-<div>
+<div class="row justify-content-evenly">
     @foreach (var pcSet in Model.listSets)
     {
-        <div class="row col-md-12 mt-1 p-1">
+        <div class="col-md-5 m-2 p-2 rounded-3 border border-1 border-success">
             <div class="col-md-12 text-center">
-                <span class="text-center fw-bold fs-4 p-1">@pcSet.Title</span>
+                <span class="text-center fw-bold fs-5 p-1">@pcSet.Title</span>
             </div>
-            <div class="col-md-3 align-items-center text-center">
+            <div class="col-md-12 align-items-center text-center">
                 <img src="@pcSet.mainImage" style="max-height:200px">
             </div>
-            <div class="col-md-9 d-flex align-items-end flex-column border-top border-1 border-dark-subtle p-2">
+            <div class="col-md-12 d-flex flex-column border-top border-1 border-dark-subtle p-2">
                 <div class="mb-auto pt-2">
-                    <span class="fs-5 text-center">@pcSet.ShortDescription</span>
+                    <span class="fs-6 text-center">@pcSet.ShortDescription</span>
                 </div>
-                <div class="border border-secondary-subtle border-1 rounded-4">
-                    <ul class="horizontal-list">
-                        @foreach (var itemSet in Model.setsItems.Where(i=>i.PcSetsId==pcSet.Id))
-                        {
-                            <li class="text-dark-emphasis"> - @itemSet.Name.Substring(0,34)</li>
-                        }
-                    </ul>
-                </div>
-                <div class="col-md-10 row ms-auto">
-                    <div class="col-md-6 p-2">
+                <div class="border border-secondary-subtle border-1 rounded-4 p-1">
+
+                    @foreach (var itemSet in Model.setsItems.Where(i => i.PcSetsId == pcSet.Id))
+                    {
+                        <div class="col-md-12 pt-1">
+                            <span class="text-dark-emphasis fs-6"> - @itemSet.Name</span>
+                        </div>
+                    }
+                </div>  
+                 <div class="col-md-12 align-self-end">
+                <div class="col-md-12 position-relative mt-2" style="height:50px">
+                    <div class="col-md-4 position-absolute bottom-0 start-0 p-2">
                         <form asp-action="PcSetViewDetail" method="get">
                             <input type="hidden" name="pcSetId" value="@pcSet.Id" />
                             <button class="btn btn-outline-secondary" type="submit">Szczegóły</button>
                         </form>
                     </div>
-                    <div class="col-md-4 mt-auto pe-2">
+                    <div class="col-md-7 position-absolute bottom-0 end-0 p-2">
                         <div>
                             <span class="fs-4 fw-bold text-dark text-center ms-auto">Cena: </span>
                             <span class="fs-4 fw-bold text-danger text-center ms-auto pe-3 pb-2">@pcSet.TotalCost.ToString("N2") zł</span>
@@ -41,6 +43,8 @@
                     </div>
                 </div>
             </div>
+            </div>
+           
         </div>
     }
 </div>

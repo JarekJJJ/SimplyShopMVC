@@ -97,23 +97,21 @@
                     </li>
                     <li>
                         <a class="nav-link" asp-area="" asp-controller="Item" asp-action="index"><span class="position-relative">Sklep<span style="font-size:x-small" class="position-absolute p-1 top-0 start-100 translate-middle te badge rounded-pill bg-danger">beta</span></span></a>
-                    </li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
+                    </li>                 
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="GetInfoArticle">Informacje</a>
-                        </li>
-                    }
+                        </li>                   
                     <li class="nav-item dropdown">
                         <a class="nav-link text-light dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Oferty</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" asp-controller="Article" asp-action="GetFiskalneArticle">Urządzenia Fiskalne</a></li>
-                            <li><a class="dropdown-item" asp-controller="Item" asp-action="PcSetViewForUser">Komputery Gaming</a></li>
+                           
                         </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="GetSerwisArticle">Serwis</a>
                     </li>
+                    <li><a class="nav-link text-warning" asp-controller="Item" asp-action="PcSetViewForUser">Komputery Gaming</a></li>
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item dropdown">
@@ -203,7 +201,7 @@
             </div>
             <div class="offcanvas-body">
                 <div>
-                    <p class="text-center">PUH HKR Jarosław Jaśkiewicz</p>
+                    <p class="text-center h1 fs-3">PUH HKR Jarosław Jaśkiewicz</p>
                     <p class="text-center">Ul. Kręta 22c , 78-520 Złocieniec</p>
                     <ul>
                         <li>Telefon: 880 394 394</li>

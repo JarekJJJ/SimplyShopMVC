@@ -180,11 +180,29 @@ namespace SimplyShopMVC.Application.Services
 
         public ArticleDetailVm GetArticleDetails(int articleId)
         {
-            // metoda _mapper.Map jest wykorzystywana przy pojedynczym obiekcie!
             var article = _articleRepo.GetArticleById(articleId);
             var articleVm = _mapper.Map<ArticleDetailVm>(article);
+            articleVm.Tags = new List<ArticleTagsForListVm>();
+            articleVm.listArticle = new List<ArticleForListVm>();
+            List<ArticleForListVm> newListArticle = new List<ArticleForListVm>();
             var _pathImage = $"{_hosting.WebRootPath}\\media\\articleimg\\{article.Id}\\";
             var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+            var articleTags = _articleRepo.GetConnectArticleTags(articleId).ToList();
+            foreach (var tag in articleTags)
+            {
+                var articleByTag = GetAllArticlesByTagId(tag.ArticleTagId);
+                if (articleByTag.Articles != null && articleByTag.Articles.Count > 0)
+                {
+                    var tempArticle = newListArticle.Any(a => a.Id == tag.ArticleId);
+                    if (!tempArticle)
+                    {
+                        newListArticle.AddRange(articleByTag.Articles);
+                    }
+                }
+                articleVm.Tags.Add(_mapper.Map<ArticleTagsForListVm>(_articleRepo.GetArticleTagByTagId(tag.ArticleTagId)));
+
+            }
+            articleVm.listArticle.AddRange(newListArticle);
             articleVm.imagePath = imageToList;
             return articleVm;
         }
