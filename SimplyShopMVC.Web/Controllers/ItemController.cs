@@ -44,7 +44,7 @@ namespace SimplyShopMVC.Web.Controllers
             }
             if (( selectedCategory > 0) || (!String.IsNullOrEmpty(searchString)))
             {
-                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 10, 1, searchString, 0, iduser);
+                listCategories = _frontService.GetItemsByCategory((int)selectedCategory, 15, 1, searchString, 0, iduser);
                 var receivedCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categories = receivedCategories.categories.ToList();
             }

@@ -3,45 +3,28 @@
 @{
     ViewData["Title"] = "Informacje";
 }
-
 <h1>Informacje</h1>
 <div class="container">
-
-
     <div class="row mb-2 position-relative">
         @if (Model.Articles != null)
         {
+            string thumbImage = "";
             @foreach (var item in Model.Articles)
             {
-                string thumbImage = item.imagePath.FirstOrDefault();
-                <div class="col-md-3 mt-1">
-                    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative  article-list">
-
-                        <div class="col-md-12">
-                            <h5 class="mb-0 mt-1 text-center">@(item.Title)</h5>
+                thumbImage = item.imagePath.FirstOrDefault();
+                <div class="col-md-3">
+                    <div class="col-md-12 justify-content-center d-flex flex-column border rounded-3 border-1 border-dark-subtle mt-2">
+                        <div class="text-center flex-fill m-1" style="background-color: rgba(255, 255, 255, 0.6);">
+                            <span class="ps-1 pt-1 fs-5 fw-bold mt-1 text-black">@(item.Title)</span>
                         </div>
-                        <div class="col-md-12">
-                            <img src="~/media/articleimg/@(item.Id)/@thumbImage" class="bd-placeholder-img m-2 position-relative top-50 start-50 translate-middle pe-1" width="200" height="auto" role="img" alt="..." aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef" dy=".3em"></text>
+                        <div class="m-1 flex-fill flex-grow-1" style="background-image:url('/media/articleimg/@(item.Id)/@thumbImage'); background-size:cover;">
+                            <div class="p-1 text-center flex-fill" style="background-color: rgba(255, 255, 255, 0.6);">
+                                <p class="mb-auto mt-1">@(item.ShortDescription)</p>
+                            </div>
+                            <div class="p-1 text-center flex-fill" style="background-color: rgba(255, 255, 255, 0.6);">
+                                <a href="/Article/ArticleDetail/@item.Id" class="icon-link gap-1 text-black fw-bold pb-2 icon-link-hover stretched-link">Więcej>></a>
+                            </div>
                         </div>
-                        <div class="col-md-12pe-2">
-                            <p class="mb-auto mt-1 text-container">@(item.ShortDescription)</p>
-                        </div>
-                        <div class="col-md-12 pe-2">
-                            <a href="/Article/ArticleDetail/@item.Id" class="icon-link gap-1 icon-link-hover stretched-link">Więcej</a>
-                        </div>
-                        <div class="col-md-12">
-                            <span class="d-inline-block mb-2 text-primary-emphasis fs-6 fw-light">
-                                Kategoria:
-                                @{
-                                    foreach (var tag in item.artTags)
-                                    {
-                                        @tag.Name
-                                        <span> , </span>
-                                    }
-                                }
-                            </span>
-                        </div>
-
                     </div>
                 </div>
             }

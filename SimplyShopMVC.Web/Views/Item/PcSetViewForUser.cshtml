@@ -23,7 +23,7 @@
                     @foreach (var itemSet in Model.setsItems.Where(i => i.PcSetsId == pcSet.Id))
                     {
                         <div class="col-md-12 pt-1">
-                            <span class="text-dark-emphasis fs-6"> - @itemSet.Name</span>
+                            <span class="text-dark-emphasis fs-6"> - @itemSet.Name.Substring(0, Math.Min(50, itemSet.Name.Length))...</span>
                         </div>
                     }
                 </div>  

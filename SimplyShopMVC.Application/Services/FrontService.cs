@@ -109,7 +109,7 @@ namespace SimplyShopMVC.Application.Services
             }
             else
             {
-                itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).Take(200).ToList();
+                itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
             }
             if(itemList.Count == 0 && !String.IsNullOrEmpty(searchItem))
             {
