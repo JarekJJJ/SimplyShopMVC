@@ -134,7 +134,7 @@
                     <option value="0" selected>wybierz rodzaj dostawy</option>
                     @foreach (var delivery in Model.listDelivery)
                     {
-                        <option value="@delivery.Id">@delivery.Name</option>
+                        <option value="@delivery.Id">@delivery.Name (+ @delivery.Cost.ToString("n2"))</option>
                     }
                 </select>
             </div>

@@ -236,6 +236,7 @@ namespace SimplyShopMVC.Application.Services
         {
             OrderFromCartVm newOrder = new OrderFromCartVm();
             newOrder.orderItems = new List<OrderItemsForListVm>();
+           
 
             _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(orderForList.userDetail));
             var listCartItem = _orderRepo.GetAllCartItems().Where(c => c.CartId == orderForList.cartIdToOrder)

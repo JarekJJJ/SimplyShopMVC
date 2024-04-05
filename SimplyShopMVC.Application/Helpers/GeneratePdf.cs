@@ -21,12 +21,14 @@ namespace SimplyShopMVC.Application.Helpers
     public class GeneratePdf: IGeneratePdf
     {
         private readonly IItemRepository _itemRepo;
+        private readonly IDeliveryRepository _deliveryRepo;
         private readonly ICompanySettingsRepository _companySettingsRepo;
         public static readonly String FONT = "wwwroot/media/font/arial.ttf";
-        public GeneratePdf(IItemRepository itemRepository, ICompanySettingsRepository companySettingsRepo)
+        public GeneratePdf(IItemRepository itemRepository, ICompanySettingsRepository companySettingsRepo, IDeliveryRepository deliveryRepo)
         {
             _itemRepo = itemRepository;
             _companySettingsRepo = companySettingsRepo;
+            _deliveryRepo = deliveryRepo;
         }
         public  byte[] GenertateOrderPdf(OrderFromCartVm orderFromCart)
         {
@@ -124,6 +126,27 @@ namespace SimplyShopMVC.Application.Helpers
                 vatValue = (decimal)vat.Value;
                 vatRate = vat;
             }
+            var delivery = _deliveryRepo.GetAllDeliveries().FirstOrDefault(d => d.Id == orderFromCart.orderForList.DeliveryId);
+            if (orderFromCart.orderForList.DeliveryId!= 0) 
+            {
+                if (delivery.Cost > 0)
+                {
+                    Cell cell = new Cell().Add(new Paragraph(delivery.Name).SetFontSize(8).SetFont(f));
+                    lp++;
+                    table.AddCell(lp.ToString()).SetFontSize(8);
+                    table.AddCell(cell);
+                    table.AddCell("brak").SetFontSize(8);
+                    table.AddCell("1").SetFontSize(8);
+                    var vat = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Name == "A");
+                    var priceNetto = (decimal)delivery.Cost / ((decimal)vat.Value / 100 + 1);
+                    table.AddCell(priceNetto.ToString("n2")).SetFontSize(8);
+                    table.AddCell(delivery.Cost.ToString("n2")).SetFontSize(8);
+                    table.AddCell(delivery.Cost.ToString("n2")).SetFontSize(8);
+                    orderValue = orderValue + priceNetto;
+
+
+                }
+            }
             document.Add(table.SetHorizontalAlignment(iText.Layout.Properties.HorizontalAlignment.RIGHT).SetMarginRight(30).SetWidth(pdf.GetDefaultPageSize().GetWidth()-80));
             decimal orderVat = orderValue * ((decimal)vatValue / 100 + 1) - orderValue;
             decimal orderB_value = orderValue + orderVat;
@@ -150,9 +173,13 @@ namespace SimplyShopMVC.Application.Helpers
                 document.Add(new Paragraph($"Nazwa Banku: {companyName.BankName}").SetFont(f));
                 document.Add(new Paragraph($"Numer konta: {companyName.BankAccount}").SetFont(f));
             }
+            var deliveryCost = delivery.Cost.ToString("n2");
+            document.Add(new Paragraph($""));
+            document.Add(new Paragraph($"Rodzaj dostawy: {delivery.Name} Koszt: {deliveryCost} zł").SetFont(f));
             document.Add(new Paragraph($""));
             document.Add(new Paragraph($"Dodatkowe informacje dotyczące wysyłki zamówienia:").SetFont(f));
             document.Add(new Paragraph($"{orderFromCart.orderForList.ShipingDescription}").SetFont(f));
+        
 
             document.Close();
             return stream.ToArray();
