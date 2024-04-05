@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240405184948_relCatInc")]
+    partial class relCatInc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,9 +285,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GroupItemId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -300,8 +299,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupItemId");
 
                     b.ToTable("Categories");
                 });
@@ -1243,15 +1240,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SimplyShopMVC.Domain.Model.Category", b =>
-                {
-                    b.HasOne("SimplyShopMVC.Domain.Model.GroupItem", "GroupItem")
-                        .WithMany("Categories")
-                        .HasForeignKey("GroupItemId");
-
-                    b.Navigation("GroupItem");
-                });
-
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.ConnectArticleTag", b =>
                 {
                     b.HasOne("SimplyShopMVC.Domain.Model.Article", "Article")
@@ -1549,8 +1537,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.GroupItem", b =>
                 {
-                    b.Navigation("Categories");
-
                     b.Navigation("Items");
 
                     b.Navigation("PcSets");

@@ -14,6 +14,7 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
         public int GroupId { get; set; }
         public int GroupIdHome { get; set; }
         public string Name { get; set; }
+        public int? CategoryId { get; set; }
 
         public void Mapping(Profile profile)
         {

@@ -16,6 +16,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public bool IsMainCategory { get; set; }
         public bool IsActive { get; set; }
         public int? MainCategoryId { get; set; }
+        public int? GroupItemId { get; set; }
 
         public void Mapping(Profile profile)
         {

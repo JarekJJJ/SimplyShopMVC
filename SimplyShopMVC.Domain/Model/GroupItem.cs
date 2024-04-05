@@ -14,7 +14,7 @@ namespace SimplyShopMVC.Domain.Model
         public int PriceMarkupA { get; set; }
         public int PriceMarkupB { get;set; }
         public int PriceMarkupC { get;set; }
-
+        public ICollection<Category> Categories { get; set; }
         public ICollection<Item> Items { get; set; }
         public ICollection<PcSets> PcSets { get; set; }
     }

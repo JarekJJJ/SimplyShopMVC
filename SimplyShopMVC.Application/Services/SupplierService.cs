@@ -61,6 +61,42 @@ namespace SimplyShopMVC.Application.Services
 
             return resoultListGroup;
         }
+        public ListConnectingCategoryVm GetConnectCategoryWithSupplierGroup()
+        {
+            ConnectingCategoryForListVm connectingCategory = new ConnectingCategoryForListVm();
+            ListConnectingCategoryVm listConnectionCategory= new ListConnectingCategoryVm();
+            var listIncomGroup = _supplierRepo.GetAllIncomGroup()
+                .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+            foreach ( var group in listIncomGroup )
+            {
+                if(group.CategoryId != null)
+                {
+                    var category = _mapper.Map<CategoryForListVm>(_itemRepo.GetAllCategories().FirstOrDefault(c=>c.Id == group.CategoryId));
+                    if(category!=null)
+                    {
+                        connectingCategory.category = category;
+                        connectingCategory.incomGroup = _mapper.Map<IncomGroupForListVm>(group);
+                        var itemTag =_mapper.Map<ItemTagsForListVm>(_categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(t=>t.CategoryId== category.Id));
+                        if(itemTag != null)
+                        {
+                            connectingCategory.itemTagsForList = itemTag;
+                        }
+                        var groupItem =_mapper.Map<GroupItemForListVm>(_groupItemRepo.GetAllGroupItem().FirstOrDefault(g=>g.Id== category.GroupItemId));
+                        if (groupItem != null)
+                        {
+                            connectingCategory.groupItem= groupItem;
+                        }
+                        listConnectionCategory.listConnectionCategory.Add(connectingCategory);
+                    }
+                }
+            }
+            listConnectionCategory.listIncomGroups = listIncomGroup;
+            listConnectionCategory.listCategories = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList() ;
+            listConnectionCategory.listItemTags = _itemRepo.GetAllItemTags().ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
+            listConnectionCategory.listGroupItems = _groupItemRepo.GetAllGroupItem().ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList() ;
+
+            return listConnectionCategory;
+        }
         public async Task<AddIncomItemsVm> LoadNewIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
             int countItemUpdate = 0;

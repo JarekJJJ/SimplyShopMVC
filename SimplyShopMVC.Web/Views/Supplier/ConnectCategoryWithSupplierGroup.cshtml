@@ -1,0 +1,29 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Suppliers.ListConnectingCategoryVm
+
+<div class="row">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Kategoria Sklepu</th>
+                    <th>Grupa towarowa</th>
+                    <th>Tag w kategorii</th>
+                    <th>Grupa u dostawcy</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(Model.listConnectionCategory != null && Model.listConnectionCategory.Count > 0)
+                {
+                    foreach(var item in Model.listConnectionCategory)
+                    {
+                        <tr>
+                            <td>@item.category.Name</td>
+                            <td>@item.groupItem.Name</td>
+                            <td>@item.itemTagsForList.Name</td>
+                            <td>@item.incomGroup.Name</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+</div>
+

@@ -163,5 +163,11 @@ namespace SimplyShopMVC.Web.Controllers
 
             return View(newconnectItems);
         }
+        [HttpGet]
+        public IActionResult ConnectCategoryWithSupplierGroup()
+        {
+            var result = _supplierService.GetConnectCategoryWithSupplierGroup();
+            return View(result);
+        }
     }
 }
