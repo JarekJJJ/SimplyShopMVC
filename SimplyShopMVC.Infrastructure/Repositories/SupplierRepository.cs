@@ -85,6 +85,7 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             var result = _context.IncomGroups;
             _context.RemoveRange(result);
+            _context.SaveChanges();
         }
 
     }

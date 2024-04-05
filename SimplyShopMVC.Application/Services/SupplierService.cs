@@ -206,7 +206,7 @@ namespace SimplyShopMVC.Application.Services
                                 itemId = await _supplierRepo.AddIncomItemAsync(mapedItemVm);
                                 //var result = ImageHelper.SaveImageFromUrl(linkImage, itemVm.ean, _webHost);
                                 //countImageAdd = countImageAdd + result;
-                                //countItemAdd++;
+                                countItemAdd++;
                             }
                             OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
                             var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
@@ -628,6 +628,10 @@ namespace SimplyShopMVC.Application.Services
             int countItemRemove = 0;
             AddIncomGroupsVm returnRaport = new AddIncomGroupsVm();
             returnRaport.raportAddItem = new List<string>();
+            if(incomGroups.removeItems == true)
+            {
+                _supplierRepo.DeleteIncomGroup();
+            }
             foreach (XElement elementXml in xmlDocument.Root.Elements("grupy"))
             {
                 XElement GroupId = elementXml.Element("id");

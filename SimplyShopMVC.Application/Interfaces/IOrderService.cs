@@ -10,6 +10,10 @@ namespace SimplyShopMVC.Application.Interfaces
 {
     public interface IOrderService
     {
+        ListDeliveryForListVm GetAllDeliveryToList();
+        Task UpdateDelivery(ListDeliveryForListVm listDelivery);
+        void AddDelivery(ListDeliveryForListVm listDelivery);
+        void DeleteDelivery(ListDeliveryForListVm listDelivery);
         ListCartItemsForListVm AddToCart(CartItemsForListVm cartItems);
         ListCartItemsForListVm GetCartWithCartItems(string userId);
         ListCartItemsForListVm GetCartWithCartItems(int cartId);

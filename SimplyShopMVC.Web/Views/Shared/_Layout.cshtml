@@ -14,68 +14,68 @@
     <link rel="stylesheet" href="~/SimplyShopMVC.Web.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/slick.css">
     <link rel="stylesheet" href="~/css/slick-theme.css">
-
+    <meta name="google-site-verification" content="sLnO7FGtYfbHCYzIQNk1bFoZLTEelEofybvl_vspkWc" />
 
 </head>
 <body>
     <div class="headbody">
         <div class="navigation m-2">
             <div class="d-flex d-inline-block align-items-center justify-content-start flex-fill">
-            <a class="navbar-brand" href="#">
-                <img src="~/media/primehkr24.png" height="42" alt="hkr24.pl - logo" />
-            </a>
-         </div>
-                <div class="d-flex d-inline-block align-items-center justify-content-center flex-fill">
-                    <form class="row g-3 me-5 w-100" asp-controller="Item" asp-action="Index" method="get">
-                        <div class="d-flex flex-row input-group border border-secondary rounded-4">
+                <a class="navbar-brand" href="#">
+                    <img src="~/media/primehkr24.png" height="42" alt="hkr24.pl - logo" />
+                </a>
+            </div>
+            <div class="d-flex d-inline-block align-items-center justify-content-center flex-fill">
+                <form class="row g-3 me-5 w-100" asp-controller="Item" asp-action="Index" method="get">
+                    <div class="d-flex flex-row input-group border border-secondary rounded-4">
                         <input class="searchInput p-1 rounded-4 col-10" type="text" pattern=".{3,}" name="searchString" placeholder="search...min.3 znaki" aria-label="input search">
-                            <div class="input-group-append ms-auto">
-                                <button type="submit" id="" class="searchButton col-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                                    </svg>
-                                </button>
-                            </div>
-
+                        <div class="input-group-append ms-auto">
+                            <button type="submit" id="" class="searchButton col-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                </svg>
+                            </button>
                         </div>
-                    </form>
-                </div>
+
+                    </div>
+                </form>
+            </div>
             <div class="">
                 <p class="text-dark-emphasis fs-4 fw-bold pt-2 opacity-50">TEL: 880 394 394</p>
             </div>
-                <div class="d-flex d-inline-block align-items-center justify-content-end flex-fill">
+            <div class="d-flex d-inline-block align-items-center justify-content-end flex-fill">
                 <button type="button" class="frameButton" data-bs-toggle="offcanvas" data-bs-target="#contactPanel">
-                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-headset" viewBox="0 0 16 16">
-                    <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" />
-                </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-headset" viewBox="0 0 16 16">
+                        <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" />
+                    </svg>
                 </button>
-                    <div class="d-flex">
-                        <form asp-controller="Cart" asp-action="Index" method="post">
-                            <button type="submit" id="cart" class="frameButton">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="" class="bi bi-cart-plus-fill" viewBox="0 0 16 16">
-                                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
-                    <button type="button" id="cart" class="frameButton">
-                        <span class="" style="color:gray;">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
-                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
-                                    <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
-                                </svg>
-                            }
-                            else
-                            {
-                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
-                                </svg>
-                            }
-                        </span>
-                    </button>
-                </div>        
+                <div class="d-flex">
+                    <form asp-controller="Cart" asp-action="Index" method="post">
+                        <button type="submit" id="cart" class="frameButton">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="" class="bi bi-cart-plus-fill" viewBox="0 0 16 16">
+                                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <button type="button" id="cart" class="frameButton">
+                    <span class="" style="color:gray;">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                                <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+                            </svg>
+                        }
+                        else
+                        {
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                            </svg>
+                        }
+                    </span>
+                </button>
+            </div>
         </div>
     </div>
     <header class="container-fluid navbar navbar-expand-lg bd-navbar sticky-top shadow-sm" id="elementToToggle" style="background-color:rgb(111, 66, 193);">
@@ -87,7 +87,7 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-           
+
             <div class="navbar-collapse collapse d-sm-inline-flex">
 
                 <ul class="navbar-nav col-lg-8 flex-grow-1 fs-5 fw-semibold">
@@ -96,15 +96,15 @@
                     </li>
                     <li>
                         <a class="nav-link" asp-area="" asp-controller="Item" asp-action="index"><span class="position-relative">Sklep<span style="font-size:x-small" class="position-absolute p-1 top-0 start-100 translate-middle te badge rounded-pill bg-danger">beta</span></span></a>
-                    </li>                 
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="GetInfoArticle">Informacje</a>
-                        </li>                   
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="GetInfoArticle">Informacje</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link text-light dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Oferty</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" asp-controller="Article" asp-action="GetFiskalneArticle">Urządzenia Fiskalne</a></li>
-                           
+
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -123,21 +123,29 @@
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="ListCategoryToUpdate">Edycja kategorii</a></li>
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="ListWarehouseToUpdate">Edycja magazynu</a></li>
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="GroupItem">Edycja grup towarowych</a></li>
+                                <li><a class="dropdown-item" asp-controller="Shop" asp-action="DeliverySettings">Edycja dostaw</a></li>
                                 <li><a class="dropdown-item" asp-controller="Item" asp-action="AdminViewPcSet">Edycja zestawów PC</a></li>
-                                
+                                <li class="dropdown">
+                                    <a class="dropdown-item dropdown-toggle" href="#" id="nestedDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Ustawienia
+                                    </a>
+                                    <ul class="dropdown" aria-labelledby="nestedDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Shop" asp-action="UserSettings">Użytkownicy</a></li>
+                                    </ul>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" asp-controller="Article" asp-action="AddArticle">Dodaj informację</a></li>
                                 <li><a class="dropdown-item" asp-controller="Article" asp-action="AdminListArticle">Lista artykułów</a></li>
                                 <li><a class="dropdown-item" asp-controller="Article" asp-action="ListArticleTagToUpdate">Edytuj ArticleTag</a></li>
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="CompanySettings">Dane firmy</a></li>
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="GetOrderForAdmin">Zamówienia</a></li>
-                                <li><a class="dropdown-item" asp-controller="Shop" asp-action="UserSettings">Użytkownicy</a></li>
+
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link text-light dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dostawy Xml</a>
                             <ul class="dropdown-menu">
-                                 <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddnewIncomXML">nowy Incom XML - beta</a></li>
+                                <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddnewIncomXML">nowy Incom XML - beta</a></li>
                                 <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddIncomItemsXML">Dostawa Incom XML</a></li>
                                 <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddIncomGroupsXML">Dodawanie grup Incom XML</a></li>
                                 <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddGroupItems">łączenie grup ze sklepem</a></li>
@@ -175,7 +183,7 @@
 
             </div>
         </nav>
-        
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -194,7 +202,7 @@
                         <li>Telefon: 880 394 394</li>
                         <li>Email: info@hkr.net.pl</li>
                     </ul>
-                </div>               
+                </div>
             </div>
         </div>
     </div>
@@ -236,7 +244,7 @@
                     $('#elementToToggle').removeClass("opacity-0");
                     $('#elementToToggle').addClass("opacity-100");
                 }
-                scrollThreshold = scrollPosition; 
+                scrollThreshold = scrollPosition;
             });
         });
     </script>

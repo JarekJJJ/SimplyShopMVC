@@ -40,6 +40,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<OrinkGroup> OrinkGroups { get; set; }
         public DbSet<PcSets> PcSets { get; set; }
         public DbSet<PcSetsItems> PcSetsItems { get; set; }
+        public DbSet<Delivery> Delivery { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }

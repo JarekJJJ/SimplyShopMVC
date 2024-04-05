@@ -106,7 +106,7 @@
             </div>
 
         </div>
-        <div class="col-md-5 border border-success rounded p-2 m-1 ms-auto">
+        <div class="row col-md-5 border border-success rounded p-2 m-1 ms-auto">
             <div class="col-md-12 text-center">
                 <span class="fs-4">Pozostałe dane: </span>
             </div>
@@ -128,10 +128,21 @@
                     <option value="fakturaVat">Faktura VAT</option>
                 </select>
             </div>
+            <div class="col-sm-6 col-md-4">
+                <label asp-for="orderForList.DeliveryId" class="form-label">Rodzaj dostawy:</label>
+                <select class="form-select" asp-for="orderForList.DeliveryId" id="countItem">
+                    <option value="0" selected>wybierz rodzaj dostawy</option>
+                    @foreach (var delivery in Model.listDelivery)
+                    {
+                        <option value="@delivery.Id">@delivery.Name</option>
+                    }
+                </select>
+            </div>
             <div class="col">
                 <label asp-for="orderForList.ShipingDescription" class="form-label">Dodatkowe uwagi(np. inne miejsce dostawy itp.)</label>
                 <textarea class="col-md-12" asp-for="orderForList.ShipingDescription" rows="3"></textarea>
             </div>
+    
         </div>
         <input type="hidden" asp-for="orderForList.NumberOrders" value="@Model.orderForList.NumberOrders" />
         <input type="hidden" asp-for="orderForList.UserId" value="@Model.userDetail.UserId" />

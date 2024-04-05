@@ -13,19 +13,25 @@
 
             @foreach (var mainCheck in Model.listIncomGroup.Where(a => a.GroupIdHome == 0).ToList())
             {
-                <div class="col-md-3">
-                    <div class="form-check">
+               
+                    <div class="form-check col-md-3">
                         <input class="form-check-input" type="checkbox" name="selectedCategoryId" value="@mainCheck.GroupId.ToString()" id="flexCheckDefault_@mainCheck.Id">
                         <label class="form-check-label" for="flexCheckDefault_@mainCheck.Id"> <span class="fw-bold"> @mainCheck.Name </span> </label>
                     </div>
                     @foreach (var childCheck in Model.listIncomGroup.Where(c => c.GroupIdHome == mainCheck.GroupId))
                     {
-                        <div class="form-check ms-1">
+                        <div class="form-check ms-1 col-md-3">
                             <input class="form-check-input" type="checkbox" name="selectedCategoryId" value="@childCheck.GroupId.ToString()" id="flexCheckDefault_@childCheck.Id">
                             <label class="form-check-label" for="flexCheckDefault_@childCheck.Id"> - @childCheck.Name </label>
                         </div>
-                    }
-                </div>
+                        @foreach (var nextChild in Model.listIncomGroup.Where(c => c.GroupIdHome == childCheck.GroupId))
+                        {
+                             <div class="form-check ms-2 col-md-3 fs-6">
+                                <input class="form-check-input" type="checkbox" name="selectedCategoryId" value="@nextChild.GroupId.ToString()" id="flexCheckDefault_@nextChild.Id">
+                                <label class="form-check-label" for="flexCheckDefault_@nextChild.Id">  -- @nextChild.Name </label>
+                        </div>
+                        }
+                    }              
             }
         </div>
         <div class="col-md-3">

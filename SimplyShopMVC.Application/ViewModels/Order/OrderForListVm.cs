@@ -21,6 +21,7 @@ namespace SimplyShopMVC.Application.ViewModels.Order
         public bool IsAccepted { get; set; } = false;
         public bool IsCompleted { get; set; } = false;
         public bool IsCancelled { get; set; } = false;
+        public int DeliveryId { get; set; }
         
         public void Mapping(Profile profile)
         {

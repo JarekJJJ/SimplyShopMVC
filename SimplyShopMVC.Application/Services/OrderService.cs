@@ -25,7 +25,9 @@ namespace SimplyShopMVC.Application.Services
         private readonly IEmailService _sendEmail;
         private readonly IGeneratePdf _genPdf;
         private readonly IPriceCalculate priceCalc;
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf, IPriceCalculate priceCalculate)
+        private readonly IDeliveryRepository _deliveryRepo;
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf, IPriceCalculate priceCalculate
+        , IDeliveryRepository deliveryRepo)
         {
             _orderRepo = orderRepository;
             _mapper = mapper;
@@ -34,13 +36,42 @@ namespace SimplyShopMVC.Application.Services
             _sendEmail = sendEmail;
             _genPdf = genPdf;
             priceCalc = priceCalculate;
+            _deliveryRepo = deliveryRepo;
         }
 
+        public ListDeliveryForListVm GetAllDeliveryToList() // Kontroler shop - deliverySettings - HttpGet
+        {
+            ListDeliveryForListVm listDelivery = new ListDeliveryForListVm();
+            var result = _deliveryRepo.GetAllDeliveries().ProjectTo<DeliveryForListVm>(_mapper.ConfigurationProvider).ToList();
+            listDelivery.listDelivery = result;
+            return listDelivery;
+        }
+        public async Task UpdateDelivery(ListDeliveryForListVm listDelivery) // shop controller - Delivery settings - Post - options: 2;
+        {
+            if (listDelivery.delivery != null)
+            {
+                await _deliveryRepo.UpdateDeliveryAsync(_mapper.Map<Delivery>(listDelivery.delivery));
+            }
+        }
+        public void AddDelivery(ListDeliveryForListVm listDelivery) // shop controller - Delivery settings - Post - options: 1;
+        {
+            if (listDelivery.delivery != null)
+            {
+                _deliveryRepo.AddDelivery(_mapper.Map<Delivery>(listDelivery.delivery));
+            }
+        }
+        public void DeleteDelivery(ListDeliveryForListVm listDelivery) // shop controller - Delivery settings - Post - options: 3;
+        {
+            if (listDelivery.delivery != null)
+            {
+                 _deliveryRepo.DeleteDelivery(listDelivery.delivery.Id);
+            }
+        }
         public ListCartItemsForListVm AddToCart(CartItemsForListVm cartItem)
         {
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
             var itemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(a => a.ItemId == cartItem.ItemId);
-            if (cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0 && itemWare.Quantity>0)
+            if (cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0 && itemWare.Quantity > 0)
             {
                 var mappedCartItems = _mapper.Map<CartItems>(cartItem);
                 mappedCartItems.VatRateId = itemWare.VatRateId;
@@ -106,7 +137,7 @@ namespace SimplyShopMVC.Application.Services
             CartForListVm cart = new CartForListVm();
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
             List<CartForListVm> listCart = new List<CartForListVm>();
-            UserDetail userDetail= new UserDetail();
+            UserDetail userDetail = new UserDetail();
             var actualCart = _orderRepo.GetAllCarts().FirstOrDefault(a => a.Id == cartId && a.IsDeleted == false && a.IsRealized == false && a.IsSaved == false);
             if (actualCart != null)
             {
@@ -126,7 +157,8 @@ namespace SimplyShopMVC.Application.Services
                 var item = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == cartItem.ItemId && i.WarehouseId == cartItem.WarehouseId);
                 if (item != null)
                 {
-                    cartItem.PriceN = priceCalc.priceCalc(cartItem.ItemId, cartItem.WarehouseId, userDetail.UserId);                }
+                    cartItem.PriceN = priceCalc.priceCalc(cartItem.ItemId, cartItem.WarehouseId, userDetail.UserId);
+                }
             }
             listCart.Add(cart);
             listCartItems.listCartItems = cartItemsForList;
@@ -149,8 +181,10 @@ namespace SimplyShopMVC.Application.Services
             OrderFromCartVm orderFromCart = new OrderFromCartVm();
             orderFromCart.cartItems = listCartItems.listCartItems;
             orderFromCart.orderForList = new OrderForListVm();
+            orderFromCart.listDelivery = new List<DeliveryForListVm>();
             var userFromCart = listCartItems.listCart.FirstOrDefault();
             var userDetail = _userRepo.GetAllUsers().FirstOrDefault(a => a.UserId == userFromCart.userId);
+            orderFromCart.listDelivery = _deliveryRepo.GetAllDeliveries().ProjectTo<DeliveryForListVm>(_mapper.ConfigurationProvider).ToList();
 
             if (userDetail == null)
             {
@@ -368,7 +402,7 @@ namespace SimplyShopMVC.Application.Services
                             orderItem.PriceB = result.orderItem.PriceB;
                             _orderRepo.UpdateOrderItems(orderItem);
                         }
-            
+
                     }
                     break;
                 default:
@@ -377,9 +411,9 @@ namespace SimplyShopMVC.Application.Services
                     _orderRepo.UpdateOrders(mappedOrder);
                     break;
             }
-          
-           
-           
+
+
+
 
         }
         public byte[] GetPdfDocumentFromService(int _orderId)
@@ -413,7 +447,7 @@ namespace SimplyShopMVC.Application.Services
         }
         public UserDetailForListVm GetUserDetailById(string userId)
         {
-            var userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u=>u.UserId == userId));
+            var userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId));
             return userDetail;
         }
     }

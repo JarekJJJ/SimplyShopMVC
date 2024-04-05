@@ -127,7 +127,7 @@ namespace SimplyShopMVC.Web.Controllers
                 var id = _itemService.AddCategory(model);
                 return RedirectToAction("ItemUpdate", new { selectedItem = model.Id });
             }
-            
+
             return RedirectToAction("AdminListItem");
         }
         public IActionResult ListItemTagToUpdate(string? searchTag)
@@ -238,7 +238,7 @@ namespace SimplyShopMVC.Web.Controllers
         }
         [Authorize(Roles = "Admin"), HttpPost]
         public IActionResult adminFinishOrder(OrderForAdminListVm result, int options)
-        {           
+        {
             _orderService.AdminFinishOrder(result, options);
             return RedirectToAction("GetOrderForAdmin");
         }
@@ -252,7 +252,7 @@ namespace SimplyShopMVC.Web.Controllers
         [Authorize(Roles = "Admin"), HttpPost]
         public IActionResult GroupItem(ListGroupItemForListVm listGroupItemForList, int options)
         {
-           
+
             _itemService.GroupsItemsList(options, listGroupItemForList.GroupItem);
             return RedirectToAction("GroupItem");
         }
@@ -260,7 +260,7 @@ namespace SimplyShopMVC.Web.Controllers
         public IActionResult UserSettings()
         {
             string searchString = string.Empty;
-            var userList = _settingsService.UserSettings( new ListUserDetailForListVm(), 0, searchString);
+            var userList = _settingsService.UserSettings(new ListUserDetailForListVm(), 0, searchString);
             return View(userList);
         }
         [Authorize(Roles = "Admin"), HttpPost]
@@ -268,19 +268,48 @@ namespace SimplyShopMVC.Web.Controllers
         {
             if (String.IsNullOrEmpty(searchString))
             {
-                searchString= string.Empty;
+                searchString = string.Empty;
             }
-            if(options >0)
+            if (options > 0)
             {
-               var userList = _settingsService.UserSettings(result, options, searchString);              
+                var userList = _settingsService.UserSettings(result, options, searchString);
                 return View(userList);
             }
             else
             {
                 var userList = _settingsService.UserSettings(result, options, searchString);
             }
-            
+
             return RedirectToAction("UserSettings");
+        }
+        [Authorize(Roles = "Admin"), HttpGet]
+        public IActionResult DeliverySettings()
+        {
+            var result = _orderService.GetAllDeliveryToList();
+            return View(result);
+        }
+        [Authorize(Roles = "Admin"), HttpPost]
+        public IActionResult DeliverySettings(ListDeliveryForListVm result, int options)
+        {
+            if (result != null && options > 0)
+            {
+                switch (options)
+                {
+                    case 1:
+                        _orderService.AddDelivery(result);                     
+                        break;
+                    case 2:
+                        _orderService.UpdateDelivery(result);
+                        break;
+                    case 3:
+                        _orderService.DeleteDelivery(result);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return RedirectToAction("DeliverySettings");
         }
 
     }
