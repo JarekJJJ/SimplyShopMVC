@@ -111,7 +111,7 @@ namespace SimplyShopMVC.Application.Services
             {
                 itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
             }
-            if(itemList.Count == 0 && !String.IsNullOrEmpty(searchItem))
+            if (itemList.Count == 0 && !String.IsNullOrEmpty(searchItem))
             {
                 itemList = _itemRepo.GetAllItems().Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).Take(200).ToList();
             }
@@ -166,12 +166,12 @@ namespace SimplyShopMVC.Application.Services
             foreach (var item in items)
             {
                 var checkDuplicateItem = frontItems.FirstOrDefault(f => f.id == item.Id);
-                var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id && i.WarehouseId == 1);
-                if(indexItemWare== null)
+                var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id && i.WarehouseId == 1 && i.Quantity > 0);
+                if (indexItemWare == null)
                 {
-                    indexItemWare = _itemRepo.GetAllItemWarehouses().Where(i => i.ItemId == item.Id && i.Quantity > 0).OrderBy(i=>i.NetPurchasePrice).FirstOrDefault();
+                    indexItemWare = _itemRepo.GetAllItemWarehouses().Where(i => i.ItemId == item.Id && i.Quantity > 0).OrderBy(i => i.NetPurchasePrice).FirstOrDefault();
                 }
-              
+
                 if (indexItemWare != null && checkDuplicateItem == null)
                 {
                     var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == indexItemWare.VatRateId);  //Dodać sprawdzenie czy istnieje przedmiot w itemWArehouse!
@@ -248,8 +248,8 @@ namespace SimplyShopMVC.Application.Services
                     }
                     indexItem.tags = ListTagsForItem(item.Id);
                     indexItem.images = listImage;
-                    frontItemForLists.Add(indexItem);                   
-                }              
+                    frontItemForLists.Add(indexItem);
+                }
             }
             var orderingItem = frontItemForLists.OrderBy(i => i.priceLevelA).ToList();
             return orderingItem;
