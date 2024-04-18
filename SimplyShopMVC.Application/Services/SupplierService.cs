@@ -53,47 +53,96 @@ namespace SimplyShopMVC.Application.Services
         //newIncom
         public AddIncomItemsVm LoadNewIncomGroupForView()
         {
-            AddIncomItemsVm resoultListGroup= new AddIncomItemsVm();
+            AddIncomItemsVm resoultListGroup = new AddIncomItemsVm();
             var mapedResoultVm = _supplierRepo.GetAllIncomGroup().ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
             var mappedWare = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).ToList();
             resoultListGroup.listIncomGroup = mapedResoultVm;
-            resoultListGroup.warehouseForListVm= mappedWare;
+            resoultListGroup.warehouseForListVm = mappedWare;
 
             return resoultListGroup;
+        }
+        public void AddConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
+        {
+            if (result.listIncomGroupId != null && result.listIncomGroupId.Count > 0 && result.selectedCategory != null)
+            {
+                List<int> incomsIdList = new List<int>();
+                foreach (var incomGroupId in result.listIncomGroupId)
+                {
+                    incomsIdList.Add(incomGroupId);
+                    var incomGroupChild = _supplierRepo.GetAllIncomGroup().Where(i => i.GroupIdHome == incomGroupId).ToList();
+                    if (incomGroupChild != null)
+                    {
+                        foreach (var incomGroupSecondChild in incomGroupChild)
+                        {
+                            if (incomGroupSecondChild != null)
+                            {
+                                incomsIdList.Add(incomGroupSecondChild.Id);
+                                var incomGroupThirdChild = _supplierRepo.GetAllIncomGroup().Where(i => i.GroupIdHome == incomGroupSecondChild.Id).ToList();
+                                if (incomGroupThirdChild != null)
+                                {
+                                    foreach (var resultThirdChild in incomGroupThirdChild)
+                                    {
+                                        incomsIdList.Add(resultThirdChild.Id);
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+                var allIncomGroups = _supplierRepo.GetAllIncomGroup().Where(i => incomsIdList.Contains(i.Id)).ToList();
+                if (allIncomGroups != null && allIncomGroups.Count > 0)
+                {
+                    //foreach(var groupIncom in allIncomGroups)
+                    //{
+                    //    groupIncom.CategoryId = result.selectedCategory.Id;
+                    //    _supplierRepo.UpdateIncomGroup(groupIncom);
+                    //}
+                }
+            }
         }
         public ListConnectingCategoryVm GetConnectCategoryWithSupplierGroup()
         {
             ConnectingCategoryForListVm connectingCategory = new ConnectingCategoryForListVm();
-            ListConnectingCategoryVm listConnectionCategory= new ListConnectingCategoryVm();
-            var listIncomGroup = _supplierRepo.GetAllIncomGroup()
-                .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
-            foreach ( var group in listIncomGroup )
+            ListConnectingCategoryVm listConnectionCategory = new ListConnectingCategoryVm();
+            var listConnectingGroup = _supplierRepo.GetAllConnectCategoryGroup();
+            //.ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
+            if (listConnectingGroup != null)
             {
-                if(group.CategoryId != null)
+                foreach (var group in listConnectingGroup)
                 {
-                    var category = _mapper.Map<CategoryForListVm>(_itemRepo.GetAllCategories().FirstOrDefault(c=>c.Id == group.CategoryId));
-                    if(category!=null)
+
+                    var category = _mapper.Map<CategoryForListVm>(_itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == group.CategoryId));
+                    if (category != null)
                     {
                         connectingCategory.category = category;
-                        connectingCategory.incomGroup = _mapper.Map<IncomGroupForListVm>(group);
-                        var itemTag =_mapper.Map<ItemTagsForListVm>(_categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(t=>t.CategoryId== category.Id));
-                        if(itemTag != null)
+                        connectingCategory.incomGroup = _mapper.Map<IncomGroupForListVm>(_supplierRepo.GetAllIncomGroup().FirstOrDefault(g=>g.Id==group.IncomGroupId)); //tutaj dalej zmienić category 
+                        var categoryTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(t => t.CategoryId == category.Id);
+                        if (categoryTag != null)
                         {
-                            connectingCategory.itemTagsForList = itemTag;
+                            var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == categoryTag.ItemTagId));
+                            if (itemTag != null)
+                            {
+                                connectingCategory.itemTagsForList = itemTag;
+                            }
                         }
-                        var groupItem =_mapper.Map<GroupItemForListVm>(_groupItemRepo.GetAllGroupItem().FirstOrDefault(g=>g.Id== category.GroupItemId));
+
+
+                        var groupItem = _mapper.Map<GroupItemForListVm>(_groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == category.GroupItemId)); // tutaj !
                         if (groupItem != null)
                         {
-                            connectingCategory.groupItem= groupItem;
+                            connectingCategory.groupItem = groupItem;
                         }
                         listConnectionCategory.listConnectionCategory.Add(connectingCategory);
                     }
+
                 }
             }
-            listConnectionCategory.listIncomGroups = listIncomGroup;
-            listConnectionCategory.listCategories = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList() ;
+
+           // listConnectionCategory.listIncomGroups = listIncomGroup;
+            listConnectionCategory.listCategories = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             listConnectionCategory.listItemTags = _itemRepo.GetAllItemTags().ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
-            listConnectionCategory.listGroupItems = _groupItemRepo.GetAllGroupItem().ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList() ;
+            listConnectionCategory.listGroupItems = _groupItemRepo.GetAllGroupItem().ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
 
             return listConnectionCategory;
         }
@@ -107,7 +156,7 @@ namespace SimplyShopMVC.Application.Services
             AddIncomItemsVm returnRaport = new AddIncomItemsVm();
             List<string> list = new List<string>();
             returnRaport.raportAddItem = new List<string>();
-            List<int> idSelectedCategory= new List<int>();
+            List<int> idSelectedCategory = new List<int>();
             foreach (var categoryNr in incomItems.selectedCategory)
             {
                 List<IncomGroup> listCategoryToAddIncomItems = new List<IncomGroup>();
@@ -115,14 +164,14 @@ namespace SimplyShopMVC.Application.Services
                 listCategoryToAddIncomItems = _supplierRepo.GetAllIncomGroup().Where(a => a.GroupId == _categoryNr || a.GroupIdHome == _categoryNr).ToList();
                 if (listCategoryToAddIncomItems != null)
                 {
-                    foreach(var listCategory in listCategoryToAddIncomItems)
+                    foreach (var listCategory in listCategoryToAddIncomItems)
                     {
                         idSelectedCategory.Add(listCategory.GroupId);
                     }
                 }
-               
+
             }
-            
+
             if (incomItems.warehouseId != 0)
             {
                 if (incomItems.removeItems == true)
@@ -130,7 +179,7 @@ namespace SimplyShopMVC.Application.Services
                     var itemFromSelectedWarehouse = _supplierRepo.GetAllIncom().Where(i => i.warehouseId == incomItems.warehouseId).ToList();
                     foreach (var item in itemFromSelectedWarehouse)
                     {
-                       await _supplierRepo.DeleteIncomItemAsync(item.Id);
+                        await _supplierRepo.DeleteIncomItemAsync(item.Id);
                         countItemRemove++;
                     }
                 }
@@ -147,7 +196,7 @@ namespace SimplyShopMVC.Application.Services
                         if (grupa_towarowa.Value != null)
                         {
                             int tempXmlGroupId;
-                          bool okParse = int.TryParse(grupa_towarowa.Value, out tempXmlGroupId);
+                            bool okParse = int.TryParse(grupa_towarowa.Value, out tempXmlGroupId);
                             if (okParse)
                             {
                                 foreach (var _selectedGroup in idSelectedCategory)
@@ -232,8 +281,8 @@ namespace SimplyShopMVC.Application.Services
                             {
                                 mapedItemVm.createDate = itemToCheck.createDate;
                                 mapedItemVm.updateTime = dateTime;
-                              await _supplierRepo.UpdateIncomAsync(mapedItemVm);
-                               await UpdateItemInShopAsync(mapedItemVm);
+                                await _supplierRepo.UpdateIncomAsync(mapedItemVm);
+                                await UpdateItemInShopAsync(mapedItemVm);
                                 countItemUpdate++;
                                 itemId = itemToCheck.Id;
                             }
@@ -250,7 +299,7 @@ namespace SimplyShopMVC.Application.Services
                             mapedOmnibusPrice.Ean = itemVm.ean;
                             mapedOmnibusPrice.ChangeTime = dateTime;
                             mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
-                           await _omnibusPriceRepo.AddOmnibusPriceAsync(mapedOmnibusPrice);
+                            await _omnibusPriceRepo.AddOmnibusPriceAsync(mapedOmnibusPrice);
                         }
                     }
                     catch (Exception)
@@ -664,7 +713,7 @@ namespace SimplyShopMVC.Application.Services
             int countItemRemove = 0;
             AddIncomGroupsVm returnRaport = new AddIncomGroupsVm();
             returnRaport.raportAddItem = new List<string>();
-            if(incomGroups.removeItems == true)
+            if (incomGroups.removeItems == true)
             {
                 _supplierRepo.DeleteIncomGroup();
             }
@@ -832,7 +881,7 @@ namespace SimplyShopMVC.Application.Services
             if (connectedItems.groupItem != null && !string.IsNullOrEmpty(connectedItems.groupItem.Name))
             {
                 var mappedGroupItem = _mapper.Map<Domain.Model.GroupItem>(connectedItems.groupItem);
-               await _groupItemRepo.AddGroupItemAsync(mappedGroupItem);
+                await _groupItemRepo.AddGroupItemAsync(mappedGroupItem);
                 string raport = $"Dodano pomyślnie grupę : {mappedGroupItem.Name}";
                 newConnectItem.raport.Add(raport);
             }
@@ -840,7 +889,7 @@ namespace SimplyShopMVC.Application.Services
             if ((connectedItems.category != null) && (!string.IsNullOrEmpty(connectedItems.category.Name)))
             {
                 var mappedCategory = _mapper.Map<Category>(connectedItems.category);
-                var idCategory =  await _itemRepo.AddCategoryAsync(mappedCategory);
+                var idCategory = await _itemRepo.AddCategoryAsync(mappedCategory);
                 if (idCategory != 0)
                 {
                     string raport = $"Dodano pomyślnie kategorię o nazwie: {mappedCategory.Name}";
@@ -876,7 +925,7 @@ namespace SimplyShopMVC.Application.Services
                         if (connectedItems.selectedGroupSupplier > 0 && connectedItems.selectedCategory != null
                                         && connectedItems.selectedWarehouse != null)
                         {
-                            var supplierItemByGroupId =_supplierRepo.GetAllIncom().Where(s => s.grupa_towarowa == connectedItems.selectedGroupSupplier.ToString()).ToList();
+                            var supplierItemByGroupId = _supplierRepo.GetAllIncom().Where(s => s.grupa_towarowa == connectedItems.selectedGroupSupplier.ToString()).ToList();
                             foreach (var supItem in supplierItemByGroupId)
                             {
                                 var resultItem = _itemRepo.GetAllItems().FirstOrDefault(r => r.EanCode == supItem.ean);
@@ -935,7 +984,7 @@ namespace SimplyShopMVC.Application.Services
                                     newItem.Weight = supItem.waga;
                                     newItem.GroupItemId = connectedItems.selectedGroupItem;
                                     var mappedNewItem = _mapper.Map<Item>(newItem);
-                                   await _itemRepo.UpdateItemAsync(mappedNewItem);
+                                    await _itemRepo.UpdateItemAsync(mappedNewItem);
                                 }
                                 if (connectedItems.selectedItemTags != null && connectedItems.selectedItemTags.Count > 0)
                                 {
@@ -945,7 +994,7 @@ namespace SimplyShopMVC.Application.Services
                                         var resultItemTag = _itemRepo.GetAllConnectedItemTags().FirstOrDefault(r => r.ItemTagId == sTag.Id && r.ItemId == newItemId);
                                         if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (newItemId != 0) && (resultItemTag == null))
                                         {
-                                           await _itemRepo.AddConnectionItemTagsAsync(newItemId, _mapper.Map<ItemTag>(sTag));
+                                            await _itemRepo.AddConnectionItemTagsAsync(newItemId, _mapper.Map<ItemTag>(sTag));
                                             string raport = $"Dodano pomyślnie Tag o nazwie: {sTag.Name} do produktów z kategorii";
                                             newConnectItem.raport.Add(raport);
                                         }
@@ -961,7 +1010,7 @@ namespace SimplyShopMVC.Application.Services
                                     var resultTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(r => r.ItemTagId == tag && r.CategoryId == sCategory.Id);
                                     if ((sTag != null) && ((int)connectedItems.selectedCategory > 0) && (resultTag == null))
                                     {
-                                       await _categoryTagsRepo.AddConnectCategoryTagsAsync(sTag, (int)connectedItems.selectedCategory);
+                                        await _categoryTagsRepo.AddConnectCategoryTagsAsync(sTag, (int)connectedItems.selectedCategory);
                                     }
                                 }
                             }
@@ -1108,7 +1157,7 @@ namespace SimplyShopMVC.Application.Services
                     {
                         itemWarehouse.NetPurchasePrice = incomItems.cena;
                         itemWarehouse.Quantity = incomItems.stan_magazynowy;
-                       await _itemRepo.UpdateItemWarehouseAsync(itemWarehouse);
+                        await _itemRepo.UpdateItemWarehouseAsync(itemWarehouse);
                         return true;
                     }
                     catch (Exception)

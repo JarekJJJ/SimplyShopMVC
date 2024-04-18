@@ -19,7 +19,12 @@ namespace SimplyShopMVC.Domain.Interface
         void DeleteIncomItem(int incomId);
         Task DeleteIncomItemAsync(int incomId);
         int AddIncomGroup(IncomGroup incomGroup);
+        void UpdateIncomGroup(IncomGroup incomGroup);
         IQueryable<IncomGroup> GetAllIncomGroup();
         void DeleteIncomGroup();
+        IQueryable<ConnectCategoryGroup> GetAllConnectCategoryGroup();
+        int AddConnectCategoryGroup(ConnectCategoryGroup connectCategoryGroup);
+        void UpdateConnectCategoryGroup(ConnectCategoryGroup connectCategoryGroup);
+        void DeleteConnectCategoryGroup(int id);
     }
 }

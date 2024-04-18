@@ -1,4 +1,5 @@
 ﻿using SimplyShopMVC.Domain.Model.Sets;
+using SimplyShopMVC.Domain.Model.Suppliers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace SimplyShopMVC.Domain.Model
         public int PriceMarkupB { get;set; }
         public int PriceMarkupC { get;set; }
         public ICollection<Category> Categories { get; set; }
+        public ICollection<ConnectCategoryGroup> ConnectCategoryGroups { get; set; }
         public ICollection<Item> Items { get; set; }
         public ICollection<PcSets> PcSets { get; set; }
     }

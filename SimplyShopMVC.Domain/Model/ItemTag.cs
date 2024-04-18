@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplyShopMVC.Domain.Model.Suppliers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace SimplyShopMVC.Domain.Model
         public string? Description { get; set; }
         public ICollection<ConnectItemTag> ConnectItemTags { get; set; }
         public ICollection<ConnectCategoryTag> ConnectCategoryTag{ get; set; }
+        public ICollection<ConnectCategoryGroup> ConnectCategoryGroups { get; set; } 
 
 
     }

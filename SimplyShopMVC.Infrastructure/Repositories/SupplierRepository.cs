@@ -16,7 +16,31 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             _context = context;
         }   
-
+        public IQueryable<ConnectCategoryGroup> GetAllConnectCategoryGroup()
+        {
+            var result = _context.ConnectCategoryGroups;
+            return result;
+        }
+        public int AddConnectCategoryGroup(ConnectCategoryGroup connectCategoryGroup)
+        {
+            _context.Add(connectCategoryGroup);
+            _context.SaveChanges();
+            return connectCategoryGroup.Id;
+        }
+        public void UpdateConnectCategoryGroup(ConnectCategoryGroup connectCategoryGroup)
+        {
+            _context.Update(connectCategoryGroup);
+            _context.SaveChanges();
+        }
+        public void DeleteConnectCategoryGroup(int id)
+        {
+            var result = _context.ConnectCategoryGroups.FirstOrDefault(c => c.Id == id);
+            if (result != null)
+            {
+                _context.Remove(result);
+                _context.SaveChanges();
+            }        
+        }
         public int AddIncomItem(Incom incom)
         {
             _context.Add(incom);
@@ -75,6 +99,11 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             _context.Add(incomGroup);
             _context.SaveChanges();
             return incomGroup.Id;
+        }
+        public void UpdateIncomGroup(IncomGroup incomGroup)
+        {
+            _context.Update(incomGroup);
+            _context.SaveChanges();
         }
         public IQueryable<IncomGroup> GetAllIncomGroup()
         {

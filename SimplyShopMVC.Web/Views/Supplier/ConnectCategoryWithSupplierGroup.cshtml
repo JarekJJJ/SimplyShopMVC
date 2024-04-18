@@ -1,29 +1,93 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Suppliers.ListConnectingCategoryVm
 
 <div class="row">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Kategoria Sklepu</th>
-                    <th>Grupa towarowa</th>
-                    <th>Tag w kategorii</th>
-                    <th>Grupa u dostawcy</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if(Model.listConnectionCategory != null && Model.listConnectionCategory.Count > 0)
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Kategoria Sklepu</th>
+                <th>Grupa towarowa</th>
+                <th>Tag w kategorii</th>
+                <th>Grupa u dostawcy</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.listConnectionCategory != null && Model.listConnectionCategory.Count > 0)
+            {
+                foreach (var item in Model.listConnectionCategory)
                 {
-                    foreach(var item in Model.listConnectionCategory)
+                    <tr>
+                        <td>@item.category.Name</td>
+                        <td>@item.groupItem.Name</td>
+                        <td>@item.itemTagsForList.Name</td>
+                        <td>@item.incomGroup.Name</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    <form asp-action="ConnectCategoryWithSupplierGroup" enctype="multipart/form-data" method="post" class="row gy-2 gx-3 align-items-center">
+        <div class="row">
+            <div class="col-md-3">
+                <label asp-for="groupItem" class="form-label">Wybierz grupę towarową w sklepie:</label>
+                <select class="form-select" asp-for="groupItem.Id">
+
+                    @foreach (var gItem in Model.listGroupItems)
                     {
-                        <tr>
-                            <td>@item.category.Name</td>
-                            <td>@item.groupItem.Name</td>
-                            <td>@item.itemTagsForList.Name</td>
-                            <td>@item.incomGroup.Name</td>
-                        </tr>
+                        <option value="@gItem.Id">@gItem.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="selectedCategory" class="form-label">Wybierz kategorię w sklepie(dla nowych produktów):</label>
+                <select class="form-select" asp-for="selectedCategory.Id">
+
+                    @foreach (var gItem in Model.listCategories.Where(c => c.IsMainCategory == false).ToList()) // tutaqj
+                    {
+                        <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
+                    }
+                </select>
+            </div>
+             <div class="col-md-3">
+            <label asp-for="listItemTags" class="form-label">Wybierz tagi dla produktów:</label>
+            <select class="form-select" id="selectedItemTags" name="selectedItemTags" multiple>
+
+                @foreach (var gItem in Model.listItemTags)
+                {
+                    <option value="@gItem.Id" name="@gItem.Name">@gItem.Name</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex align-items-start flex-md-column mb-1 flex-sm-row flex-wrap" style="height:3500px">
+            <p> Wybierz kategorie dostawcy do połączenia z kategorią w sklepie:</p>
+
+            @foreach (var mainCheck in Model.listIncomGroups.Where(a => a.GroupIdHome == 0).ToList())
+            {
+
+                <div class="form-check col-md-3">
+                    <input class="form-check-input" type="checkbox" name="listIncomGroupId" value="@mainCheck.GroupId.ToString()" id="flexCheckDefault_@mainCheck.Id">
+                    <label class="form-check-label" for="flexCheckDefault_@mainCheck.Id"> <span class="fw-bold"> @mainCheck.Name </span> </label>
+                </div>
+                @foreach (var childCheck in Model.listIncomGroups.Where(c => c.GroupIdHome == mainCheck.GroupId))
+                {
+                    <div class="form-check ms-1 col-md-3">
+                        <input class="form-check-input" type="checkbox" name="listIncomGroupId" value="@childCheck.GroupId.ToString()" id="flexCheckDefault_@childCheck.Id">
+                        <label class="form-check-label" for="flexCheckDefault_@childCheck.Id"> - @childCheck.Name </label>
+                    </div>
+                    @foreach (var nextChild in Model.listIncomGroups.Where(c => c.GroupIdHome == childCheck.GroupId))
+                    {
+                        <div class="form-check ms-2 col-md-3 fs-6">
+                            <input class="form-check-input" type="checkbox" name="listIncomGroupId" value="@nextChild.GroupId.ToString()" id="flexCheckDefault_@nextChild.Id">
+                            <label class="form-check-label" for="flexCheckDefault_@nextChild.Id">  -- @nextChild.Name </label>
+                        </div>
                     }
                 }
-            </tbody>
-        </table>
+            }
+        </div>
+        <div class="col-md-2">
+            <input type="submit" value="Dodaj" class="btn btn-primary mt-4" />
+        </div>
+    </form>
 </div>
 

@@ -11,6 +11,7 @@ namespace SimplyShopMVC.Application.Interfaces
     public interface ISupplierService
     {
         ListConnectingCategoryVm GetConnectCategoryWithSupplierGroup();
+        void AddConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result);
         AddIncomItemsVm LoadNewIncomGroupForView();
         Task<AddIncomItemsVm> LoadNewIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument);
         AddIncomItemsVm LoadOrinkItemsXML(AddIncomItemsVm orinkItems, XDocument xmlDocument);

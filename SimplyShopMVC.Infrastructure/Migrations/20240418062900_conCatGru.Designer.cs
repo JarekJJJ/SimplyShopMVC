@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240418062900_conCatGru")]
+    partial class conCatGru
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -853,9 +855,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Property<int>("GroupItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("IncomGroupId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ItemTagId")
                         .HasColumnType("int");
 
@@ -864,8 +863,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("GroupItemId");
-
-                    b.HasIndex("IncomGroupId");
 
                     b.HasIndex("ItemTagId");
 
@@ -961,6 +958,9 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ConnectCategoryGroupId")
+                        .HasColumnType("int");
+
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
@@ -974,6 +974,10 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ConnectCategoryGroupId")
+                        .IsUnique()
+                        .HasFilter("[ConnectCategoryGroupId] IS NOT NULL");
 
                     b.ToTable("IncomGroups");
                 });
@@ -1536,12 +1540,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SimplyShopMVC.Domain.Model.Suppliers.IncomGroup", "IncomGroup")
-                        .WithMany("ConnectCategoryGroups")
-                        .HasForeignKey("IncomGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SimplyShopMVC.Domain.Model.ItemTag", "ItemTag")
                         .WithMany("ConnectCategoryGroups")
                         .HasForeignKey("ItemTagId");
@@ -1549,8 +1547,6 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("GroupItem");
-
-                    b.Navigation("IncomGroup");
 
                     b.Navigation("ItemTag");
                 });
@@ -1571,6 +1567,12 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.HasOne("SimplyShopMVC.Domain.Model.Category", null)
                         .WithMany("IncomGroups")
                         .HasForeignKey("CategoryId");
+
+                    b.HasOne("SimplyShopMVC.Domain.Model.Suppliers.ConnectCategoryGroup", "ConnectCategoryGroup")
+                        .WithOne("IncomGroup")
+                        .HasForeignKey("SimplyShopMVC.Domain.Model.Suppliers.IncomGroup", "ConnectCategoryGroupId");
+
+                    b.Navigation("ConnectCategoryGroup");
                 });
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.Suppliers.Orink", b =>
@@ -1664,9 +1666,10 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Navigation("PcSetsItems");
                 });
 
-            modelBuilder.Entity("SimplyShopMVC.Domain.Model.Suppliers.IncomGroup", b =>
+            modelBuilder.Entity("SimplyShopMVC.Domain.Model.Suppliers.ConnectCategoryGroup", b =>
                 {
-                    b.Navigation("ConnectCategoryGroups");
+                    b.Navigation("IncomGroup")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SimplyShopMVC.Domain.Model.Suppliers.OrinkGroup", b =>

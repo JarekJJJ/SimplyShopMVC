@@ -19,6 +19,7 @@ namespace SimplyShopMVC.Domain.Model
         public GroupItem GroupItem { get; set; }
         public  ICollection<IncomGroup> IncomGroups { get; set; }
         public virtual ICollection<Item> Items { get; set; }
+        public ICollection<ConnectCategoryGroup> ConnectCategoryGroups { get; set; }
         public ICollection<ConnectCategoryTag> ConnectCategoryTag { get; set; }
     }
 }
