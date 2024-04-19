@@ -63,6 +63,14 @@ namespace SimplyShopMVC.Application.Services
         }
         public void AddConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
         {
+            ConnectCategoryGroup conCatGroup = new ConnectCategoryGroup();
+            conCatGroup.CategoryId = result.selectedCategory.Id;
+            conCatGroup.GroupItemId = result.groupItem.Id;
+            if (result.selectedItemTags != null && result.selectedItemTags.Count > 0)
+            {
+                conCatGroup.ItemTagId = result.selectedItemTags.FirstOrDefault();
+            }
+            var idConnectingCategoryGroup = _supplierRepo.AddConnectCategoryGroup(conCatGroup);
             if (result.listIncomGroupId != null && result.listIncomGroupId.Count > 0 && result.selectedCategory != null)
             {
                 List<int> incomsIdList = new List<int>();
@@ -76,13 +84,13 @@ namespace SimplyShopMVC.Application.Services
                         {
                             if (incomGroupSecondChild != null)
                             {
-                                incomsIdList.Add(incomGroupSecondChild.Id);
+                                incomsIdList.Add(incomGroupSecondChild.GroupId);
                                 var incomGroupThirdChild = _supplierRepo.GetAllIncomGroup().Where(i => i.GroupIdHome == incomGroupSecondChild.Id).ToList();
                                 if (incomGroupThirdChild != null)
                                 {
                                     foreach (var resultThirdChild in incomGroupThirdChild)
                                     {
-                                        incomsIdList.Add(resultThirdChild.Id);
+                                        incomsIdList.Add(resultThirdChild.GroupId);
                                     }
                                 }
 
@@ -90,20 +98,29 @@ namespace SimplyShopMVC.Application.Services
                         }
                     }
                 }
-                var allIncomGroups = _supplierRepo.GetAllIncomGroup().Where(i => incomsIdList.Contains(i.Id)).ToList();
-                if (allIncomGroups != null && allIncomGroups.Count > 0)
+                List<IncomGroup> listIncomGroup= new List<IncomGroup>();
+                foreach(var incomIdGroup in incomsIdList)
                 {
-                    //foreach(var groupIncom in allIncomGroups)
-                    //{
-                    //    groupIncom.CategoryId = result.selectedCategory.Id;
-                    //    _supplierRepo.UpdateIncomGroup(groupIncom);
-                    //}
+                    var incomGroups = _supplierRepo.GetAllIncomGroup().FirstOrDefault(i =>i.GroupId == incomIdGroup);
+                    if(incomGroups != null)
+                    {
+                        listIncomGroup.Add(incomGroups);
+                    }               
+                }
+
+                if (listIncomGroup != null && listIncomGroup.Count > 0)
+                {
+                    foreach (var groupIncom in listIncomGroup)
+                    {
+                        groupIncom.ConnectCategoryGroupId = idConnectingCategoryGroup;
+                        _supplierRepo.UpdateIncomGroup(groupIncom);
+                    }
                 }
             }
         }
         public ListConnectingCategoryVm GetConnectCategoryWithSupplierGroup()
         {
-            ConnectingCategoryForListVm connectingCategory = new ConnectingCategoryForListVm();
+          
             ListConnectingCategoryVm listConnectionCategory = new ListConnectingCategoryVm();
             var listConnectingGroup = _supplierRepo.GetAllConnectCategoryGroup();
             //.ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
@@ -111,12 +128,13 @@ namespace SimplyShopMVC.Application.Services
             {
                 foreach (var group in listConnectingGroup)
                 {
-
+                    ConnectingCategoryForListVm connectingCategory = new ConnectingCategoryForListVm();
                     var category = _mapper.Map<CategoryForListVm>(_itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == group.CategoryId));
                     if (category != null)
                     {
                         connectingCategory.category = category;
-                        connectingCategory.incomGroup = _mapper.Map<IncomGroupForListVm>(_supplierRepo.GetAllIncomGroup().FirstOrDefault(g=>g.Id==group.IncomGroupId)); //tutaj dalej zmienić category 
+                        connectingCategory.listIncomGroup = _supplierRepo.GetAllIncomGroup().Where(g => g.ConnectCategoryGroupId == group.Id)
+                            .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
                         var categoryTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(t => t.CategoryId == category.Id);
                         if (categoryTag != null)
                         {
@@ -126,9 +144,7 @@ namespace SimplyShopMVC.Application.Services
                                 connectingCategory.itemTagsForList = itemTag;
                             }
                         }
-
-
-                        var groupItem = _mapper.Map<GroupItemForListVm>(_groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == category.GroupItemId)); // tutaj !
+                        var groupItem = _mapper.Map<GroupItemForListVm>(_groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == group.GroupItemId)); // tutaj !
                         if (groupItem != null)
                         {
                             connectingCategory.groupItem = groupItem;
@@ -139,7 +155,7 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
 
-           // listConnectionCategory.listIncomGroups = listIncomGroup;
+            listConnectionCategory.listIncomGroups = _supplierRepo.GetAllIncomGroup().ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
             listConnectionCategory.listCategories = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             listConnectionCategory.listItemTags = _itemRepo.GetAllItemTags().ProjectTo<ItemTagsForListVm>(_mapper.ConfigurationProvider).ToList();
             listConnectionCategory.listGroupItems = _groupItemRepo.GetAllGroupItem().ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();

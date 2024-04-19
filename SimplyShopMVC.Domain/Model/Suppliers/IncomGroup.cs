@@ -12,7 +12,8 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
         public int GroupId { get; set; }
         public int GroupIdHome { get; set; }
         public string Name { get; set; }
-        public ICollection<ConnectCategoryGroup> ConnectCategoryGroups { get; set; }
+        public int? ConnectCategoryGroupId { get; set; }
+        public ConnectCategoryGroup ConnectCategoryGroup { get; set; }
 
        // public ICollection<Incom> Incoms { get; set; }
     }

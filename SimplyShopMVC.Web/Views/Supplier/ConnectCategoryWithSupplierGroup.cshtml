@@ -18,8 +18,18 @@
                     <tr>
                         <td>@item.category.Name</td>
                         <td>@item.groupItem.Name</td>
-                        <td>@item.itemTagsForList.Name</td>
-                        <td>@item.incomGroup.Name</td>
+                        <td>
+                            @if(item.itemTagsForList != null)
+                            {
+                                @item.itemTagsForList.Name
+                            }
+                           </td>
+                        <td>
+                            @foreach(var iGroup in item.listIncomGroup)
+                            {
+                                <span>@iGroup.Name, </span>
+                            }
+                            
                     </tr>
                 }
             }

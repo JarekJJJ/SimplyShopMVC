@@ -9,13 +9,12 @@ namespace SimplyShopMVC.Domain.Model.Suppliers
     public class ConnectCategoryGroup
     {
         public int Id { get; set; }
-        public Category Category { get; set; } = new Category();
+        public Category Category { get; set; } 
         public int CategoryId { get; set; }
-        public int IncomGroupId { get; set; }
-        public IncomGroup IncomGroup { get; set; } = new IncomGroup();
+        public List<IncomGroup> IncomGroups { get; set; } 
         public int GroupItemId { get; set; }
-        public GroupItem GroupItem { get; set; } = new GroupItem();
+        public GroupItem GroupItem { get; set; } 
         public int? ItemTagId { get; set; }
-        public ItemTag ItemTag { get; set; } = new ItemTag();
+        public ItemTag ItemTag { get; set; } 
     }
 }
