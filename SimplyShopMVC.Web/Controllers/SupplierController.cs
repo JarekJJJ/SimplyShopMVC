@@ -176,5 +176,11 @@ namespace SimplyShopMVC.Web.Controllers
             // Do zrobienia serwis
             return RedirectToAction("ConnectCategoryWithSupplierGroup");
         }
+        [HttpPost]
+        public IActionResult DeleteConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
+        {
+            _supplierService.DeleteConnectCategoryWithSupplierGroup(result);
+            return RedirectToAction("ConnectCategoryWithSupplierGroup");
+        }
     }
 }

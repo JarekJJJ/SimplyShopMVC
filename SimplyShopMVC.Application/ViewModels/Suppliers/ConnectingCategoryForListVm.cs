@@ -9,6 +9,7 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
 {
     public class ConnectingCategoryForListVm
     {
+        public int Id { get; set; }
         public CategoryForListVm category { get; set; }
         public List<IncomGroupForListVm> listIncomGroup { get; set; }
         public ItemTagsForListVm itemTagsForList { get; set; }

@@ -63,13 +63,13 @@
                 <input type="hidden" asp-for="delivery.Id" value="0" />
                 <input type="hidden" name="options" value="1" />
             <td>
-                <input type="text" asp-for="delivery.Name" value="" />
+                <input type="text" asp-for="delivery.Name" value="" required />
             </td>
             <td>
                 <input type="text" asp-for="delivery.Description" value="" />
             </td>
             <td>
-                <input type="number" asp-for="delivery.Cost" value="" />
+                <input type="number" asp-for="delivery.Cost" value="" required />
             </td>
             <td>
                 <input type="number" asp-for="delivery.MaxWeight" value="" />

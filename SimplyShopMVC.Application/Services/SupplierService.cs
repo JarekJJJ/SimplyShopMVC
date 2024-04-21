@@ -122,13 +122,14 @@ namespace SimplyShopMVC.Application.Services
         {
           
             ListConnectingCategoryVm listConnectionCategory = new ListConnectingCategoryVm();
-            var listConnectingGroup = _supplierRepo.GetAllConnectCategoryGroup();
+            var listConnectingGroup = _supplierRepo.GetAllConnectCategoryGroup().ToList();
             //.ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
             if (listConnectingGroup != null)
             {
                 foreach (var group in listConnectingGroup)
                 {
                     ConnectingCategoryForListVm connectingCategory = new ConnectingCategoryForListVm();
+                    connectingCategory.Id = group.Id;
                     var category = _mapper.Map<CategoryForListVm>(_itemRepo.GetAllCategories().FirstOrDefault(c => c.Id == group.CategoryId));
                     if (category != null)
                     {
@@ -161,6 +162,34 @@ namespace SimplyShopMVC.Application.Services
             listConnectionCategory.listGroupItems = _groupItemRepo.GetAllGroupItem().ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
 
             return listConnectionCategory;
+        }
+        public void DeleteConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
+        {
+            if(result.listIncomGroupId != null && result.listIncomGroupId.Count > 0)
+            {
+                foreach(var item in result.listIncomGroupId)
+                {
+                    var connectCategoryGroup = _supplierRepo.GetAllIncomGroup().FirstOrDefault(i => i.Id == item);
+                    if(connectCategoryGroup != null)
+                    {
+                        connectCategoryGroup.ConnectCategoryGroupId = null;
+                        _supplierRepo.UpdateIncomGroup(connectCategoryGroup);
+                    }                
+                }
+            }
+            if (result.options != null && result.options > 0 && result.connectingCategory != null) //kasowanie całego rekordu connect....  
+            {
+                var listConnectCategoryGroupInIncomGroups = _supplierRepo.GetAllIncomGroup().Where(i=>i.ConnectCategoryGroupId == result.connectingCategory.Id).ToList();
+                if(listConnectCategoryGroupInIncomGroups != null)
+                {
+                    foreach(var item in listConnectCategoryGroupInIncomGroups)
+                    {
+                        item.ConnectCategoryGroupId = null;
+                        _supplierRepo.UpdateIncomGroup(item);
+                    }
+                }
+                _supplierRepo.DeleteConnectCategoryGroup(result.connectingCategory.Id);
+            }
         }
         public async Task<AddIncomItemsVm> LoadNewIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
         {
