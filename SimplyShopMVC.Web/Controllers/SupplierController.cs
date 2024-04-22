@@ -177,9 +177,9 @@ namespace SimplyShopMVC.Web.Controllers
             return RedirectToAction("ConnectCategoryWithSupplierGroup");
         }
         [HttpPost]
-        public IActionResult DeleteConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
+        public IActionResult EditConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
         {
-            _supplierService.DeleteConnectCategoryWithSupplierGroup(result);
+            _supplierService.EditConnectCategoryWithSupplierGroup(result);
             return RedirectToAction("ConnectCategoryWithSupplierGroup");
         }
     }

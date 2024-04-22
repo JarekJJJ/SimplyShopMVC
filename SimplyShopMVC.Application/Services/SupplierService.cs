@@ -163,7 +163,7 @@ namespace SimplyShopMVC.Application.Services
 
             return listConnectionCategory;
         }
-        public void DeleteConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
+        public void EditConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
         {
             if(result.listIncomGroupId != null && result.listIncomGroupId.Count > 0)
             {
@@ -177,7 +177,7 @@ namespace SimplyShopMVC.Application.Services
                     }                
                 }
             }
-            if (result.options != null && result.options > 0 && result.connectingCategory != null) //kasowanie całego rekordu connect....  
+            if (result.options != null && result.options == 1 && result.connectingCategory != null) //kasowanie całego rekordu connect....  
             {
                 var listConnectCategoryGroupInIncomGroups = _supplierRepo.GetAllIncomGroup().Where(i=>i.ConnectCategoryGroupId == result.connectingCategory.Id).ToList();
                 if(listConnectCategoryGroupInIncomGroups != null)
@@ -189,6 +189,15 @@ namespace SimplyShopMVC.Application.Services
                     }
                 }
                 _supplierRepo.DeleteConnectCategoryGroup(result.connectingCategory.Id);
+            }
+            if (result.options != null && result.options == 2 && result.connectingCategory != null)
+            {
+                var selectedConnectingCategory = _supplierRepo.GetAllConnectCategoryGroup().FirstOrDefault(c=>c.Id == result.connectingCategory.Id);
+                if(selectedConnectingCategory != null)
+                {
+                    selectedConnectingCategory.CategoryId = result.connectingCategory.category.Id;
+                    _supplierRepo.UpdateConnectCategoryGroup(selectedConnectingCategory);
+                }
             }
         }
         public async Task<AddIncomItemsVm> LoadNewIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)
