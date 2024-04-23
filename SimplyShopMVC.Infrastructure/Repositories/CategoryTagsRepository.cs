@@ -32,6 +32,11 @@ namespace SimplyShopMVC.Infrastructure.Repositories
                 _context.SaveChanges();
             }
         }
+        public void AddConnectCategoryTags(ConnectCategoryTag ccTag)
+        {
+            _context.ConnectCategoryTags.Add(ccTag);
+            _context.SaveChanges();
+        }
         public async Task AddConnectCategoryTagsAsync(ItemTag sTag, int CategoryId)
         {
             var category = _context.Categories.FirstOrDefault(c => c.Id == CategoryId);
@@ -57,6 +62,21 @@ namespace SimplyShopMVC.Infrastructure.Repositories
         {
             var result = _context.ConnectCategoryTags.Where(a => a.CategoryId == CategoryId);
             _context.ConnectCategoryTags.RemoveRange(result);
+            _context.SaveChanges();
+        }
+        public void DeleteConnectionCategoryTagsWithTag(int CategoryId, int tagId)
+        {
+            var result = _context.ConnectCategoryTags.FirstOrDefault(a => a.CategoryId == CategoryId && a.ItemTagId==tagId);
+            if(result !=null)
+            {
+                _context.ConnectCategoryTags.Remove(result);
+                _context.SaveChanges();
+            }
+
+        }
+        public void UpdateConnectionCategoryTags(ConnectCategoryTag categoryTag)
+        {
+            _context.ConnectCategoryTags.Update(categoryTag);
             _context.SaveChanges();
         }
     }

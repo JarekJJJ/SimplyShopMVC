@@ -66,11 +66,13 @@ namespace SimplyShopMVC.Application.Services
             ConnectCategoryGroup conCatGroup = new ConnectCategoryGroup();
             conCatGroup.CategoryId = result.selectedCategory.Id;
             conCatGroup.GroupItemId = result.groupItem.Id;
-            if (result.selectedItemTags != null && result.selectedItemTags.Count > 0)
+            if (result.selectedItemTags != null && result.selectedItemTags > 0)
             {
-                conCatGroup.ItemTagId = result.selectedItemTags.FirstOrDefault();
+                conCatGroup.ItemTagId = result.selectedItemTags;
+                
             }
             var idConnectingCategoryGroup = _supplierRepo.AddConnectCategoryGroup(conCatGroup);
+
             if (result.listIncomGroupId != null && result.listIncomGroupId.Count > 0 && result.selectedCategory != null)
             {
                 List<int> incomsIdList = new List<int>();
@@ -98,14 +100,14 @@ namespace SimplyShopMVC.Application.Services
                         }
                     }
                 }
-                List<IncomGroup> listIncomGroup= new List<IncomGroup>();
-                foreach(var incomIdGroup in incomsIdList)
+                List<IncomGroup> listIncomGroup = new List<IncomGroup>();
+                foreach (var incomIdGroup in incomsIdList)
                 {
-                    var incomGroups = _supplierRepo.GetAllIncomGroup().FirstOrDefault(i =>i.GroupId == incomIdGroup);
-                    if(incomGroups != null)
+                    var incomGroups = _supplierRepo.GetAllIncomGroup().FirstOrDefault(i => i.GroupId == incomIdGroup);
+                    if (incomGroups != null)
                     {
                         listIncomGroup.Add(incomGroups);
-                    }               
+                    }
                 }
 
                 if (listIncomGroup != null && listIncomGroup.Count > 0)
@@ -120,7 +122,7 @@ namespace SimplyShopMVC.Application.Services
         }
         public ListConnectingCategoryVm GetConnectCategoryWithSupplierGroup()
         {
-          
+
             ListConnectingCategoryVm listConnectionCategory = new ListConnectingCategoryVm();
             var listConnectingGroup = _supplierRepo.GetAllConnectCategoryGroup().ToList();
             //.ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
@@ -165,24 +167,24 @@ namespace SimplyShopMVC.Application.Services
         }
         public void EditConnectCategoryWithSupplierGroup(ListConnectingCategoryVm result)
         {
-            if(result.listIncomGroupId != null && result.listIncomGroupId.Count > 0)
+            if (result.listIncomGroupId != null && result.listIncomGroupId.Count > 0)
             {
-                foreach(var item in result.listIncomGroupId)
+                foreach (var item in result.listIncomGroupId)
                 {
                     var connectCategoryGroup = _supplierRepo.GetAllIncomGroup().FirstOrDefault(i => i.Id == item);
-                    if(connectCategoryGroup != null)
+                    if (connectCategoryGroup != null)
                     {
                         connectCategoryGroup.ConnectCategoryGroupId = null;
                         _supplierRepo.UpdateIncomGroup(connectCategoryGroup);
-                    }                
+                    }
                 }
             }
             if (result.options != null && result.options == 1 && result.connectingCategory != null) //kasowanie całego rekordu connect....  
             {
-                var listConnectCategoryGroupInIncomGroups = _supplierRepo.GetAllIncomGroup().Where(i=>i.ConnectCategoryGroupId == result.connectingCategory.Id).ToList();
-                if(listConnectCategoryGroupInIncomGroups != null)
+                var listConnectCategoryGroupInIncomGroups = _supplierRepo.GetAllIncomGroup().Where(i => i.ConnectCategoryGroupId == result.connectingCategory.Id).ToList();
+                if (listConnectCategoryGroupInIncomGroups != null)
                 {
-                    foreach(var item in listConnectCategoryGroupInIncomGroups)
+                    foreach (var item in listConnectCategoryGroupInIncomGroups)
                     {
                         item.ConnectCategoryGroupId = null;
                         _supplierRepo.UpdateIncomGroup(item);
@@ -192,12 +194,57 @@ namespace SimplyShopMVC.Application.Services
             }
             if (result.options != null && result.options == 2 && result.connectingCategory != null)
             {
-                var selectedConnectingCategory = _supplierRepo.GetAllConnectCategoryGroup().FirstOrDefault(c=>c.Id == result.connectingCategory.Id);
-                if(selectedConnectingCategory != null)
+                var selectedConnectingCategory = _supplierRepo.GetAllConnectCategoryGroup().FirstOrDefault(c => c.Id == result.connectingCategory.Id);
+                if (selectedConnectingCategory != null)
                 {
                     selectedConnectingCategory.CategoryId = result.connectingCategory.category.Id;
                     _supplierRepo.UpdateConnectCategoryGroup(selectedConnectingCategory);
                 }
+            }
+            if (result.options != null && result.options == 3 && result.selectedItemTags != null && result.selectedCategory != null)
+            {
+                _categoryTagsRepo.DeleteConnectionCategoryTagsWithTag(result.selectedCategory.Id, result.selectedItemTags);
+            }
+            if (result.options != null && result.options == 4 && result.selectedItemTags != null && result.selectedCategory != null)
+            {
+                var selectedConnectingCategory = _supplierRepo.GetAllConnectCategoryGroup().FirstOrDefault(c => c.Id == result.connectingCategory.Id);
+                if (selectedConnectingCategory != null)
+                {
+                    selectedConnectingCategory.ItemTagId = result.selectedItemTags;
+                    _supplierRepo.UpdateConnectCategoryGroup(selectedConnectingCategory);
+                  var catTags =  _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(c => c.CategoryId == result.selectedCategory.Id);
+                    if (catTags != null)
+                    {
+                        _categoryTagsRepo.DeleteConnectionCategoryTags(catTags.CategoryId);
+                        catTags = new ConnectCategoryTag();
+                        catTags.CategoryId = result.selectedCategory.Id;
+                        catTags.ItemTagId = result.selectedItemTags;
+                        _categoryTagsRepo.AddConnectCategoryTags(catTags);
+                    }
+                    else
+                    {
+                        catTags = new ConnectCategoryTag(); 
+                        catTags.CategoryId = result.selectedCategory.Id;
+                        catTags.ItemTagId = result.selectedItemTags;
+                        _categoryTagsRepo.AddConnectCategoryTags(catTags);
+                    }
+                }
+                //// var sTag = _itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == result.selectedItemTags.FirstOrDefault());
+                // if (sTag != null)
+                // {
+
+                //     // _categoryTagsRepo.AddConnectCategoryTags(sTag, result.selectedCategory.Id);
+                // }
+            }
+            if (result.options != null && result.options == 5 && result.connectingCategory != null && result.groupItem != null)
+            {
+                var selectedGroupItem = _supplierRepo.GetAllConnectCategoryGroup().FirstOrDefault(c=>c.Id == result.connectingCategory.Id);
+                if (selectedGroupItem != null)
+                {
+                    selectedGroupItem.GroupItemId = result.groupItem.Id;
+                    _supplierRepo.UpdateConnectCategoryGroup(selectedGroupItem);
+                }
+
             }
         }
         public async Task<AddIncomItemsVm> LoadNewIncomItemsXML(AddIncomItemsVm incomItems, XDocument xmlDocument)

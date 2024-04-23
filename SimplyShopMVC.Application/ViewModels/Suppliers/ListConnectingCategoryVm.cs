@@ -18,7 +18,7 @@ namespace SimplyShopMVC.Application.ViewModels.Suppliers
         public List<GroupItemForListVm> listGroupItems { get; set; } = new List<GroupItemForListVm>();
         public GroupItemForListVm groupItem { get; set; }
         public List<int> listIncomGroupId { get; set; } 
-        public List<int> selectedItemTags { get; set; }
+        public int selectedItemTags { get; set; }
         public CategoryForListVm selectedCategory { get; set; }
         public int options { get; set; }
     }
