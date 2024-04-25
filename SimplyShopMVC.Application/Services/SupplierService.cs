@@ -138,7 +138,7 @@ namespace SimplyShopMVC.Application.Services
                         connectingCategory.category = category;
                         connectingCategory.listIncomGroup = _supplierRepo.GetAllIncomGroup().Where(g => g.ConnectCategoryGroupId == group.Id)
                             .ProjectTo<IncomGroupForListVm>(_mapper.ConfigurationProvider).ToList();
-                        var categoryTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(t => t.CategoryId == category.Id);
+                        var categoryTag = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(t => t.CategoryId == category.Id && t.ItemTagId == group.ItemTagId);
                         if (categoryTag != null)
                         {
                             var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(t => t.Id == categoryTag.ItemTagId));
@@ -221,7 +221,7 @@ namespace SimplyShopMVC.Application.Services
                 {
                     selectedConnectingCategory.ItemTagId = result.selectedItemTags;
                     _supplierRepo.UpdateConnectCategoryGroup(selectedConnectingCategory);
-                    var catTags = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(c => c.CategoryId == result.selectedCategory.Id);
+                    var catTags = _categoryTagsRepo.GetAllCategoryTags().FirstOrDefault(c => c.CategoryId == result.selectedCategory.Id && c.ItemTagId == result.selectedItemTags);
                     if (catTags != null)
                     {
                         _categoryTagsRepo.DeleteConnectionCategoryTags(catTags.CategoryId);
