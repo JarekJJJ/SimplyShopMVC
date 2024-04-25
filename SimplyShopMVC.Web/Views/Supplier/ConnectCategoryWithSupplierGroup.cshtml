@@ -19,11 +19,11 @@
                 {
                     <tr>
                         <td>@item.category.Name
-                            <div>
-                                <form asp-action="EditConnectCategoryWithSupplierGroup" method="post">
+                            <div class="input-group">
+                                <form class="" asp-action="EditConnectCategoryWithSupplierGroup" method="post">
                                     <input type="hidden" asp-for="options" value="2"/>
                                     <input type="hidden" asp-for="connectingCategory.Id" value="@item.Id"/>
-                                    <select class="form-select" asp-for="connectingCategory.category.Id">
+                                    <select class="" asp-for="connectingCategory.category.Id">
                                         @foreach (var category in Model.listCategories)
                                         {
                                             <option value="@category.Id" name="@category.Name" selected="@(category !=null && category.Id == item.category.Id ? "selected": null)">@category.Name</option>
@@ -39,11 +39,11 @@
                             </div>
                         </td>
                         <td>@item.groupItem.Name
-                            <div>
+                            <div class="input-group">
                                 <form asp-action="EditConnectCategoryWithSupplierGroup" method="post">
                                     <input type="hidden" asp-for="options" value="5" />
                                     <input type="hidden" asp-for="connectingCategory.Id" value="@item.Id" />
-                                    <select class="form-select form-select-sm" asp-for="groupItem.Id">
+                                    <select asp-for="groupItem.Id">
                                      <option selected>wybierz (marżę) </option>
                                     @foreach (var group in Model.listGroupItems)
                                     {
@@ -60,28 +60,33 @@
                             </div>
                         </td>
                         <td>
+                          
+                      <div class="row">
                             @if (item.itemTagsForList != null)
                             {
+                                <div class="col-auto m-1">
                                 <form asp-action="EditConnectCategoryWithSupplierGroup" enctype="multipart/form-data" method="post" class="row gy-2 gx-3 align-items-center">
                                     <input type="hidden" asp-for="options" value="3" />
                                     <input type="hidden" asp-for="selectedItemTags" value="@item.itemTagsForList.Id"/>
                                     <input type="hidden" asp-for="selectedCategory.Id" value="@item.category.Id" />
-                                    <button class="btn btn-outline-danger" onclick="confirmAction(event)">
-                                        <span class="text-dark">@item.itemTagsForList.Name</span>
+                                            <button class="btn btn-outline-danger m-1 p-0" onclick="confirmAction(event)">
+                                        <span class="text-dark" style="font-size: 0.7em;">@item.itemTagsForList.Name</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
                                             <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
                                             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
                                         </svg>
                                     </button>
                                 </form>
+                                </div>
                             }
-                            <span>Dodaj Tag:</span>
+                            </div>
+                            <div class="input-group">
                             <form asp-action="EditConnectCategoryWithSupplierGroup" method="post">
                                 <input type="hidden" asp-for="options" value="4" />
                                 <input type="hidden" asp-for="connectingCategory.Id" value="@item.Id" />
                                 <input type="hidden" asp-for="selectedCategory.Id" value="@item.category.Id" />
-                                <select class="form-select form-select-sm" asp-for="selectedItemTags">
-                                     <option selected>wybierz tag </option>
+                                <select class="" asp-for="selectedItemTags">
+                                     <option selected>dodaj tag: </option>
                                     @foreach (var tag in Model.listItemTags)
                                     {
                                         <option value="@tag.Id" name="@tag.Name">@tag.Name</option>
@@ -94,6 +99,7 @@
                                     </svg>
                                 </button>
                             </form>
+                            </div>
                         </td>
                         <td>
                             <div class="row">
@@ -171,22 +177,24 @@
 
                 @foreach (var mainCheck in Model.listIncomGroups.Where(a => a.GroupIdHome == 0).ToList())
                 {
-
+                    var mainConnectCategoryGroup = Model.listConnectedIncomGroups.FirstOrDefault(i => i.GroupId == mainCheck.GroupId);
                     <div class="form-check col-md-3">
                         <input class="form-check-input" type="checkbox" name="listIncomGroupId" value="@mainCheck.GroupId.ToString()" id="flexCheckDefault_@mainCheck.Id">
-                        <label class="form-check-label" for="flexCheckDefault_@mainCheck.Id"> <span class="fw-bold"> @mainCheck.Name </span> </label>
+                        <label class="form-check-label" for="flexCheckDefault_@mainCheck.Id"> <span class="fw-bold @(mainConnectCategoryGroup != null ? "text-primary": null)"> @mainCheck.Name </span> </label>
                     </div>
                     @foreach (var childCheck in Model.listIncomGroups.Where(c => c.GroupIdHome == mainCheck.GroupId))
                     {
+                         var checkConnectCategoryGroup = Model.listConnectedIncomGroups.FirstOrDefault(i => i.GroupId == childCheck.GroupId);  
                         <div class="form-check ms-1 col-md-3">
                             <input class="form-check-input" type="checkbox" name="listIncomGroupId" value="@childCheck.GroupId.ToString()" id="flexCheckDefault_@childCheck.Id">
-                            <label class="form-check-label" for="flexCheckDefault_@childCheck.Id"> - @childCheck.Name </label>
+                            <label class="form-check-label" for="flexCheckDefault_@childCheck.Id"><span class="@(checkConnectCategoryGroup != null ? "text-primary": null)"> - @childCheck.Name </span></label>
                         </div>
                         @foreach (var nextChild in Model.listIncomGroups.Where(c => c.GroupIdHome == childCheck.GroupId))
                         {
+                            var checkConnectNextChild = Model.listConnectedIncomGroups.FirstOrDefault(i => i.GroupId == nextChild.GroupId);
                             <div class="form-check ms-2 col-md-3 fs-6">
                                 <input class="form-check-input" type="checkbox" name="listIncomGroupId" value="@nextChild.GroupId.ToString()" id="flexCheckDefault_@nextChild.Id">
-                                <label class="form-check-label" for="flexCheckDefault_@nextChild.Id">  -- @nextChild.Name </label>
+                                <label class="form-check-label" for="flexCheckDefault_@nextChild.Id"><span class="@(checkConnectNextChild != null ? "text-primary": null)">  -- @nextChild.Name </span></label>
                             </div>
                         }
                     }

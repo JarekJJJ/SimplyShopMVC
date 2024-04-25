@@ -436,7 +436,7 @@ namespace SimplyShopMVC.Application.Services
 
             if (searchCategory == null)
             {
-                var listCategory = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).Take(20).ToList();
+                var listCategory = _itemRepo.GetAllCategories().ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
                 updateCategoryVm.listCategory = listCategory;
                 foreach (var category in updateCategoryVm.listCategory)
                 {

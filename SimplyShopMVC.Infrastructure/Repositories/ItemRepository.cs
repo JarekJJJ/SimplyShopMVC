@@ -49,7 +49,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
             var items = _context.Items;
             return items;
         }
-
         public void UpdateItem(Item item)
         {
             var existingItem = _context.Items.FirstOrDefault(i => i.Id == item.Id);
@@ -78,7 +77,6 @@ namespace SimplyShopMVC.Infrastructure.Repositories
              await _context.SaveChangesAsync();
             }
         }
-
         public IQueryable<ItemTag> GetAllItemTags()
         {
             var result = _context.ItemTags;
