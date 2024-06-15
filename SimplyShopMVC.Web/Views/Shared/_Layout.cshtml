@@ -214,12 +214,18 @@
         </div>
     </footer>
     <script src="~/lib/jquery-3.7.1.min.js"></script>
+    <script src="~/lib/jquery.cookie/jquery.cookie.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/tinymce/tinymce.js"></script>
     <script src="~/js/slick.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
+    <div class="privacy-police-info" style="display:none">
+        Serwis wykorzystuje pliki cookies. Korzystając ze strony wyrażasz zgodę na wykorzystanie plików cookies.
+        <button onclick="closePrivacyPolice()" type="button" class="btn btn-light mx-3 my-1 privacy-police-btn">
+            Ok, rozumiem.
+        </button>
+    </div>
     <script>
         tinymce.init({
             selector: '#mytextarea',
@@ -248,6 +254,14 @@
                 scrollThreshold = scrollPosition;
             });
         });
+        $(document).ready(function() {
+            if($.cookie("privacyPolice") !== "1")
+                $(".privacy-police-info").show();
+        });
+        function closePrivacyPolice() {
+            $(".privacy-police-info").hide();
+            $.cookie("privacyPolice", "1", {path:'/', expires: 365 });
+        }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

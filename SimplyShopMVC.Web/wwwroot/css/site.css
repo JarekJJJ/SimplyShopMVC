@@ -234,3 +234,16 @@ body {
     display: inline-block;
     margin-right: 10px;
 }
+.privacy-police-info {
+    font-size:12px;
+    position: fixed;
+    bottom: 0px;
+    background-color: #464646;
+    width:100%;
+    color: lightgray;
+    text-align: center;
+    padding: 5px 0;
+}
+.privacy-police-btn{
+    font-size: 10px
+}
