@@ -247,3 +247,7 @@ body {
 .privacy-police-btn{
     font-size: 10px
 }
+.btn-link {
+    text-decoration: none;
+    color:black;
+}

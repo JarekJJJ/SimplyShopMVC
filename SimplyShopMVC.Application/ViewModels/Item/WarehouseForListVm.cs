@@ -15,6 +15,7 @@ namespace SimplyShopMVC.Application.ViewModels.Item
         public string? Description { get; set; }
         public int DeliveryTime { get; set; }
         public bool IsActive { get; set; }
+        public bool onlyRegistered { get; set; }
 
         public void Mapping(Profile profile)
         {

@@ -131,9 +131,13 @@ namespace SimplyShopMVC.Application.Services
                 var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));
                 listItem.tags.Add(itemTag);
             }
-            var cart = GetCart(userId);
-            var cartItems = GetCartItemsToCart(cart.Id);
-            listItem.cart = cart;
+            if(userId!= null)
+            {
+                var cart = GetCart(userId);
+                var cartItems = GetCartItemsToCart(cart.Id);
+                listItem.cart = cart;
+            }
+       
 
             return listItem;
         }
@@ -144,9 +148,12 @@ namespace SimplyShopMVC.Application.Services
             var receivedCategories = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             listItemShopIndexVm.categories = receivedCategories;
-            var cart = GetCart(userId);
-            var cartItems = GetCartItemsToCart(cart.Id);
-            listItemShopIndexVm.cart = cart;
+            if(userId != null)
+            {
+                var cart = GetCart(userId);
+                var cartItems = GetCartItemsToCart(cart.Id);
+                listItemShopIndexVm.cart = cart;
+            }         
             return listItemShopIndexVm;
         }
         //funkcje 

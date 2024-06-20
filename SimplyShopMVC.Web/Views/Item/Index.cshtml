@@ -16,20 +16,20 @@
         <div class="d-flex align-items-start flex-md-column mb-1 flex-sm-row flex-wrap" style="height:550px">
             @foreach (var mainCategory in mainCategories)
             {
-               // <div class="col-md-3 col-sm-6">
-                    <div class="col-md-2 col-sm-6">
-                        <span class="fw-bold">@mainCategory.Name</span>
-                    </div>
-                   // @{
-                        var subCategory = Model.categories.Where(i => i.MainCategoryId == mainCategory.Id);
-                  //  }
-                    @foreach (var subCat in subCategory)
-                    {
+                // <div class="col-md-3 col-sm-6">
+                <div class="col-md-2 col-sm-6">
+                    <span class="fw-bold">@mainCategory.Name</span>
+                </div>
+                // @{
+                var subCategory = Model.categories.Where(i => i.MainCategoryId == mainCategory.Id);
+                //  }
+                @foreach (var subCat in subCategory)
+                {
                     <div class=" col-md-2 col-sm-6 ms-2">
-                            <span class="">- @Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 text-black link-underline link-underline-opacity-0 link-underline-opacity-50-hover"})</span>
-                        </div>
-                    }
-            //    </div>
+                        <span class="">- @Html.ActionLink(subCat.Name,"Index", new {selectedCategory=subCat.Id}, new{@class="link-offset-2 text-black link-underline link-underline-opacity-0 link-underline-opacity-50-hover"})</span>
+                    </div>
+                }
+                //    </div>
             }
         </div>
     </div>
@@ -81,8 +81,51 @@
         {
             var mainImage = item.images.FirstOrDefault();
             <div class="col-md-3 p-1 cart">
-                <form asp-controller="Cart" asp-action="AddCartItem" method="post">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form asp-controller="Cart" asp-action="AddCartItem" method="post">
 
+                        <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
+                            <div class=" badge bg-primary text-wrap" style="width: 6rem;">
+                                Nowość
+                            </div>
+                            <div class="text-center d-flex justify-content-center m-1">
+                                <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@item.name">
+                            </div>
+                            <div class="text-center">
+                                <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
+                            </div>
+                            <div class="text-center text-container">
+                                <button type="button" class="btn btn-link" id="modal-description-btn-@item.id"><span class="fs-6">@item.name</span></button>
+                                <partial name="Modals/_ModalDescription"
+                             model="@(new ModalParams
+                                        {
+                                    Id="modal-description-" + item.id,
+                                    Title=item.name ,
+                                    Description= item.description
+                                    })" />
+                            </div>
+                            <div class="flex-grow-1 d-flex align-items-end justify-content-center">
+                                <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
+                                <input type="hidden" name="pageNo" value="@Model.currentPage" />
+                                <input type="hidden" id="@item.id" asp-for="@Model.cartItem.ItemId" value="@item.id">
+                                <input type="hidden" asp-for="cartItem.Name" value="@item.name" />
+                                <input type="hidden" id="prizeB_@item.id" asp-for="@Model.cartItem.PriceN" value="@item.priceB" />
+                                <input type="hidden" asp-for="cartItem.WarehouseId" value="@item.warehouseId" />
+                                <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id" />
+                                <input type="hidden" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@item.id" value="1" />
+                                <button type="submit" class="btn cart button btn-danger @(item.quantity>0 ? null : "disabled")">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                    </svg> <span class="text-light">Dodaj do koszyka</span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </form>
+                }
+                @if (User.Identity.IsAuthenticated == false)
+                {
                     <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
                         <div class=" badge bg-primary text-wrap" style="width: 6rem;">
                             Nowość
@@ -94,74 +137,75 @@
                             <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
                         </div>
                         <div class="text-center text-container">
-                            <span class="fs-6"><a href="">@Html.ActionLink(item.name, "DetailItem","Item", new {selectedItem=item.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</a></span>
+                            <button type="button" class="btn btn-link" id="modal-description-btn-@item.id"><span class="fs-6">@item.name</span></button>
+                            <partial name="Modals/_ModalDescription"
+                         model="@(new ModalParams
+                                        {
+                                    Id="modal-description-" + item.id,
+                                    Title=item.name ,
+                                    Description= item.description
+                                    })" />
                         </div>
-                        <div class="flex-grow-1 d-flex align-items-end justify-content-center">
-                            <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
-                            <input type="hidden" name="pageNo" value="@Model.currentPage" />
-                            <input type="hidden" id="@item.id" asp-for="@Model.cartItem.ItemId" value="@item.id">
-                            <input type="hidden" asp-for="cartItem.Name" value="@item.name" />
-                            <input type="hidden" id="prizeB_@item.id" asp-for="@Model.cartItem.PriceN" value="@item.priceB" />
-                            <input type="hidden" asp-for="cartItem.WarehouseId" value="@item.warehouseId" />
-                            <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id" />
-                            <input type="hidden" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@item.id" value="1" />
-                            <button type="submit" class="btn cart button btn-danger @(item.quantity>0 ? null : "disabled")">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
-                                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                                </svg> <span class="text-light">Dodaj do koszyka</span>
-                            </button>
 
-                        </div>
                     </div>
-                </form>
+                }
+            </div>
+        }
+
+    }
+
+
+    <div class="col-md-2 bg-white me-2 mt-2 d-flex align-items-center">
+        <p class="text-center mb-auto">Filtry:</p>
+
+        @if (Model.tags != null)
+        {
+            <div class="col-md-6 btn-group-vertical mb-auto mt-5" role="group" aria-label="Vertical radio toggle button group">
+                <input type="radio" class="btn-check filtrRadio" name="options-base" id="0" autocomplete="off" checked="@(Model.selectedTag==0 ? true:false)">
+                <label class="btn btn-outline-dark" for="0">brak</label>
+                @foreach (var filtr in Model.tags)
+                {
+
+                    <input type="radio" class="btn-check filtrRadio border border-1 m-1" name="options-base" id="@filtr.Id" autocomplete="off" checked="@(Model.selectedTag==filtr.Id ? true:false)">
+                    <label class="btn btn-outline-info" for="@filtr.Id">@filtr.Name</label>
+
+                }
             </div>
 
 
         }
-    }
-    else
-    {
-        <div class="col-md-2 bg-white me-2 mt-2 d-flex align-items-center">
-            <p class="text-center mb-auto">Filtry:</p>
 
-            @if (Model.tags != null)
+    </div>
+    <div class="col-md-9 bg-light p-0">
+        <table class="table table-striped mt-2" style="display:none" id="produktyLista">
+            <tr>
+                <th>Nazwa towaru</th>
+                <th>dostępna ilość</th>
+                <th>cena brutto</th>
+                <th>czas dostawy</th>
+                <th>zamów</th>
+            </tr>
+
+
+            @foreach (var sItem in Model.categoryItems)
             {
-                <div class="col-md-6 btn-group-vertical mb-auto mt-5" role="group" aria-label="Vertical radio toggle button group">
-                    <input type="radio" class="btn-check filtrRadio" name="options-base" id="0" autocomplete="off" checked="@(Model.selectedTag==0 ? true:false)">
-                    <label class="btn btn-outline-dark" for="0">brak</label>
-                    @foreach (var filtr in Model.tags)
-                    {
-
-                        <input type="radio" class="btn-check filtrRadio border border-1 m-1" name="options-base" id="@filtr.Id" autocomplete="off" checked="@(Model.selectedTag==filtr.Id ? true:false)">
-                        <label class="btn btn-outline-info" for="@filtr.Id">@filtr.Name</label>
-
-                    }
-                </div>
-
-
-            }
-
-        </div>
-        <div class="col-md-9 bg-light p-0">
-            <table class="table table-striped mt-2" style="display:none" id="produktyLista">
                 <tr>
-                    <th>Nazwa towaru</th>
-                    <th>dostępna ilość</th>
-                    <th>cena brutto</th>
-                    <th>czas dostawy</th>
-                    <th>zamów</th>
-                    <th>szczegóły</th>
-                </tr>
-
-
-                @foreach (var sItem in Model.categoryItems)
-                {
-                    <tr>
-                        <td>@sItem.name</td>
-                        <td>@sItem.quantity</td>
-                        <td>@sItem.priceB.ToString("N2")</td>
-                        <td>@sItem.deliveryTime</td>
-                        <td>
+                    <td>
+                        <button type="button" class="btn btn-link" id="modal-description-btn-@sItem.id"><span class="fs-6">@sItem.name</span></button>
+                        <partial name="Modals/_ModalDescription"
+                             model="@(new ModalParams
+                                        {
+                                    Id="modal-description-" + sItem.id,
+                                    Title=sItem.name ,
+                                    Description= sItem.description
+                                    })" />
+                    </td>
+                    <td>@sItem.quantity</td>
+                    <td>@sItem.priceB.ToString("N2")</td>
+                    <td>@sItem.deliveryTime</td>
+                    <td>
+                        @if (User.Identity.IsAuthenticated)
+                        {
                             <form asp-controller="Cart" asp-action="AddCartItem" method="post">
 
                                 <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
@@ -180,29 +224,32 @@
                                 </button>
 
                             </form>
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <form asp-controller="Item" asp-action="AddPcSet" method="post">
-                                    <input type="hidden" name="options" value="1" />
-                                    <input type="hidden" id="@sItem.id" asp-for="listItemsSets.setsItem.ItemId" value="@sItem.id">
-                                    <input type="hidden" min="0" asp-for="listItemsSets.setsItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
-                                    <button type="submit" class="btn btn-dark ms-4 me-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
-                                            <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                                        </svg> <span class="text-light link-underline link-underline-opacity-0"></span>
-                                    </button>
-                                </form>
-                            }
-                        </td>
-                        <td> <div class="h7">  <span class="">@Html.ActionLink("szczegóły","DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0"})</span> </div></td>
-                    </tr>
-                }
-            </table>
-            <div class="col-md-12 bg-light" style="display:none" id="produktyPanel">
+                        }
 
-                @foreach (var sItem in Model.categoryItems)
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form asp-controller="Item" asp-action="AddPcSet" method="post">
+                                <input type="hidden" name="options" value="1" />
+                                <input type="hidden" id="@sItem.id" asp-for="listItemsSets.setsItem.ItemId" value="@sItem.id">
+                                <input type="hidden" min="0" asp-for="listItemsSets.setsItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
+                                <button type="submit" class="btn btn-dark ms-4 me-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                    </svg> <span class="text-light link-underline link-underline-opacity-0"></span>
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="col-md-12 bg-light" style="display:none" id="produktyPanel">
+
+            @foreach (var sItem in Model.categoryItems)
+            {
+                var mainImage = sItem.images.FirstOrDefault();
+                @if (User.Identity.IsAuthenticated)
                 {
-                    var mainImage = sItem.images.FirstOrDefault();
                     <form asp-controller="Cart" asp-action="AddCartItem" method="post">
 
                         <div class="col-md-12 d-flex mt-2 bg-white">
@@ -226,7 +273,14 @@
                                     </div>
                                 </div>
                                 <div class="p-1">
-                                    <span class="">@Html.ActionLink(sItem.name,"DetailItem", new {selectedItem=sItem.id}, new{@class="link-offset-2 link-underline link-underline-opacity-0 h4 text-black text-start"})</span>
+                                    <button type="button" class="btn btn-link" id="modal-description-btn-v2-@sItem.id"><span class="fs-6">@sItem.name</span></button>
+                                    <partial name="Modals/_ModalDescription"
+                                     model="@(new ModalParams
+                                        {
+                                    Id="modal-description-v2-" + sItem.id,
+                                    Title=sItem.name ,
+                                    Description= sItem.description
+                                    })" />
                                 </div>
                                 <div class="mt-auto row">
                                     <div class="col p-1"><span class="text-secondary">Ean: @sItem.eanCode</span></div>
@@ -269,25 +323,81 @@
                             </div>
                         </div>
                     </form>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <form asp-controller="Item" asp-action="AddPcSet" method="post">
-                            <input type="hidden" name="options" value="1" />
-                            <input type="hidden" id="@sItem.id" asp-for="listItemsSets.setsItem.ItemId" value="@sItem.id">
-                            <input type="hidden" min="0" asp-for="listItemsSets.setsItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
-                            <button type="submit" class="btn btn-dark ms-4 me-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
-                                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
-                                </svg> <span class="text-light link-underline link-underline-opacity-0">+PcSet</span>
-                            </button>
-                        </form>
-                    }
+                }
+                @if (User.Identity.IsAuthenticated == false)
+                {
+                    <div class="col-md-12 d-flex mt-2 bg-white">
+                        <div class="text-center d-flex justify-content-center m-1 col-md-2">
+                            <div class="d-flex align-self-center justify-content-center">
+                                <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name">
+                            </div>
+                        </div>
+                        <div class="d-flex  flex-grow-1 p-4 flex-column">
+                            <div class="mb-auto">
+                                <div class="d-inline-flex">
+                                    @if ((sItem.tags.Any()) && (sItem.tags != null))
+                                    {
+                                        @foreach (var tags in sItem.tags)
+                                        {
+                                            <div class=" badge bg-danger text-wrap m-1" style="width: 6rem;">
+                                                <span>@tags.Name</span>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="p-1">
+                                <button type="button" class="btn btn-link" id="modal-description-btn-v2-@sItem.id"><span class="fs-6">@sItem.name</span></button>
+                                <partial name="Modals/_ModalDescription"
+                                 model="@(new ModalParams
+                                        {
+                                    Id="modal-description-v2-" + sItem.id,
+                                    Title=sItem.name ,
+                                    Description= sItem.description
+                                    })" />
+                            </div>
+                            <div class="mt-auto row">
+                                <div class="col p-1"><span class="text-secondary">Ean: @sItem.eanCode</span></div>
+                                <div class="col p-1"><span class="text-secondary">Symbol: @sItem.itemSymbol</span></div>
+                                <div class="col p-1"><span class="text-secondary">Czas wysyłki: do @sItem.deliveryTime dni</span></div>
+                                @if (sItem.quantity > 0)
+                                {
+                                    <div class="col p-1"><span class="text-secondary">Ilość na magazynie: @sItem.quantity szt.</span></div>
+                                }
+                                else
+                                {
+                                    <div class="col p-1"><span class="text-secondary">Chwilowo niedostępny - towar na zamówienie.</span></div>
+                                }
+                            </div>
+
+                        </div>
+                        <div class="d-flex align-items-end flex-column mb-3" style="height: 200px;">
+                            <div class="p-2 justify-content-center text-center m-auto">
+                                <span class="fs-5 fw-bolder text-success">@sItem.priceB.ToString("N2") zł</span>
+                            </div>
+                        </div>
+                    </div>
                 }
 
+                @if (User.IsInRole("Admin"))
+                {
+                    <form asp-controller="Item" asp-action="AddPcSet" method="post">
+                        <input type="hidden" name="options" value="1" />
+                        <input type="hidden" id="@sItem.id" asp-for="listItemsSets.setsItem.ItemId" value="@sItem.id">
+                        <input type="hidden" min="0" asp-for="listItemsSets.setsItem.Quantity" class="form-control p-1" id="quantity_@sItem.id" value="1" data-val="true" aria-describedby="inputGroup-sizing-lg" style="max-width: 100px;">
+                        <button type="submit" class="btn btn-dark ms-4 me-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                            </svg> <span class="text-light link-underline link-underline-opacity-0">+PcSet</span>
+                        </button>
+                    </form>
+                }
+            }
 
-            </div>
 
         </div>
+
+    </div>
     }
 
 </div>
@@ -361,6 +471,19 @@
             }
 
         };
+
+        $(document).ready(function () {
+            $('[id ^= "modal-description-btn-"]').on('click', function () {
+                var itemId = $(this).attr('id').split('-')[3];
+                $('#modal-description-' + itemId).modal('show');
+            });
+        });
+        $(document).ready(function () {
+            $('[id ^= "modal-description-btn-v2-"]').on('click', function () {
+                var itemId = $(this).attr('id').split('-')[4];
+                $('#modal-description-v2-' + itemId).modal('show');
+            });
+        });
     </script>
-}
+    }
 

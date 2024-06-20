@@ -121,7 +121,6 @@ namespace SimplyShopMVC.Application.Services
             throw new NotImplementedException();
         }
 
-
         public void AddTagsToItem(List<int> tags, int itemId)
         {
             _itemRepo.DeleteConnectionItemTags(itemId);
@@ -498,7 +497,7 @@ namespace SimplyShopMVC.Application.Services
         {
             UpdateWarehouseVm updateWarehouse = new UpdateWarehouseVm();
             updateWarehouse.countWarehouse = new List<CountWarehouseVm>();
-            if (searchWarehouse == null)
+            if (String.IsNullOrEmpty(searchWarehouse))
             {
                 var listWarehouse = _itemRepo.GetAllWarehouses().ProjectTo<WarehouseForListVm>(_mapper.ConfigurationProvider).Take(20).ToList();
                 updateWarehouse.listWarehouse = listWarehouse;
@@ -508,6 +507,10 @@ namespace SimplyShopMVC.Application.Services
                     var count = _itemRepo.GetAllItemWarehouses().Where(i => i.WarehouseId == warehouse.Id).Count();
                     countWarehouseVm.countItem = count;
                     countWarehouseVm.warehouseId = warehouse.Id;
+                    if(warehouse.onlyRegistered == null)
+                    {
+                        warehouse.onlyRegistered = true;
+                    }
                     updateWarehouse.countWarehouse.Add(countWarehouseVm);
                 }
                 return updateWarehouse;

@@ -12,6 +12,7 @@ using System.Data;
 
 namespace SimplyShopMVC.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         private readonly IItemService _itemService;
@@ -148,17 +149,20 @@ namespace SimplyShopMVC.Web.Controllers
             return RedirectToAction("ListItemTagToUpdate");
         }
         // ----------- Category ----------
+        [Authorize(Roles = "Admin")]
         public IActionResult ListCategoryToUpdate(string? searchCategory)
         {
             var categoryList = _itemService.ListCategoryToUpdate(searchCategory);
             return View(categoryList);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult UpdateCategory(int categoryId)
         {
             var category = _itemService.GetCategoryToUpdate(categoryId);
             return View(category);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult UpdateCategory(UpdateCategoryVm model, int options)
         {
@@ -166,17 +170,20 @@ namespace SimplyShopMVC.Web.Controllers
             return RedirectToAction("ListCategoryToUpdate");
         }
         //----------Warehouse-----------------
+        [Authorize(Roles = "Admin")]
         public IActionResult ListWarehouseToUpdate(string? searchWarehouse)
         {
             var warehouseList = _itemService.ListWarehouseToUpdate(searchWarehouse);
             return View(warehouseList);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult UpdateWarehouse(int warehouseId)
         {
             var warehouse = _itemService.GetWarehouseToUpdate(warehouseId);
             return View(warehouse);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult UpdateWarehouse(UpdateWarehouseVm model, int options)
         {

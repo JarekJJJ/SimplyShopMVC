@@ -26,14 +26,17 @@ namespace SimplyShopMVC.Web.Controllers
             _settingsService = settingsService;
             _setService = setService;
         }
-        [Authorize]
+        
         [HttpGet]
         public IActionResult Index(int? selectedCategory, string searchString)
         {
             var listCategories = new ListItemShopIndexVm();
             var iduser = _userManager.GetUserId(User);
             var userDetail = _userManager.GetUserName(User);
-            _settingsService.AddUserSettings(iduser, userDetail);
+            if(iduser != null)
+            {
+                _settingsService.AddUserSettings(iduser, userDetail);
+            }
             if (String.IsNullOrEmpty(searchString))
             {
                 searchString= string.Empty;
