@@ -75,7 +75,7 @@
     </div>
 </form>
 <div class="row mt-1 bg-white">
-    @if ((Model.categoryItems.Count == 0) && (Model.newsItems != null))
+   @* @if ((Model.categoryItems.Count == 0) && (Model.newsItems != null))
     {
         @foreach (var item in Model.newsItems)
         {
@@ -152,9 +152,11 @@
             </div>
         }
 
+    }*@
+    @if (Model.categoryItems.Count == 0)
+    {
+        <vc:box-new-items number="16"/>
     }
-
-
     <div class="col-md-2 bg-white me-2 mt-2 d-flex align-items-center">
         <p class="text-center mb-auto">Filtry:</p>
 

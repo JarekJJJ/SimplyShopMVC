@@ -1,0 +1,90 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Front.ListItemShopIndexVm
+@if (Model.newsItems != null)
+{
+    @foreach (var item in Model.newsItems)
+    {
+        var mainImage = item.images.FirstOrDefault();
+        <div class="col-md-3 p-1 cart">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="Cart" asp-action="AddCartItem" method="post">
+
+                    <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
+                        <div class=" badge bg-primary text-wrap" style="width: 6rem;">
+                            Nowość
+                        </div>
+                        <div class="text-center d-flex justify-content-center m-1">
+                            <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@item.name">
+                        </div>
+                        <div class="text-center">
+                            <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
+                        </div>
+                        <div class="text-center text-container">
+                            <button type="button" class="btn btn-link" id="modal-description-btn-@item.id"><span class="fs-6">@item.name</span></button>
+                            <partial name="Modals/_ModalDescription"
+                         model="@(new ModalParams
+                                        {
+                                    Id="modal-description-" + item.id,
+                                    Title=item.name ,
+                                    Description= item.description
+                                    })" />
+                        </div>
+                        <div class="flex-grow-1 d-flex align-items-end justify-content-center">
+                            <input type="hidden" asp-for="selectedCategory" value="@Model.selectedCategory" />
+                            <input type="hidden" name="pageNo" value="@Model.currentPage" />
+                            <input type="hidden" id="@item.id" asp-for="@Model.cartItem.ItemId" value="@item.id">
+                            <input type="hidden" asp-for="cartItem.Name" value="@item.name" />
+                            <input type="hidden" id="prizeB_@item.id" asp-for="@Model.cartItem.PriceN" value="@item.priceB" />
+                            <input type="hidden" asp-for="cartItem.WarehouseId" value="@item.warehouseId" />
+                            <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id" />
+                            <input type="hidden" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@item.id" value="1" />
+                            <button type="submit" class="btn cart button btn-danger @(item.quantity>0 ? null : "disabled")">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
+                                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z" />
+                                </svg> <span class="text-light">Dodaj do koszyka</span>
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            }
+            @if (User.Identity.IsAuthenticated == false)
+            {
+                <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
+                    <div class=" badge bg-primary text-wrap" style="width: 6rem;">
+                        Nowość
+                    </div>
+                    <div class="text-center d-flex justify-content-center m-1">
+                        <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@item.name">
+                    </div>
+                    <div class="text-center">
+                        <span class=""><strong>@item.priceB.ToString("N2") zł</strong></span>
+                    </div>
+                    <div class="text-center text-container">
+                        <button type="button" class="btn btn-link" id="modal-description-btn-@item.id"><span class="fs-6">@item.name</span></button>
+                        <partial name="Modals/_ModalDescription"
+                     model="@(new ModalParams
+                                        {
+                                    Id="modal-description-" + item.id,
+                                    Title=item.name ,
+                                    Description= item.description
+                                    })" />
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+
+}
+@section Scripts
+    {
+   <script type="text/javascript">       
+        $(document).ready(function () {
+            $('[id ^= "modal-description-btn-"]').on('click', function () {
+                var itemId = $(this).attr('id').split('-')[3];
+                $('#modal-description-' + itemId).modal('show');
+            });
+        });
+    </script>
+    }

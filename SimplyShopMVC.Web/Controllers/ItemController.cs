@@ -55,8 +55,8 @@ namespace SimplyShopMVC.Web.Controllers
             {
                 listCategories = _frontService.GetAllCategories(iduser);
                 listCategories.categoryItems = new List<FrontItemForList>();
-                var newsItems = _frontService.GetItemsToIndex(16, "Nowość", iduser);
-                listCategories.newsItems = newsItems;
+               // var newsItems = _frontService.GetItemsToIndex(16, "Nowość", iduser);
+               // listCategories.newsItems = newsItems;
             }
             listCategories.itemToOrder = new FrontItemForList();
             return View(listCategories);
