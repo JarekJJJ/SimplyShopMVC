@@ -17,6 +17,7 @@ using SimplyShopMVC.Domain.Model.Order;
 using Microsoft.AspNetCore.Identity;
 using iText.Layout.Element;
 using SimplyShopMVC.Infrastructure.Migrations;
+using System.Security.Claims;
 
 namespace SimplyShopMVC.Application.Services
 {

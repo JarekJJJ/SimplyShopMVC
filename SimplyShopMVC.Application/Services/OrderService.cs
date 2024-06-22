@@ -129,6 +129,7 @@ namespace SimplyShopMVC.Application.Services
             listCart.Add(cart);
             listCartItems.listCartItems = cartItemsForList;
             listCartItems.listCart = listCart;
+            listCartItems.countCartItems = listCartItems.listCartItems.Count;
             return listCartItems;
         }
 

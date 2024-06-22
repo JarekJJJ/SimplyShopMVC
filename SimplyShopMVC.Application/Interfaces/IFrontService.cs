@@ -1,5 +1,6 @@
 ﻿using SimplyShopMVC.Application.ViewModels.Front;
 using SimplyShopMVC.Application.ViewModels.Item;
+using SimplyShopMVC.Application.ViewModels.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace SimplyShopMVC.Domain.Interface
         List<FrontItemForList> GetItemsToIndex(int quantityItem, string tagName, string userId);
         ListItemShopIndexVm GetAllCategories(string userId);
         ListItemShopIndexVm GetItemsByCategory(int categoryId, int pageSize, int pageNo, string searchString, int selectedTags, string userId);
+        CartForListVm GetCart(string userId);
     }
 }
