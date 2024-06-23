@@ -251,6 +251,7 @@ body {
     text-decoration: none;
     color:black;
 }
-.cartCollapse{
-    z-index:1501;
+.cartDropDown {
+    z-index: 1501;
+    transform: translateX(0%) !important;
 }

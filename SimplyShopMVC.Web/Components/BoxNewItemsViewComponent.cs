@@ -25,9 +25,9 @@ namespace SimplyShopMVC.Web.Components
             if (userId != null)
             {
                 var actualCart = _frontService.GetCart(userId);
-                listCategories.newsItems = newsItems;
                 listCategories.cart = actualCart;
             }
+            listCategories.newsItems = newsItems;
             //logika podobna do kontrolera          
             return View(listCategories);
         }
