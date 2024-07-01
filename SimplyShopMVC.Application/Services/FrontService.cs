@@ -32,9 +32,10 @@ namespace SimplyShopMVC.Application.Services
         private readonly IOmnibusHelper _omnibusHelper;
         private readonly IOrderRepository _orderRepo;
         private readonly IUserRepository _userRepo;
+        private readonly IFavoriteItemRepository _favoriteItemRepo;
 
         public FrontService(ISupplierRepository supplierRepo, IMapper mapper, IWebHostEnvironment webHost, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ICategoryTagsRepository categoryTagsRep,
-            IOmnibusHelper omnibusHelper, IOrderRepository orderRepo, IUserRepository userRepo)
+            IOmnibusHelper omnibusHelper, IOrderRepository orderRepo, IUserRepository userRepo, IFavoriteItemRepository favoriteItemRepo)
         {
             _supplierRepo = supplierRepo;
             _mapper = mapper;
@@ -45,6 +46,7 @@ namespace SimplyShopMVC.Application.Services
             _omnibusHelper = omnibusHelper;
             _orderRepo = orderRepo;
             _userRepo = userRepo;
+            _favoriteItemRepo = favoriteItemRepo;
         }
 
         public FrontItemForList GetItemDetail(int id, string userId)
@@ -132,13 +134,13 @@ namespace SimplyShopMVC.Application.Services
                 var itemTag = _mapper.Map<ItemTagsForListVm>(_itemRepo.GetAllItemTags().FirstOrDefault(i => i.Id == tag.ItemTagId));
                 listItem.tags.Add(itemTag);
             }
-            if(userId!= null)
+            if (userId != null)
             {
                 var cart = GetCart(userId);
                 var cartItems = GetCartItemsToCart(cart.Id);
                 listItem.cart = cart;
             }
-       
+
 
             return listItem;
         }
@@ -149,15 +151,107 @@ namespace SimplyShopMVC.Application.Services
             var receivedCategories = _itemRepo.GetAllCategories()
                 .ProjectTo<CategoryForListVm>(_mapper.ConfigurationProvider).ToList();
             listItemShopIndexVm.categories = receivedCategories;
-            if(userId != null)
+            if (userId != null)
             {
                 var cart = GetCart(userId);
                 var cartItems = GetCartItemsToCart(cart.Id);
                 listItemShopIndexVm.cart = cart;
-            }         
+            }
             return listItemShopIndexVm;
         }
         //funkcje 
+        public FrontItemForList GetItemToList(int itemId, string userId)
+        {
+            FrontItemForList indexItem = new FrontItemForList();
+            var userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId);
+            var item = _mapper.Map<ItemForListVm>(_itemRepo.GetAllItems().FirstOrDefault(i => i.Id == itemId));
+           // var checkDuplicateItem = frontItems.FirstOrDefault(f => f.id == item.Id);
+            var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id && i.WarehouseId == 1 && i.Quantity > 0);
+            if (indexItemWare == null)
+            {
+                indexItemWare = _itemRepo.GetAllItemWarehouses().Where(i => i.ItemId == item.Id && i.Quantity > 0).OrderBy(i => i.NetPurchasePrice).FirstOrDefault();
+            }
+
+            if (indexItemWare != null)
+            {
+                var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == indexItemWare.VatRateId);  //Dodać sprawdzenie czy istnieje przedmiot w itemWArehouse!
+
+                indexItem.id = item.Id;
+                indexItem.name = item.Name;
+                indexItem.description = item.Description;
+                indexItem.eanCode = item.EanCode;
+                indexItem.imageFolder = item.ImageFolder;
+                indexItem.itemSymbol = item.ItemSymbol;
+                var groupIdresoult = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == item.GroupItemId);
+                var warehouseResoult = _itemRepo.GetAllWarehouses().FirstOrDefault(w => w.Id == indexItemWare.WarehouseId);
+                //Można dodać sprawdzenie czy cena sprzedaży nie została nadana ręcznie w ItemWarehouse jeżeli nie to pobranie marży po grupie.              
+                var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
+                var resultPriceLevelA = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
+                var resultPriceLevelB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupB);
+                var resultPriceLevelC = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupC);
+                if (userDetail == null)
+                {
+                    indexItem.priceB = resultPriceLevelA;
+                }
+                else
+                {
+                    switch (userDetail.PriceLevel)
+                    {
+                        case ("A"):
+                            indexItem.priceB = resultPriceLevelA;
+                            break;
+                        case ("B"):
+                            indexItem.priceB = resultPriceLevelB;
+                            break;
+                        case ("C"):
+                            indexItem.priceB = resultPriceLevelC;
+                            break;
+                        default:
+                            indexItem.priceB = resultPriceB;
+                            break;
+                    }
+                }
+                indexItem.priceLevelA = resultPriceLevelA;
+                indexItem.priceLevelB = resultPriceLevelB;
+                indexItem.priceLevelC = resultPriceLevelC;
+                indexItem.quantity = indexItemWare.Quantity;
+                indexItem.deliveryTime = warehouseResoult.DeliveryTime;
+                indexItem.warehouseId = warehouseResoult.Id;
+                indexItem.vatRateId = vatRateResoult.Id;
+                var _pathImage = $"{_webHost.WebRootPath}\\media\\itemimg\\{item.ImageFolder}\\";
+                var imageToList = ImageHelper.AllImageFromPath(_pathImage).ToList();
+                var listImage = new List<PhotoItemVm>();
+                int photoId = 0;
+                if (imageToList.Count > 0)
+                {
+                    foreach (var imageUrl in imageToList)
+                    {
+                        var photoDetail = new PhotoItemVm();
+                        photoDetail.Id = photoId;
+                        photoId++;
+                        photoDetail.Name = imageUrl;
+                        var _imgFullUrl = $"/media/itemimg/{item.ImageFolder}/{imageUrl}";
+                        photoDetail.ImageUrl = _imgFullUrl;
+                        photoDetail.IsSelected = false;
+                        listImage.Add(photoDetail);
+                    }
+                }
+                else
+                {
+                    var photoDetail = new PhotoItemVm();
+                    photoDetail.Id = photoId;
+                    photoId++;
+                    photoDetail.Name = "nophoto.png";
+                    var _imgFullUrl = $"/media/{photoDetail.Name}";
+                    photoDetail.ImageUrl = _imgFullUrl;
+                    photoDetail.IsSelected = false;
+                    listImage.Add(photoDetail);
+                }
+                indexItem.tags = ListTagsForItem(item.Id);
+                indexItem.images = listImage;               
+            }
+            return indexItem;
+        }
         public decimal GetPriceDetalB(decimal netPurchasePrice, int vatRateValue, int groupMarkup)
         {
             decimal markupPercentage = (decimal)groupMarkup / 100;
@@ -315,6 +409,54 @@ namespace SimplyShopMVC.Application.Services
                 cartItemsForList.AddRange(cartItems);
             }
             return cartItemsForList;
+        }
+        public int AddFavoriteItemToList(FavoriteItemsForListVm favoriteItem)
+        {
+            var resultFavoriteItem = _favoriteItemRepo.GetAllFavoriteItems().FirstOrDefault(i => i.Id == favoriteItem.Id);
+            if (resultFavoriteItem == null)
+            {
+                _favoriteItemRepo.AddFavoriteItem(_mapper.Map<FavoriteItem>(favoriteItem));
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        public ListFavoriteItemsForListVm GetAllFavoriteItems(string userId)
+        {
+            ListFavoriteItemsForListVm favoriteItems = new ListFavoriteItemsForListVm();
+            var resultfavoriteItems = _favoriteItemRepo.GetAllFavoriteItems().Where(u => u.UserId == userId)
+                .ProjectTo<FavoriteItemsForListVm>(_mapper.ConfigurationProvider).ToList();
+            if (resultfavoriteItems!= null)
+            {
+                foreach (var fItem in resultfavoriteItems)
+                {
+                    var resultItem = GetItemToList(fItem.ItemId, userId);
+                    if(resultItem != null)
+                    {
+                        fItem.actualPriceB = resultItem.priceB;
+                        fItem.actualQuantity = resultItem.quantity;
+                        fItem.warehouseId= resultItem.warehouseId;
+                        fItem.VatRateId= resultItem.vatRateId;
+                    }
+               
+                }
+            }
+            favoriteItems.listFavoriteItemVm = resultfavoriteItems;
+            return favoriteItems;
+        }
+        public int DeleteFavoriteItemFromList(FavoriteItemsForListVm favoriteItem)
+        {
+            if (favoriteItem != null && favoriteItem.Id > 0)
+            {
+                _favoriteItemRepo.DeleteFavoriteItem(favoriteItem.Id);
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

@@ -38,7 +38,6 @@ namespace SimplyShopMVC.Application.Services
             priceCalc = priceCalculate;
             _deliveryRepo = deliveryRepo;
         }
-
         public ListDeliveryForListVm GetAllDeliveryToList() // Kontroler shop - deliverySettings - HttpGet
         {
             ListDeliveryForListVm listDelivery = new ListDeliveryForListVm();
@@ -451,6 +450,10 @@ namespace SimplyShopMVC.Application.Services
         {
             var userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId));
             return userDetail;
+        }
+        public void AddFavoriteItemToCart(FavoriteItemsForListVm favoriteItem, int cartId, int warehouseId, int VatRateId)
+        {
+
         }
     }
 }
