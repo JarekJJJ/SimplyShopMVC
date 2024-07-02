@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.Services;
 using SimplyShopMVC.Application.ViewModels.Front;
+using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Application.ViewModels.PcSets;
 using SimplyShopMVC.Domain.Interface;
 
@@ -184,6 +185,29 @@ namespace SimplyShopMVC.Web.Controllers
             var iduser = _userManager.GetUserId(User);
             pcSetDetail = _setService.PcSetDetailForUser(pcSetId, iduser);
             return View(pcSetDetail);
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult FavoriteItemList()
+        {
+            var iduser = _userManager.GetUserId(User);
+            var favoriteItemList = _frontService.GetAllFavoriteItems(iduser);
+            return View(favoriteItemList);
+        }
+        [Authorize, HttpPost]
+        public IActionResult AddFavoriteItemToList(int fItemId)
+        {
+            var iduser = _userManager.GetUserId(User);
+
+            var result = _frontService.AddFavoriteItemToList(fItemId, iduser);
+            if(result == 1)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
         }
     }
 }

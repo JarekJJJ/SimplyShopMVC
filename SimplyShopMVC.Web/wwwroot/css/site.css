@@ -255,3 +255,10 @@ body {
     z-index: 1501;
     transform: translateX(0%) !important;
 }
+.biHover:hover {
+   font-weight:bold;
+    background-color: white;
+}
+.svghover:hover {
+    color: red;
+}

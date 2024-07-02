@@ -165,7 +165,7 @@ namespace SimplyShopMVC.Application.Services
             FrontItemForList indexItem = new FrontItemForList();
             var userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId);
             var item = _mapper.Map<ItemForListVm>(_itemRepo.GetAllItems().FirstOrDefault(i => i.Id == itemId));
-           // var checkDuplicateItem = frontItems.FirstOrDefault(f => f.id == item.Id);
+            // var checkDuplicateItem = frontItems.FirstOrDefault(f => f.id == item.Id);
             var indexItemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id && i.WarehouseId == 1 && i.Quantity > 0);
             if (indexItemWare == null)
             {
@@ -248,7 +248,7 @@ namespace SimplyShopMVC.Application.Services
                     listImage.Add(photoDetail);
                 }
                 indexItem.tags = ListTagsForItem(item.Id);
-                indexItem.images = listImage;               
+                indexItem.images = listImage;
             }
             return indexItem;
         }
@@ -410,13 +410,27 @@ namespace SimplyShopMVC.Application.Services
             }
             return cartItemsForList;
         }
-        public int AddFavoriteItemToList(FavoriteItemsForListVm favoriteItem)
+        public int AddFavoriteItemToList(int itemId, string userId)
         {
-            var resultFavoriteItem = _favoriteItemRepo.GetAllFavoriteItems().FirstOrDefault(i => i.Id == favoriteItem.Id);
-            if (resultFavoriteItem == null)
+            if (itemId > 0)
             {
-                _favoriteItemRepo.AddFavoriteItem(_mapper.Map<FavoriteItem>(favoriteItem));
-                return 1;
+                var resultFavoriteItem = _favoriteItemRepo.GetAllFavoriteItems().FirstOrDefault(i => i.ItemId == itemId);
+                if (resultFavoriteItem == null)
+                {
+                    FavoriteItemsForListVm favoriteItem = new FavoriteItemsForListVm();
+                    var resultItem = GetItemToList(itemId, userId);
+                    favoriteItem.ItemId = itemId;
+                    favoriteItem.UserId = userId;
+                    favoriteItem.AddDate = DateTime.Now;
+                    favoriteItem.PriceB = resultItem.priceB;
+                    _favoriteItemRepo.AddFavoriteItem(_mapper.Map<FavoriteItem>(favoriteItem));
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+
             }
             else
             {
@@ -428,19 +442,20 @@ namespace SimplyShopMVC.Application.Services
             ListFavoriteItemsForListVm favoriteItems = new ListFavoriteItemsForListVm();
             var resultfavoriteItems = _favoriteItemRepo.GetAllFavoriteItems().Where(u => u.UserId == userId)
                 .ProjectTo<FavoriteItemsForListVm>(_mapper.ConfigurationProvider).ToList();
-            if (resultfavoriteItems!= null)
+            if (resultfavoriteItems != null)
             {
                 foreach (var fItem in resultfavoriteItems)
                 {
                     var resultItem = GetItemToList(fItem.ItemId, userId);
-                    if(resultItem != null)
+                    if (resultItem != null)
                     {
                         fItem.actualPriceB = resultItem.priceB;
                         fItem.actualQuantity = resultItem.quantity;
-                        fItem.warehouseId= resultItem.warehouseId;
-                        fItem.VatRateId= resultItem.vatRateId;
+                        fItem.warehouseId = resultItem.warehouseId;
+                        fItem.VatRateId = resultItem.vatRateId;
+                        fItem.Name = resultItem.name;
                     }
-               
+
                 }
             }
             favoriteItems.listFavoriteItemVm = resultfavoriteItems;

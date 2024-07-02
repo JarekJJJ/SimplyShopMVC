@@ -1,0 +1,43 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Order.ListFavoriteItemsForListVm
+
+@{
+    ViewData["Title"] = "HKR24.pl - Lista ulubionych produktów";
+}
+
+<div class="row">
+    <p class=" fs-4 text-center">Ulubione produkty</p>
+</div>
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>lp.</th>
+                <th>Nazwa</th>
+                <th>Stara cena</th>
+                <th>Aktualna cena</th>
+                <th>dostępna ilość</th>
+                <th>Dodaj do koszyka</th>
+                <th>Usuń</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int lp = 0;
+            }
+            @foreach (var fItem in Model.listFavoriteItemVm)
+            {
+                lp++;
+                <tr>
+                    <td>@lp</td>
+                    <td>@fItem.Name</td>
+                    <td>@fItem.PriceB.ToString("N2")</td>
+                    <td>@fItem.actualPriceB.ToString("N2")</td>
+                    <td>@fItem.actualQuantity</td>
+                    <td>Dodaj do koszyka</td>
+                    <td>Usuń</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

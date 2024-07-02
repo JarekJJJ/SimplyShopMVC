@@ -22,13 +22,15 @@ namespace SimplyShopMVC.Application.ViewModels.Order
         public int actualQuantity { get; set; }
         public int? warehouseId { get; set; }
         public int? VatRateId { get; set; }
+        public string Name { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<FavoriteItemsForListVm, SimplyShopMVC.Domain.Model.Order.FavoriteItem>().ReverseMap()
                   .ForMember(s => s.actualPriceB, opt => opt.Ignore())
                   .ForMember(s => s.actualQuantity, opt => opt.Ignore())
                   .ForMember(s => s.warehouseId, opt => opt.Ignore())
-                  .ForMember(s => s.VatRateId, opt => opt.Ignore());
+                  .ForMember(s => s.VatRateId, opt => opt.Ignore())
+                  .ForMember(s => s.Name, opt => opt.Ignore());
 
         }
     }

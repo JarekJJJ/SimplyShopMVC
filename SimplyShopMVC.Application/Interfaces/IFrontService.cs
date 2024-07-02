@@ -16,7 +16,7 @@ namespace SimplyShopMVC.Domain.Interface
         ListItemShopIndexVm GetAllCategories(string userId);
         ListItemShopIndexVm GetItemsByCategory(int categoryId, int pageSize, int pageNo, string searchString, int selectedTags, string userId);
         CartForListVm GetCart(string userId);
-        int AddFavoriteItemToList(FavoriteItemsForListVm favoriteItem);
+        int AddFavoriteItemToList(int itemId, string userId);
         ListFavoriteItemsForListVm GetAllFavoriteItems(string userId);
         int DeleteFavoriteItemFromList(FavoriteItemsForListVm favoriteItem);
     }

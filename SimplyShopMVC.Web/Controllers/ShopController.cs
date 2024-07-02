@@ -7,6 +7,7 @@ using SimplyShopMVC.Application.ViewModels.Article;
 using SimplyShopMVC.Application.ViewModels.Item;
 using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Application.ViewModels.user;
+using SimplyShopMVC.Domain.Interface;
 using SimplyShopMVC.Domain.Model;
 using System.Data;
 
