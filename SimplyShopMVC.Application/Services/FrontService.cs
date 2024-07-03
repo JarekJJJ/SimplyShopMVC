@@ -461,11 +461,11 @@ namespace SimplyShopMVC.Application.Services
             favoriteItems.listFavoriteItemVm = resultfavoriteItems;
             return favoriteItems;
         }
-        public int DeleteFavoriteItemFromList(FavoriteItemsForListVm favoriteItem)
+        public int DeleteFavoriteItemFromList(int favoriteItemId)
         {
-            if (favoriteItem != null && favoriteItem.Id > 0)
+            if (favoriteItemId > 0)
             {
-                _favoriteItemRepo.DeleteFavoriteItem(favoriteItem.Id);
+                _favoriteItemRepo.DeleteFavoriteItem(favoriteItemId);
                 return 1;
             }
             else

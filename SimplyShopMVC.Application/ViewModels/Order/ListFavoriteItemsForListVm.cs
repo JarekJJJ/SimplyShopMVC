@@ -9,5 +9,6 @@ namespace SimplyShopMVC.Application.ViewModels.Order
     public class ListFavoriteItemsForListVm
     {
        public List<FavoriteItemsForListVm> listFavoriteItemVm { get; set; }
+        public int selectedFavoriteItemId { get; set; }
     }
 }

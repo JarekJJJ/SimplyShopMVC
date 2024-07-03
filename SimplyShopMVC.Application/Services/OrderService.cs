@@ -26,8 +26,9 @@ namespace SimplyShopMVC.Application.Services
         private readonly IGeneratePdf _genPdf;
         private readonly IPriceCalculate priceCalc;
         private readonly IDeliveryRepository _deliveryRepo;
+        private readonly IFrontService _frontService;
         public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf, IPriceCalculate priceCalculate
-        , IDeliveryRepository deliveryRepo)
+        , IDeliveryRepository deliveryRepo, IFrontService frontService)
         {
             _orderRepo = orderRepository;
             _mapper = mapper;
@@ -37,6 +38,7 @@ namespace SimplyShopMVC.Application.Services
             _genPdf = genPdf;
             priceCalc = priceCalculate;
             _deliveryRepo = deliveryRepo;
+            _frontService = frontService;
         }
         public ListDeliveryForListVm GetAllDeliveryToList() // Kontroler shop - deliverySettings - HttpGet
         {
@@ -451,9 +453,31 @@ namespace SimplyShopMVC.Application.Services
             var userDetail = _mapper.Map<UserDetailForListVm>(_userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId));
             return userDetail;
         }
-        public void AddFavoriteItemToCart(FavoriteItemsForListVm favoriteItem, int cartId, int warehouseId, int VatRateId)
+        public int AddFavoriteItemToCart(int itemId, int quantity, string userId)
         {
-
+            CartItemsForListVm cartItem = new CartItemsForListVm();
+            if(itemId> 0 && quantity >0 && !String.IsNullOrEmpty(userId))
+            {
+                cartItem.ItemId = itemId;
+                cartItem.Quantity = quantity;
+                var cartId = _frontService.GetCart(userId);
+                if(cartId != null)
+                {
+                    cartItem.CartId = cartId.Id;
+                    var itemDetail = _frontService.GetItemDetail(itemId, userId);
+                    if (itemDetail != null)
+                    {
+                        cartItem.PriceN = itemDetail.priceB;
+                       // cartItem.VatRateId = (int)itemDetail.vatRateId; // vatRateId jest pobierane w AddToCart ! 
+                        cartItem.WarehouseId = itemDetail.warehouseId;
+                        cartItem.Name = itemDetail.name;
+                        AddToCart(cartItem);
+                        return 1;
+                    }
+                }
+                
+            }
+            return 0;
         }
     }
 }

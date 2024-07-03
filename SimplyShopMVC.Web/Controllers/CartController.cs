@@ -35,7 +35,7 @@ namespace SimplyShopMVC.Web.Controllers
             }
            return View();
         }
-        [HttpPost]
+        [Authorize, HttpPost]
         public IActionResult AddCartItem(ListItemShopIndexVm result)
         {
             var userId = _userManager.GetUserId(User);
@@ -51,6 +51,21 @@ namespace SimplyShopMVC.Web.Controllers
             //backResult.categories = receivedCategories.categories.ToList();
             return RedirectToAction("Index");
             // zrobić cenę netto
+        }
+        [Authorize, HttpPost]
+        public IActionResult AddCartItemAjax(int fItemId, int quantity)
+        {
+            var iduser = _userManager.GetUserId(User);
+
+            var result = _orderService.AddFavoriteItemToCart(fItemId, quantity, iduser);
+            if (result == 1)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
         }
         [HttpPost]
         public IActionResult DeleteCartItem(int cartItemId, int cartId)

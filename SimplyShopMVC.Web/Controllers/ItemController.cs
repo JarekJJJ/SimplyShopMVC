@@ -209,5 +209,12 @@ namespace SimplyShopMVC.Web.Controllers
                 return Json(new { success = false });
             }
         }
+        [ValidateAntiForgeryToken, Authorize, HttpPost]
+        public IActionResult DeleteFavoriteItem(int favoriteItemId)
+        {
+            _frontService.DeleteFavoriteItemFromList(favoriteItemId);
+            TempData["success"] = "Usunięto pozycje z listy ulubionych produktów";
+            return RedirectToAction("FavoriteItemList");
+        }
     }
 }

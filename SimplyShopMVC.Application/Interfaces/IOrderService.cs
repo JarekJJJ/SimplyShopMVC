@@ -30,5 +30,6 @@ namespace SimplyShopMVC.Application.Interfaces
         OrderForAdminListVm ViewOrderForAdmin(int? orderId, string? userId);
         void AdminFinishOrder(OrderForAdminListVm result, int options);
         UserDetailForListVm GetUserDetailById(string userId);
+        int AddFavoriteItemToCart(int itemId, int quantity, string userId);
     }
 }
