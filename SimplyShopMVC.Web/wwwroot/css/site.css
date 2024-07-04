@@ -256,8 +256,9 @@ body {
     transform: translateX(0%) !important;
 }
 .biHover:hover {
+    color: black;
    font-weight:bold;
-    background-color: white;
+   background-color: white;
 }
 .svghover:hover {
     color: red;
