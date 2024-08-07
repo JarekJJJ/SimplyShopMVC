@@ -94,5 +94,24 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
         }
+        public void SendAdminEmail(string subject, string body)
+        {
+            using (SmtpClient smtpClient = new SmtpClient(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort))
+            {
+                var to = _emailConfiguration.AdminEmail;
+                smtpClient.Credentials = new NetworkCredential(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+                smtpClient.EnableSsl = _emailConfiguration.EnableSsl;
+
+                using (MailMessage mailMessage = new MailMessage())
+                {
+                    mailMessage.From = new MailAddress(_emailConfiguration.SmtpUsername);
+                    mailMessage.To.Add(to);
+                    mailMessage.Subject = subject;
+                    mailMessage.Body = body;
+                    mailMessage.IsBodyHtml = true; // Ustaw to na false, jeśli treść wiadomości ma być zwykłym tekstem               
+                    smtpClient.Send(mailMessage);
+                }
+            }
+        }
     }
 }

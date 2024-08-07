@@ -15,5 +15,6 @@ namespace SimplyShopMVC.Infrastructure
         public string SmtpUsername { get; set; }
         public string SmtpPassword { get; set; }
         public bool EnableSsl { get; set; }
+        public string AdminEmail { get; set; }
     }
 }

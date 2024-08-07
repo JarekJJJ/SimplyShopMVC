@@ -27,6 +27,7 @@ namespace SimplyShopMVC.Application.Services
         private readonly IPriceCalculate priceCalc;
         private readonly IDeliveryRepository _deliveryRepo;
         private readonly IFrontService _frontService;
+      
         public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf, IPriceCalculate priceCalculate
         , IDeliveryRepository deliveryRepo, IFrontService frontService)
         {
@@ -279,8 +280,8 @@ namespace SimplyShopMVC.Application.Services
             newOrder.cartItems = listCartItem;
             newOrder.orderForList = orderForList.orderForList;
             var orderPdf = _genPdf.GenertateOrderPdf(newOrder);
-            _sendEmail.SendEmail($"{newOrder.userDetail.EmailAddress}", "test", $"Złożono zamówienie nr: {orderForList.orderForList.NumberOrders}", orderPdf);
-
+            _sendEmail.SendEmail($"{newOrder.userDetail.EmailAddress}", "Nowe zamówienie", $"Złożono zamówienie nr: {orderForList.orderForList.NumberOrders}", orderPdf);
+            _sendEmail.SendAdminEmail($"Klient {newOrder.userDetail.EmailAddress} złożył zamówienie.", $"Złożono zamówienie nr: {orderForList.orderForList.NumberOrders} z email: {newOrder.userDetail.EmailAddress}");
             return newOrder;
         }
         public OrderForUserListVm GetOrdersByUserId(string userId)

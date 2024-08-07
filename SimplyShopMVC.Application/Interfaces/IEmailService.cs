@@ -11,5 +11,6 @@ namespace SimplyShopMVC.Application.Interfaces
         void SendEmail(string to, string subject, string body, List<string>? attachments);
         void SendEmail(string to, string subject, string body, byte[] attachments);
         void SendEmail(string to, string subject, string body);
+        void SendAdminEmail(string subject, string body);
     }
 }
