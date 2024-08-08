@@ -260,6 +260,14 @@ namespace SimplyShopMVC.Application.Services
             decimal priceDetalB = netPurchasePrice * (1 + markupPercentage) * (1 + vatPercentage);
             return priceDetalB;
         }
+        public decimal GetPriceDetalB(decimal netPurchasePrice, int vatRateValue) // Przeciążenie dla towarów z ustaloną sztywną ceną
+        {
+            //decimal markupPercentage = (decimal)groupMarkup / 100;
+            decimal vatPercentage = (decimal)vatRateValue / 100;
+            // Wyliczenie ceny brutto
+            decimal priceDetalB = netPurchasePrice * (1 + vatPercentage);
+            return priceDetalB;
+        }
         public List<FrontItemForList> mapItemToList(List<Item> items, List<FrontItemForList> frontItems, string userId)
         {
             IndexListVm indexList = new IndexListVm();
@@ -290,27 +298,42 @@ namespace SimplyShopMVC.Application.Services
                     var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
                     var resultPriceLevelA = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
                     var resultPriceLevelB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupB);
-                    var resultPriceLevelC = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupC);
+                    var resultPriceLevelC = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupC);                        
                     if (userDetail == null)
                     {
-                        indexItem.priceB = resultPriceLevelA;
+                        if(indexItemWare.FinalPriceA != null && indexItemWare.FinalPriceA > 0)
+                        {
+                            indexItem.priceB = GetPriceDetalB((decimal)indexItemWare.FinalPriceA.Value, vatRateResoult.Value);
+                        }
+                        else
+                        {
+                            indexItem.priceB = resultPriceLevelA;
+                        }
                     }
                     else
                     {
-                        switch (userDetail.PriceLevel)
+                        if (indexItemWare.FinalPriceA != null && indexItemWare.FinalPriceA > 0)
                         {
-                            case ("A"):
-                                indexItem.priceB = resultPriceLevelA;
-                                break;
-                            case ("B"):
-                                indexItem.priceB = resultPriceLevelB;
-                                break;
-                            case ("C"):
-                                indexItem.priceB = resultPriceLevelC;
-                                break;
-                            default:
-                                indexItem.priceB = resultPriceB;
-                                break;
+                            indexItem.priceB = GetPriceDetalB((decimal)indexItemWare.FinalPriceA.Value, vatRateResoult.Value);
+                        }
+                        else
+                        {
+
+                            switch (userDetail.PriceLevel)
+                            {
+                                case ("A"):
+                                    indexItem.priceB = resultPriceLevelA;
+                                    break;
+                                case ("B"):
+                                    indexItem.priceB = resultPriceLevelB;
+                                    break;
+                                case ("C"):
+                                    indexItem.priceB = resultPriceLevelC;
+                                    break;
+                                default:
+                                    indexItem.priceB = resultPriceB;
+                                    break;
+                            }
                         }
                     }
                     indexItem.priceLevelA = resultPriceLevelA;

@@ -74,7 +74,7 @@
     <form asp-action="AddItem" class="row g-3" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
-        <div class="col-md-6">
+        <div class="col-md-4">
             <p class="mt-1 mb-0">Wybierz kategorię towaru: </p>
             <select class="form-select mb-2" id="selectedCategory" name="selectedCategory">
                 <option value="0">Wybierz kategorię</option>
@@ -92,7 +92,7 @@
             <input asp-for="Image" class="form-control" type="file" name="Image" id="Image" multiple>
             
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <p class="mt-1 mb-0">Wybierz Tag towaru: </p>
             <select class="form-select" id="SelectedTags" name="SelectedTags" multiple>
                 @if (Model.ItemTags != null)
@@ -104,6 +104,19 @@
                 }             
             </select>
             <span asp-validation-for="SelectedTags" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <p class="mt-1 mb-0">Wybierz grupę towarową (marże) </p>
+            <select class="form-select" id="selectedGroup" name="selectedGroup">
+                @if (Model.ListGroup != null)
+                {
+                    @foreach (var itemGroup in Model.ListGroup)
+                    {
+                        <option value="@itemGroup.Id" name="@itemGroup.Name">@itemGroup.Name</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="selectedGroup" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">

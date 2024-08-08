@@ -55,6 +55,7 @@ namespace SimplyShopMVC.Application.Services
                     mItem.ItemSymbol = DateTime.Now.ToString("yyyyMMddHHmmss");
                 }
                 mItem.CategoryId = item.selectedCategory;
+                mItem.GroupItemId = item.selectedGroup;
                 var id = _itemRepo.AddItem(mItem);
                 string newFolderPath = Path.Combine(webHostFolder.WebRootPath, "media\\itemimg", folderName);
                 Directory.CreateDirectory(newFolderPath);
@@ -90,6 +91,9 @@ namespace SimplyShopMVC.Application.Services
                 listCategory.Add(category);
             }
             item.Categories = listCategory;
+            var ListitemGroup = _groupItemRepo.GetAllGroupItem().
+                ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider).ToList();
+            item.ListGroup = ListitemGroup;
             return item;
         }
 
