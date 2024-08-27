@@ -323,22 +323,32 @@ namespace SimplyShopMVC.Application.Services
             var _item = _mapper.Map<Item>(model);
             _item.CategoryId = model.selectedCategory;
             _item.GroupItemId = model.selectedGroup;
-            _itemRepo.UpdateItem(_item);
-            if (model.EanCode != null && model.EanCode.Length > 0)
+            string folderName = "";
+            if (String.IsNullOrEmpty(_item.ImageFolder))
             {
-                _item.ImageFolder = model.EanCode;
-            }
-            string folderName;
-            if (model.ImageFolder != null || (model.EanCode != null))
-            {
+
+                if (!String.IsNullOrEmpty(model.EanCode))
+                {
+                    _item.ImageFolder = model.EanCode;
+                }
+                else
+                {
+                    if (!String.IsNullOrEmpty(model.ItemSymbol))
+                    {
+                        _item.ImageFolder = _item.ItemSymbol;
+                    }else
+                    {
+                        _item.ImageFolder = (model.Id).ToString();
+                    }
+                }
                 folderName = _item.ImageFolder;
             }
             else
             {
-                _item.ImageFolder = _item.ItemSymbol;
                 folderName = _item.ImageFolder;
             }
-            string newFolderPath = Path.Combine(_webHost.WebRootPath, "media\\itemimg", folderName);
+
+                string newFolderPath = Path.Combine(_webHost.WebRootPath, "media\\itemimg", folderName);
             try
             {
                 Directory.CreateDirectory(newFolderPath);
@@ -370,6 +380,7 @@ namespace SimplyShopMVC.Application.Services
                 }
             }
             AddTagsToItem(model.SelectedTags, model.Id);
+            _itemRepo.UpdateItem(_item);
             return _item.Id;
         }
 
@@ -511,7 +522,7 @@ namespace SimplyShopMVC.Application.Services
                     var count = _itemRepo.GetAllItemWarehouses().Where(i => i.WarehouseId == warehouse.Id).Count();
                     countWarehouseVm.countItem = count;
                     countWarehouseVm.warehouseId = warehouse.Id;
-                    if(warehouse.onlyRegistered == null)
+                    if (warehouse.onlyRegistered == null)
                     {
                         warehouse.onlyRegistered = true;
                     }
@@ -553,14 +564,14 @@ namespace SimplyShopMVC.Application.Services
 
         public ListGroupItemForListVm GroupsItemsList(int options, GroupItemForListVm groupItem)
         {
-            ListGroupItemForListVm listGroupItemForListVm= new ListGroupItemForListVm();
+            ListGroupItemForListVm listGroupItemForListVm = new ListGroupItemForListVm();
             var groupItemList = _groupItemRepo.GetAllGroupItem()
                 .ProjectTo<GroupItemForListVm>(_mapper.ConfigurationProvider);
             var mappedGroup = _mapper.Map<GroupItem>(groupItem);
             switch (options)
             {
                 case 1:// Dodanie grupy poprzez POST              
-                    _groupItemRepo.AddGroupItem(mappedGroup);                   
+                    _groupItemRepo.AddGroupItem(mappedGroup);
                     return listGroupItemForListVm;
                 case 2: //Update grupy poprzez POST
                     _groupItemRepo.UpdateGroupItem(mappedGroup);
