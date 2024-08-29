@@ -47,7 +47,7 @@ namespace SimplyShopMVC.Web.Controllers
         public IActionResult GetFiskalneArticle()
         {
             TempData["tagName"] = "Fiskalne";
-            return RedirectToAction("Index");
+            return View();
         }
         [HttpGet]
         public IActionResult GetGamingArticle()

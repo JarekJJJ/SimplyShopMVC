@@ -21,7 +21,8 @@ namespace SimplyShopMVC.Application.ViewModels.Article
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
-        
+        public int Priority { get; set; }
+
         // właściwości pomocnicze nie mapowane na model
         public List<IFormFile> Image { get; set; }  
         public int TagId { get; set; }

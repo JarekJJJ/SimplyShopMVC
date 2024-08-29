@@ -15,6 +15,7 @@ namespace SimplyShopMVC.Application.ViewModels.Article
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
+        public int Priority { get; set; }
         public List<string> imagePath { get; set; }
         public List<ArticleForListVm> listArticle { get; set; }
         public List<ArticleTagsForListVm> Tags { get; set; }

@@ -1,0 +1,23 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container row">
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="alert alert-info pt-2" role="alert">
+        <p>Wyświetla produkty z tagiem "uFiskalane" oraz artykuły z tagiem aFiskalne, artykuły wyświetlamy tak jak w blogu z listą a prawej strony w panelu na samej górze wyświetlany jest artykuł z priorytetm 1 niżej 2 itd... </p>
+    </div>
+    <div class="row m-1 ">
+            <div class="col-md-12 col-sm-12 mt-4 border border-4 border-warning rounded rounded-3 position-relative">
+     <vc:article-fiskalne number-article="1" tag-name="Fiskalne"/>  
+     </div>
+    </div>
+    <div class="row m-1 ">
+        <vc:box-fiskalne-items number="8" />
+    </div>
+}
+
+</div>

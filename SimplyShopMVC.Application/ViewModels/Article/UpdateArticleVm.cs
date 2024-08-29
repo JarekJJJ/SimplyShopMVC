@@ -21,6 +21,7 @@ namespace SimplyShopMVC.Application.ViewModels.Article
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
+        public int Priority { get; set; }
         // pomocnicz
         public List<ArticleTagsForListVm> Tags { get; set; } // Do wyświetlania tagów przy tworzeniu artykułów.
         public List<ArticleTagsForListVm> SelectedTags { get; set; } // do dodawania tagów do artykułu w serwisie

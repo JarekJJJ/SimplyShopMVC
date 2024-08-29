@@ -13,6 +13,7 @@ namespace SimplyShopMVC.Domain.Model
         public string ShortDescription { get; set; }
         public string Content { get; set; }
         public DateTime Created { get; set; }
+        public int Priority { get; set; } = 0;
         public ICollection<ConnectArticleTag> ConnectArticleTags { get; set; }
 
 
