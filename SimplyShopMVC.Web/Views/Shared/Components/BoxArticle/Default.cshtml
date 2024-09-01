@@ -1,0 +1,37 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Article.ListArticleForListVm
+@if (Model.Articles != null)
+{
+    @foreach (var article in Model.Articles)
+    {
+        var mainImage = article.imagePath.FirstOrDefault();
+        <div class="col-md-6 col-sm-11 col-lg-4 p-1 flex-shrink-0" style="height:400px">
+            <div class=" border border-1 p-0 position-relative d-flex flex-column h-100">
+                <div class="text-center d-flex justify-content-center overflow-hidden m-0" style="height:300px">
+                    @if (mainImage != null)
+                    {
+                        <img src="\media\articleimg\@article.Id\@mainImage" class=" object-fit-cover  w-100 h-100 " alt="@article.Title">
+                    }
+                    else
+                    {
+                        <img src="\media\nophoto.png" class=" object-fit-contain  img-thumbnail img-fluid border-0 " alt="@article.Title">
+                    }
+                </div>
+                <div class="text-center mt-1">
+                    <span class="fs-6 text-secondary">@article.Created.ToString("dd-MM-yyyy")</span>
+                </div>
+                <div class="text-center text-container mt-auto align-middle">
+                    <button type="button" class="btn btn-link" id="article_@article.Id">
+                        <a href="/Article/ArticleDetail/@article.Id" class="icon-link gap-1 text-black  pb-2 icon-link-hover stretched-link"><span class="fs-6">@article.Title</span></a>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    }
+}
+@section Scripts
+    {
+    <script type="text/javascript">
+
+    </script>
+    }

@@ -10,14 +10,28 @@
     <div class="alert alert-info pt-2" role="alert">
         <p>Wyświetla produkty z tagiem "uFiskalane" oraz artykuły z tagiem aFiskalne, artykuły wyświetlamy tak jak w blogu z listą a prawej strony w panelu na samej górze wyświetlany jest artykuł z priorytetm 1 niżej 2 itd... </p>
     </div>
+    }
     <div class="row m-1 ">
             <div class="col-md-12 col-sm-12 mt-4 border border-4 border-warning rounded rounded-3 position-relative">
-     <vc:article-fiskalne number-article="1" tag-name="Fiskalne"/>  
+     <vc:article-fiskalne number-article="1" tag-name="Fiskalne" priority="1"/>  
      </div>
+<div class="row m-2 ">
+        <div class="col-12 border-top border-4 border-info position-relative mt-3">
+            <span class="badge position-absolute top-0 start-0  translate-middle-y ms-2 text-info bg-white fs-4">Nowe wiadomości w tej kategorii: </span>
+        </div>
+        <div class="mt-3 row">
+        <vc:box-article number="6" tag-name="Fiskalne" />
+        </div>
     </div>
-    <div class="row m-1 ">
+    </div>
+    <div class="row m-2 ">
+        <div class="col-12 border-top border-4 border-info position-relative mt-3">
+            <span class="badge position-absolute top-0 start-0  translate-middle-y ms-2 text-info bg-white fs-4">Wybrane produkty z tej kategorii </span>
+        </div>
+    <div class="row m-1 mt-3 ">
         <vc:box-fiskalne-items number="8" />
     </div>
-}
+    </div>
+
 
 </div>

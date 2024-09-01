@@ -182,6 +182,9 @@ namespace SimplyShopMVC.Application.Services
         {
             var article = _articleRepo.GetArticleById(articleId);
             var articleVm = _mapper.Map<ArticleDetailVm>(article);
+            if(articleVm != null)
+            {
+        
             articleVm.Tags = new List<ArticleTagsForListVm>();
             articleVm.listArticle = new List<ArticleForListVm>();
             List<ArticleForListVm> newListArticle = new List<ArticleForListVm>();
@@ -204,6 +207,7 @@ namespace SimplyShopMVC.Application.Services
             }
             articleVm.listArticle.AddRange(newListArticle);
             articleVm.imagePath = imageToList;
+            }
             return articleVm;
         }
         public ArticleDetailVm GetArticleDetailsByTag(string tagName)
