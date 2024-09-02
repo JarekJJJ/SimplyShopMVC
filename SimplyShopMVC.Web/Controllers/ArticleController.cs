@@ -41,7 +41,7 @@ namespace SimplyShopMVC.Web.Controllers
         public IActionResult GetInfoArticle()
         {
             TempData["tagName"] = "Informacje";
-            return RedirectToAction("Index");
+            return View();
         }
         [HttpGet]
         public IActionResult GetFiskalneArticle()
@@ -59,7 +59,7 @@ namespace SimplyShopMVC.Web.Controllers
         public IActionResult GetSerwisArticle()
         {
             TempData["tagName"] = "Serwis";
-            return RedirectToAction("Index");
+            return View();
         }
         [Authorize(Roles = "Admin")]
         [HttpGet]

@@ -15,13 +15,13 @@ namespace SimplyShopMVC.Web.Components
             _userManager = userManager;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string number)
+        public async Task<IViewComponentResult> InvokeAsync(string number, string tagName)
         {
             var listCategories = new ListItemShopIndexVm();
             int intNumber;
             int.TryParse(number, out intNumber);
             var userId = _userManager.GetUserId((System.Security.Claims.ClaimsPrincipal)User);
-            var newsItems = _frontService.GetItemsToIndex(intNumber, "uFiskalne", userId);
+            var newsItems = _frontService.GetItemsToIndex(intNumber, tagName, userId);
             if (userId != null)
             {
                 var actualCart = _frontService.GetCart(userId);

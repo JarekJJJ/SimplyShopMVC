@@ -1,8 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿
 <div class="container row">
 
 @if (User.IsInRole("Admin"))
@@ -29,7 +25,7 @@
             <span class="badge position-absolute top-0 start-0  translate-middle-y ms-2 text-info bg-white fs-4">Wybrane produkty z tej kategorii </span>
         </div>
     <div class="row m-1 mt-3 ">
-        <vc:box-fiskalne-items number="8" />
+        <vc:box-fiskalne-items number="8" tag-name="uFiskalne"/>
     </div>
     </div>
 

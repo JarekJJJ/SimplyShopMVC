@@ -11,7 +11,11 @@
 
                     <div class=" border border-1 p-1 h-100 position-relative d-flex flex-column h-100">
                         <div class=" badge bg-primary text-wrap" style="width: 6rem;">
-                            Urządzenia Fiskalne
+                            @if(item.tags != null)
+                            {
+                                @item.tags.FirstOrDefault().Name;
+                                
+                            }                       
                         </div>
                         <div class="text-center d-flex justify-content-center m-1">
                             <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@item.name">
