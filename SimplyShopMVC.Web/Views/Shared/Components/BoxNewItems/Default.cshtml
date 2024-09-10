@@ -25,6 +25,7 @@
                          model="@(new ModalParams
                                         {
                                     Id="modal-description-" + item.id,
+                           itemId = item.id,
                                     Title=item.name ,
                                     Description= item.description
                                     })" />
@@ -36,10 +37,10 @@
                             <input type="hidden" asp-for="cartItem.Name" value="@item.name" />
                             <input type="hidden" id="prizeB_@item.id" asp-for="@Model.cartItem.PriceN" value="@item.priceB" />
                             <input type="hidden" asp-for="cartItem.WarehouseId" value="@item.warehouseId" />
-                            @if(Model.cart != null)
+                            @if (Model.cart != null)
                             {
-                                 <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id" />
-                            }                      
+                                <input type="hidden" asp-for="@Model.cartItem.CartId" value="@Model.cart.Id" />
+                            }
                             <input type="hidden" asp-for="cartItem.Quantity" class="form-control p-1" id="quantity_@item.id" value="1" />
                             <button type="submit" class="btn cart button btn-danger @(item.quantity>0 ? null : "disabled")">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="" class="bi bi-cart-plus-fill text-light" viewBox="0 0 16 16">
@@ -69,6 +70,7 @@
                      model="@(new ModalParams
                                         {
                                     Id="modal-description-" + item.id,
+                       itemId = item.id,
                                     Title=item.name ,
                                     Description= item.description
                                     })" />
@@ -82,7 +84,7 @@
 }
 @section Scripts
     {
-   <script type="text/javascript">       
+    <script type="text/javascript">
         $(document).ready(function () {
             $('[id ^= "modal-description-btn-"]').on('click', function () {
                 var itemId = $(this).attr('id').split('-')[3];

@@ -671,6 +671,7 @@ namespace SimplyShopMVC.Application.Services
             returnRaport.raportAddItem = new List<string>();
             if (incomItems.warehouseId != 0)
             {
+                var allIncomItems = _supplierRepo.GetAllIncom();
                 CultureInfo cultureInfo = new CultureInfo("pl-PL");
                 cultureInfo.NumberFormat.NumberDecimalSeparator = ",";
                 DateTime dateTime = DateTime.Now;
@@ -695,7 +696,7 @@ namespace SimplyShopMVC.Application.Services
                         itemVm.stan_magazynowy = changeToInt(stan_magazynowy.Value);
                         itemVm.cena = decimal.Parse(cena.Value, cultureInfo);
                         itemVm.updateTime = dateTime; // Tutaj zrobić podział na update i Add !!!
-                        var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
+                        var itemToCheck = allIncomItems.FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
                         var mapedItemVm = _mapper.Map<IncomItemsForListVm>(itemToCheck);
                         int itemId = 0;
                         if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
@@ -713,7 +714,7 @@ namespace SimplyShopMVC.Application.Services
                             mapedOmnibusPrice.Ean = itemVm.ean;
                             mapedOmnibusPrice.ChangeTime = dateTime;
                             mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
-                            _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);
+                            _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);                           
                         }
                     }
                     catch (Exception)
