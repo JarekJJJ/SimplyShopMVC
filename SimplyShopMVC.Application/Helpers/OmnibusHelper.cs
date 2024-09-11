@@ -60,18 +60,18 @@ namespace SimplyShopMVC.Application.Helpers
             var oPriceList = _priceRepo.GetAllOmnibusPrice().Where(i => i.Ean == eanCode)
                 .ProjectTo<OmnibusPriceToListVm>(_mapper.ConfigurationProvider).ToList();
             omnibusPriceList.AddRange(oPriceList);
-            var item = _itemRepo.GetAllItems().FirstOrDefault(i => i.EanCode == eanCode);
-            var itemW = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id);
-            var vatValue = _itemRepo.GetAllVatRate().FirstOrDefault(i => i.Id == itemW.VatRateId);
-            var groupItem = _groupItemRepo.GetAllGroupItem().FirstOrDefault(i => i.Id == item.GroupItemId);
-            if (item != null && groupItem != null)
-            {
-                foreach (var oPrice in omnibusPriceList)
-                {
-                    var a = (oPrice.PriceN * (((decimal)groupItem.PriceMarkupA / 100) + 1))*(((decimal)vatValue.Value/100)+1);
-                    oPrice.PriceDetB = a;
-                }
-            }
+            //var item = _itemRepo.GetAllItems().FirstOrDefault(i => i.EanCode == eanCode);
+            //var itemW = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == item.Id);
+            //var vatValue = _itemRepo.GetAllVatRate().FirstOrDefault(i => i.Id == itemW.VatRateId);
+            //var groupItem = _groupItemRepo.GetAllGroupItem().FirstOrDefault(i => i.Id == item.GroupItemId);
+            //if (item != null && groupItem != null)
+            //{
+            //    foreach (var oPrice in omnibusPriceList)
+            //    {
+            //        var a = (oPrice.PriceN * (((decimal)groupItem.PriceMarkupA / 100) + 1))*(((decimal)vatValue.Value/100)+1);
+            //        oPrice.PriceDetB = a;
+            //    }
+            //}
             return omnibusPriceList;
         }
         public List<OmnibusPriceToListVm> GetOmnibusPrice(ItemForListVm item)
@@ -90,6 +90,23 @@ namespace SimplyShopMVC.Application.Helpers
                 }
             }
             return omnibusPriceList;
+        }
+        public List<OmnibusPriceToListVm> GetAllOmnibusPrice(string eanCode, int numberMonths)
+        {
+            List<OmnibusPriceToListVm> listOmnibusPrice = new List<OmnibusPriceToListVm>();
+            var listAllPrice = _priceRepo.GetAllOmnibusPrice().Where(i => i.Ean == eanCode).ToList();           
+           for(var i = 1; i <= numberMonths;i++)
+            {
+                var lastTime = DateTime.Now.AddMonths(-i+1);
+                var actualTime = DateTime.Now.AddMonths(-i);
+                var tempListPrice = listAllPrice.Where(x => (x.ChangeTime >= actualTime && x.ChangeTime<lastTime)).OrderBy(p => p.PriceN).Take(1).ToList();
+                var tempPrice =_mapper.Map<OmnibusPriceToListVm>(tempListPrice.FirstOrDefault());
+                if(tempPrice != null)
+                {
+                    listOmnibusPrice.Add(tempPrice);
+                }              
+            }
+            return listOmnibusPrice;
         }
     }
 }

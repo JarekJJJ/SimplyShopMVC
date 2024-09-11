@@ -22,6 +22,41 @@ namespace SimplyShopMVC.Application.Helpers
             _groupItemRepo = groupItemRepo;
         }
 
+        public decimal omnibusPriceCalc(int itemId, decimal netPurchasePrice, string userId)
+        {
+            decimal price = 0;
+            var userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId);
+            var itemWareDetail = _itemRepo.GetAllItemWarehouses().FirstOrDefault(i => i.ItemId == itemId);
+            var itemDetail = _itemRepo.GetAllItems().FirstOrDefault(it => it.Id == itemId);
+            var groupDetail = _groupItemRepo.GetAllGroupItem().FirstOrDefault(g => g.Id == itemDetail.GroupItemId);
+            var vatRateResoult = _itemRepo.GetAllVatRate().FirstOrDefault(v => v.Id == itemWareDetail.VatRateId);
+            var resultPriceLevelA = GetPriceDetalB(netPurchasePrice, vatRateResoult.Value, groupDetail.PriceMarkupA);
+            var resultPriceLevelB = GetPriceDetalB(netPurchasePrice, vatRateResoult.Value, groupDetail.PriceMarkupB);
+            var resultPriceLevelC = GetPriceDetalB(netPurchasePrice, vatRateResoult.Value, groupDetail.PriceMarkupC);
+            if (userDetail == null)
+            {              
+                    price = resultPriceLevelA;
+            }
+            else
+            {             
+                    switch (userDetail.PriceLevel)
+                    {
+                        case ("A"):
+                            price = resultPriceLevelA;
+                            break;
+                        case ("B"):
+                            price = resultPriceLevelB;
+                            break;
+                        case ("C"):
+                            price = resultPriceLevelC;
+                            break;
+                        default:
+                            price = resultPriceLevelA;
+                            break;
+                    }                
+            }
+            return price;
+        }
         public decimal priceCalc(int itemId, int warehouseId, string userId)
         {
             var userDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == userId);

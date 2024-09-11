@@ -10,5 +10,6 @@ namespace SimplyShopMVC.Application.Interfaces
     {
         decimal priceCalc(int itemId, int warehouseId, string userId);
         decimal priceCalc(int itemId, int groupItemId, int warehouseId, string userId);
+        decimal omnibusPriceCalc(int itemId, decimal netPurchasePrice, string userId);
     }
 }

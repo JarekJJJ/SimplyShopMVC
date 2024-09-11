@@ -53,12 +53,13 @@
         </div>
     </div>
     <div class="col-md-12">
-        @foreach (var oPrice in Model.omnibusPriceList)
-        {
-            <span>
-                Najniża cena z ostatnich 30 dni : @oPrice.PriceDetB.ToString("N2") (Data: (@oPrice.ChangeTime.ToString("yyyy-MM-dd")))
-            </span>
-        }
+       
+           
+            @if(Model.omnibusBestPrice != null)
+            {
+               <span>  Najniża cena z ostatnich 30 dni: @Model.omnibusBestPrice.PriceDetB.ToString("N2") Data: @Model.omnibusBestPrice.ChangeTime.ToString("yyyy-MM-dd")</span>
+            }
+            
     </div>
     <div class="col-md-12 d-flex mt-2 bg-white justify-content-center">
         <div>

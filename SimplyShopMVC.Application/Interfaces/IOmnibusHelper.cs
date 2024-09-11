@@ -13,5 +13,6 @@ namespace SimplyShopMVC.Application.Interfaces
         void AddPriceToHistory(ItemWarehouseForListVm item);
         List<OmnibusPriceToListVm> GetOmnibusPrice(string eanCode);
         List<OmnibusPriceToListVm> GetOmnibusPrice(ItemForListVm item);
+        List<OmnibusPriceToListVm> GetAllOmnibusPrice(string eanCode, int numberMonths);
     }
 }

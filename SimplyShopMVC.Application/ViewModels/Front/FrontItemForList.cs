@@ -27,6 +27,7 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public int? vatRateId { get; set; }
         public List<PhotoItemVm> images { get; set; }
         public List<ItemTagsForListVm>? tags { get; set; }
+        public OmnibusPriceToListVm omnibusBestPrice { get; set; }
         public List<OmnibusPriceToListVm> omnibusPriceList { get; set; }
         public int orderQuantity { get; set; }
         public CartItemsForListVm cartItem { get; set; }

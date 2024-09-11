@@ -33,9 +33,10 @@ namespace SimplyShopMVC.Application.Services
         private readonly IOrderRepository _orderRepo;
         private readonly IUserRepository _userRepo;
         private readonly IFavoriteItemRepository _favoriteItemRepo;
+        private readonly IPriceCalculate _priceCalculate;
 
         public FrontService(ISupplierRepository supplierRepo, IMapper mapper, IWebHostEnvironment webHost, IItemRepository itemRepo, IGroupItemRepository groupItemRepo, ICategoryTagsRepository categoryTagsRep,
-            IOmnibusHelper omnibusHelper, IOrderRepository orderRepo, IUserRepository userRepo, IFavoriteItemRepository favoriteItemRepo)
+            IOmnibusHelper omnibusHelper, IOrderRepository orderRepo, IUserRepository userRepo, IFavoriteItemRepository favoriteItemRepo, IPriceCalculate priceCalculate)
         {
             _supplierRepo = supplierRepo;
             _mapper = mapper;
@@ -47,11 +48,12 @@ namespace SimplyShopMVC.Application.Services
             _orderRepo = orderRepo;
             _userRepo = userRepo;
             _favoriteItemRepo = favoriteItemRepo;
+            _priceCalculate = priceCalculate;
         }
 
         public FrontItemForList GetItemDetail(int id, string userId)
         {
-            List<FrontItemForList> frontItemList = new List<FrontItemForList>();
+            List<FrontItemForList> frontItemList = new List<FrontItemForList>();              
             List<Item> itemList = new List<Item>();
             var itemToMap = _itemRepo.GetItemById(id);
             itemList.Add(itemToMap);
@@ -59,7 +61,16 @@ namespace SimplyShopMVC.Application.Services
             var frontItem = mappedList.FirstOrDefault();
             if (!string.IsNullOrEmpty(frontItem.eanCode))
             {
-                frontItem.omnibusPriceList = _omnibusHelper.GetOmnibusPrice(frontItem.eanCode).Where(x => x.ChangeTime >= DateTime.Now.AddDays(-31)).OrderBy(p => p.PriceN).Take(1).ToList();
+                var bestPricelist = _omnibusHelper.GetAllOmnibusPrice(frontItem.eanCode, 12).ToList(); 
+                foreach(var priceItem in bestPricelist)
+                {
+                    priceItem.PriceDetB = _priceCalculate.omnibusPriceCalc(itemToMap.Id, priceItem.PriceN, userId);
+                }
+                var bestPrice = bestPricelist.Where(x => x.ChangeTime >= DateTime.Now.AddDays(-31)).OrderBy(p => p.PriceN).Take(1).ToList();
+                frontItem.omnibusBestPrice = bestPrice.FirstOrDefault();
+                frontItem.omnibusPriceList = bestPricelist;
+
+
             }
             return frontItem;
         }
