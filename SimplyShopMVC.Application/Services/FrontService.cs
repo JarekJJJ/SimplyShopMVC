@@ -65,6 +65,7 @@ namespace SimplyShopMVC.Application.Services
                 foreach(var priceItem in bestPricelist)
                 {
                     priceItem.PriceDetB = _priceCalculate.omnibusPriceCalc(itemToMap.Id, priceItem.PriceN, userId);
+                    
                 }
                 var bestPrice = bestPricelist.Where(x => x.ChangeTime >= DateTime.Now.AddDays(-31)).OrderBy(p => p.PriceN).Take(1).ToList();
                 frontItem.omnibusBestPrice = bestPrice.FirstOrDefault();

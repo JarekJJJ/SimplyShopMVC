@@ -8,6 +8,7 @@ using SimplyShopMVC.Application.ViewModels.Front;
 using SimplyShopMVC.Application.ViewModels.Order;
 using SimplyShopMVC.Application.ViewModels.PcSets;
 using SimplyShopMVC.Domain.Interface;
+using Newtonsoft.Json;
 
 namespace SimplyShopMVC.Web.Controllers
 {
@@ -110,16 +111,17 @@ namespace SimplyShopMVC.Web.Controllers
         {
             var iduser = _userManager.GetUserId(User);
             var item = _frontService.GetItemDetail(selectedItem, iduser);
+            ViewBag.JsonData = JsonConvert.SerializeObject(item.omnibusPriceList);
             return View(item);
         }
-        [HttpPost]
-        public IActionResult DetailItem(FrontItemForList result)
-        {
-            var iduser = _userManager.GetUserId(User);
-            var selectedItem = result.id;
-            var item = _frontService.GetItemDetail(selectedItem, iduser);
-            return View(item);
-        }
+        //[HttpPost]
+        //public IActionResult DetailItem(FrontItemForList result)
+        //{
+        //    var iduser = _userManager.GetUserId(User);
+        //    var selectedItem = result.id;
+        //    var item = _frontService.GetItemDetail(selectedItem, iduser);
+        //    return View(item);
+        //}
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult AddPcSet(ListItemShopIndexVm result, int options)

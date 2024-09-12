@@ -1,10 +1,10 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Front.FrontItemForList
-@using System.Web
+@using System.Web;
+
 @{
     ViewData["Title"] = "HKR24.pl - product detail";
     var mainImage = Model.images.FirstOrDefault();
 }
-
 <form asp-controller="Cart" asp-action="AddCartItem" method="post">
     <div class="col-md-12 d-flex mt-2 bg-white">
         <div class="text-center d-flex flex-column justify-content-center m-1 col-md-2">
@@ -53,13 +53,16 @@
         </div>
     </div>
     <div class="col-md-12">
-       
-           
-            @if(Model.omnibusBestPrice != null)
-            {
-               <span>  Najniża cena z ostatnich 30 dni: @Model.omnibusBestPrice.PriceDetB.ToString("N2") Data: @Model.omnibusBestPrice.ChangeTime.ToString("yyyy-MM-dd")</span>
-            }
-            
+
+
+        @if (Model.omnibusBestPrice != null)
+        {
+            <span>  Najniża cena z ostatnich 30 dni: @Model.omnibusBestPrice.PriceDetB.ToString("N2") Data: @Model.omnibusBestPrice.ChangeTime.ToString("yyyy-MM-dd")</span>
+        }
+
+    </div>
+    <div class="row col-md-12" style="max-height:200px">
+        <canvas id="myChart" ></canvas>
     </div>
     <div class="col-md-12 d-flex mt-2 bg-white justify-content-center">
         <div>
@@ -79,7 +82,32 @@
                 arrows: true,
             });
         });
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.omnibusPriceList.Select(m => m.ChangeTime.ToString("yyyy-MM")))),
+                datasets: [{
+                    label: 'Cena brutto',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.omnibusPriceList.Select(m => Math.Round(m.PriceDetB, 2)))),
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        }); 
 
-    </script>
+        </script>      
     }
-
