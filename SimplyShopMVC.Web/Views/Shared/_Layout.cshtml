@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="~/css/slick.css">
     <link rel="stylesheet" href="~/css/slick-theme.css">
     <link rel="stylesheet" href="~/lib/toastr.js/toastr.min.css">
+    <link rel="stylesheet" href="~/css/magnific-popup.css" />
     <meta name="google-site-verification" content="sLnO7FGtYfbHCYzIQNk1bFoZLTEelEofybvl_vspkWc" />
 
 </head>
@@ -177,10 +178,11 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/tinymce/tinymce.js"></script>
     <script src="~/js/slick.js"></script>
-@*    <script src="~/lib/Chart.js/chart.js"></script>*@
+    <script src="~/lib/jquery-mag/jquery.magnific-popup.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <div class="privacy-police-info" style="display:none">
         Serwis wykorzystuje pliki cookies. Korzystając ze strony wyrażasz zgodę na wykorzystanie plików cookies.
         <button onclick="closePrivacyPolice()" type="button" class="btn btn-light mx-3 my-1 privacy-police-btn">
@@ -200,6 +202,12 @@
                 slidesToScroll: 2,
                 arrows: true,
             });
+            $('.image-popup').magnificPopup({
+                type: 'image',
+                closeOnContentClick: true,
+                closeBtnInside: false,
+                fixedContentPos: true,
+            });
         });
         $(document).ready(function () {
             var scrollThreshold = 200;
@@ -214,7 +222,7 @@
                 }
                 scrollThreshold = scrollPosition;
             });
-        });
+        });   
         $(document).ready(function () {
             if ($.cookie("privacyPolice") !== "1")
                 $(".privacy-police-info").show();

@@ -191,7 +191,7 @@
                         <div class="col-md-12 d-flex mt-2 bg-white">
                             <div class="text-center d-flex justify-content-center m-1 col-md-2">
                                 <div class="d-flex align-self-center justify-content-center">
-                                    <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name">
+                                 <a class="image-popup" href="@mainImage.ImageUrl">   <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name"></a>
                                 </div>
                             </div>
                             <div class="d-flex  flex-grow-1 p-4 flex-column">
@@ -273,7 +273,7 @@
                     <div class="col-md-12 d-flex mt-2 bg-white">
                         <div class="text-center d-flex justify-content-center m-1 col-md-2">
                             <div class="d-flex align-self-center justify-content-center">
-                                <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name">
+                                <a class="image-popup" href="@mainImage.ImageUrl"> <img src="@mainImage.ImageUrl" class=" object-fit-contain  img-thumbnail img-fluid miniaturka border-0 " alt="@sItem.name"></a>
                             </div>
                         </div>
                         <div class="d-flex  flex-grow-1 p-4 flex-column">
@@ -380,7 +380,7 @@
 </form>
 @section Scripts
     {
-            var selectedFavoriteItemId = 0;
+                var selectedFavoriteItemId = 0;
     <script type="text/javascript">
         function PageClick(index) {
             var paginform = document.getElementById("paginForm");
@@ -422,6 +422,12 @@
             $('[id ^= "modal-description-btn-"]').on('click', function () {
                 var itemId = $(this).attr('id').split('-')[3];
                 $('#modal-description-' + itemId).modal('show');
+            });
+            $('.image-popup').magnificPopup({
+                type: 'image',
+                closeOnContentClick: true,
+                closeBtnInside: false,
+                fixedContentPos: true,
             });
         });
         $(document).ready(function () {
