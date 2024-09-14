@@ -112,6 +112,8 @@ namespace SimplyShopMVC.Web.Controllers
             var iduser = _userManager.GetUserId(User);
             var item = _frontService.GetItemDetail(selectedItem, iduser);
             ViewBag.JsonData = JsonConvert.SerializeObject(item.omnibusPriceList);
+            var fullUrl = Url.Action("DetailItem", "Item", new { selectedItem = item.id }, Request.Scheme);
+            ViewBag.FullUrl = fullUrl;
             return View(item);
         }
         //[HttpPost]

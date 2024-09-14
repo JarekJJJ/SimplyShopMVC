@@ -2,8 +2,17 @@
 @using System.Web;
 
 @{
-    ViewData["Title"] = "HKR24.pl - product detail";
+    ViewData["Title"] = "HKR24.pl -" + Model.name;
     var mainImage = Model.images.FirstOrDefault();
+}
+@section MetaTags {
+    <meta property="og:title" content="@Model.name" />
+    <meta property="og:description" content="@Model.description" />
+    <meta property="og:image" content="@mainImage.ImageUrl" />
+    <meta property="og:url" content="@ViewBag.FullUrl" />
+    <meta property="og:type" content="product" />
+    <meta property="og:price:amount" content="@Model.priceB.ToString("N2")">
+    <meta property="og:price:currency" content="PLN">
 }
 <form asp-controller="Cart" asp-action="AddCartItem" method="post">
     <div class="col-md-12 d-flex mt-2 bg-white">
