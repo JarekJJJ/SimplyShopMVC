@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SimplyShopMVC.Application.Mapping;
 using SimplyShopMVC.Domain.Model.Messages.Enums;
+using SimplyShopMVC.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,6 +27,10 @@ namespace SimplyShopMVC.Application.ViewModels.Message
         public DateTime? CreatedDate { get; set; }
         public DateTime UpdateDateTime { get; set; } = DateTime.Now;
         public StatusMessage StatusMessage { get; set; }
+        public string? SenderIpAddress { get; set; } = string.Empty;
+        [MustBeTrue(ErrorMessage= "Musisz zaakceptować warunki.")]
+        [Display(Name = "Akceptuję Politykę Prywatności")]
+        public bool PrivacyPolicy { get; set; } 
         public string? AntySpamResult { get; set; }
         public void Mapping(Profile profile)
         {

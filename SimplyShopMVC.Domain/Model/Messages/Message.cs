@@ -18,5 +18,7 @@ public class Message
     public bool IsDeleted { get; set; } = false;
     public DateTime? CreatedDate { get; set; }
     public DateTime UpdateDateTime { get; set; } = DateTime.Now;
-    public StatusMessage StatusMessage { get; set; } 
+    public StatusMessage StatusMessage { get; set; }
+    public string? SenderIpAddress { get; set; } = string.Empty;
+    public bool PrivacyPolicy { get; set; }
 }

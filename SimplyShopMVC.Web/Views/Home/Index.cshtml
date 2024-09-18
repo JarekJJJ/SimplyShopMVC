@@ -69,24 +69,7 @@
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var messages = @Html.Raw(Json.Serialize(Model.errorMessage ?? new List<string>())); // Sprawdzenie, czy errorMessage nie jest null
-                toastr.options = {
-                    "timeOut": "20000", // Czas wyświetlania w milisekundach (1000 - 1 sekunda)
-                    "extendedTimeOut": "3000" // Czas wyświetlania po interakcji użytkownika
-                };
-                if (messages.length > 0) {
-                    messages.forEach(function (message) {
-                        toastr.warning(message); // Możesz użyć toastr.success, toastr.info, toastr.warning w zależności od typu wiadomości
-                    });
-                }
-            });
-            if ('@TempData["Success"]') {
-                toastr.success('@TempData["success"]')
-            }
-            if ('@TempData["Error"]') {
-                toastr.error('@TempData["Error"]')
-            }
+
         </script>
     }
 

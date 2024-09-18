@@ -89,6 +89,9 @@ namespace SimplyShopMVC.Web.Controllers
                 {
                     message.SenderUserId = string.Empty;
                 }
+                var remoteIpAddress = HttpContext.Connection.RemoteIpAddress;
+                string userIpAddress = remoteIpAddress != null ? remoteIpAddress.ToString() : "IP not found";
+                message.SenderIpAddress = userIpAddress;
                 var result = _messageService.SendMessage(message);
                 if (result)
                 {
@@ -102,11 +105,8 @@ namespace SimplyShopMVC.Web.Controllers
             }
             else
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                 ModelState.AddModelError("AntySpamResult", "Wypełnij pole reCaptcha");
-                errors.Insert(0, "Nie udało się wysłać wiadomości");
-                errors.Insert(1, "Wystąpiły błędy:");
-                TempData["Message"] = errors;
+                TempData["Error"] = "Nie udało się wysłać wiadomości - Wystąpiły błędy. ";
             }
 
 

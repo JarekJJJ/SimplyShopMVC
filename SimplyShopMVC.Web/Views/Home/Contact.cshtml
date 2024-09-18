@@ -1,55 +1,77 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Message.MessageForListVm
 @using AspNetCore.ReCaptcha;
-<div class="m-3" id="map" style="height:350px"></div>
-<div>
-    <h2 class="fs-5" id="SendMessageLabel">Formularz kontaktowy</h2>
+<div class="container row m-2 justify-content-center text-center">
+    <p><h2>Dane firmy:</h2></p>
+    <p>
+        <h3>
+            PUH HKR<br />
+            ul. Kręta 22c<br />
+            78-520 Złocieniec</br>
+            tel: 880 394 394, NIP: 253-004-81-39
+        </h3>
+    </p>
 </div>
-@using (Html.BeginForm("Contact", "Home", FormMethod.Post))
-{
-    <div class="modal-body">
-        <div class="row mt-3 mb-5">
+<div class="m-3" id="map" style="height:350px"></div>
+<div class="container m-2 border border-1 p-2">
 
-            @Html.AntiForgeryToken()
-            <div class="form-group mt-3">
-                @Html.TextBoxFor(x=>x.SenderAddress, new { @class="form-control", placeholder="Adres email nadawcy"})
-                @Html.ValidationMessageFor(model => model.SenderAddress, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group mt-3">
-                @Html.TextBoxFor(x=>x.Title, new { @class="form-control", placeholder="Temat wiadomości"})
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group mt-3 mb-3">
-                @Html.TextAreaFor(x=>x.Body, new { @class="form-control", placeholder="Treść wiadomości", @rows=4})
-                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group mt-3">
-                @Html.HiddenFor(x=>x.AntySpamResult)
-                @Html.ValidationMessageFor(model=> model.AntySpamResult)
-            </div>
-            @Html.ReCaptcha()
 
+    <div>
+        <h2 class="fs-5" id="SendMessageLabel">Formularz kontaktowy</h2>
+    </div>
+    @using (Html.BeginForm("Contact", "Home", FormMethod.Post))
+    {
+        <div class="">
+            <div class="row mt-3 mb-5 m-2">
+
+                @Html.AntiForgeryToken()
+                <div class="form-group mt-3">
+                    @Html.TextBoxFor(x=>x.SenderAddress, new { @class="form-control", placeholder="Adres email nadawcy"})
+                    @Html.ValidationMessageFor(model => model.SenderAddress, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group mt-3">
+                    @Html.TextBoxFor(x=>x.Title, new { @class="form-control", placeholder="Temat wiadomości"})
+                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group mt-3 mb-3">
+                    @Html.TextAreaFor(x=>x.Body, new { @class="form-control", placeholder="Treść wiadomości", @rows=4})
+                    @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-check mt-3 mb-3">
+                    @Html.CheckBoxFor(x=>x.PrivacyPolicy, new { @class="form-check-input"})
+                    <label for="PrivacyPolicy" class="form-check-label">
+                        Akceptuję <a asp-controller="Home" asp-action="Privacy" target="_blank">Politykę Prywatności</a> <span> oraz Zgadzam się na przetwarzanie moich danych osobowych przez Puh Hkr, z siedzibą w Złocieńcu ul. Kręta 22c, w celu odpowiedzi na moją wiadomość, drogą telefoniczną lub poprzez e‑mail.</span>
+                    </label>
+                    @Html.ValidationMessageFor(model => model.PrivacyPolicy, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group mt-3">
+                    @Html.HiddenFor(x=>x.AntySpamResult)
+                    @Html.ValidationMessageFor(model=> model.AntySpamResult)
+                </div>
+                @Html.ReCaptcha()
+                <br>
+            </div>
+
+            <div class="">
+                <button type="submit" class="btn btn-primary">Wyślij widomość</button>
+            </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Wyślij widomość</button>
-    </div>
-}
+    }
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
         var greenIcon = L.icon({
-    iconUrl: '/media/znacznik/znacznik.png',
+            iconUrl: '/media/znacznik/znacznik.png',
             shadowUrl: '',
 
-    iconSize:     [75, 75], // size of the icon
-    shadowSize:   [50, 90], // size of the shadow
-    iconAnchor:   [32, 60], // point of the icon which will correspond to marker's location
-    shadowAnchor: [10, 74],  // the same for the shadow
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-     
-});
+            iconSize: [75, 75], // size of the icon
+            shadowSize: [50, 90], // size of the shadow
+            iconAnchor: [32, 60], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 74],  // the same for the shadow
+            popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+
+        });
         var map = L.map('map').setView([53.534531, 16.011361], 15);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -57,7 +79,8 @@
         }).addTo(map);
         L.marker([53.534531, 16.011361], { icon: greenIcon }).bindPopup("<b>PUH HKR</b><br>Serwis Komputerowy<br> ul. Kręta 22c <br> 78-520 Złocieniec").openPopup().addTo(map);
         L.marker.bindPopup("<b>PUH HKR</b><br>Serwis Komputerowy<br> ul. Kręta 22c <br> 78-520 Złocieniec").openPopup();
-       
+    </script>
+    <script>
 
         if ('@TempData["Success"]') {
             toastr.success('@TempData["Success"]')
@@ -66,6 +89,8 @@
             toastr.error('@TempData["Error"]')
         }
     </script>
+
+
     }
 
 
