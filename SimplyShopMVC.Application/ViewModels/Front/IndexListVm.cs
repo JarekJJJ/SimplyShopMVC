@@ -14,6 +14,7 @@ namespace SimplyShopMVC.Application.ViewModels.Front
         public ArticleDetailVm articlePanel1 { get; set; }
         public ArticleDetailVm articlePanel2 { get; set; }
         public ArticleDetailVm articlePanel3 { get; set; }
+        public List<string>? errorMessage { get; set; }
         public string userId { get; set; }
     }
 }

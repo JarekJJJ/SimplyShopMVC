@@ -1,8 +1,19 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Article.ArticleDetailVm
-
+@{
+    ViewData["Title"] = "HKR24.pl -" + Model.Title;
+    var mainImageTofb = Model.imagePath.FirstOrDefault();
+}
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 *@
+@section MetaTags {
+    <meta property="og:title" content="@Model.Title" />
+    <meta property="og:description" content="Po więcej odwiedź - hkr24.pl" />
+    <meta property="og:image" content=" @ViewBag.ImgUrl@mainImageTofb" />
+    <meta property="og:url" content="@ViewBag.FullUrl" />
+    <meta property="og:type" content="product" />
+}
 @{
     if (Model != null)
     {

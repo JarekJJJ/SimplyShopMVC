@@ -114,6 +114,7 @@ namespace SimplyShopMVC.Web.Controllers
             ViewBag.JsonData = JsonConvert.SerializeObject(item.omnibusPriceList);
             var fullUrl = Url.Action("DetailItem", "Item", new { selectedItem = item.id }, Request.Scheme);
             ViewBag.FullUrl = fullUrl;
+            ViewBag.ImgUrl = Request.Scheme + "://" + Request.Host.Host;
             return View(item);
         }
         //[HttpPost]

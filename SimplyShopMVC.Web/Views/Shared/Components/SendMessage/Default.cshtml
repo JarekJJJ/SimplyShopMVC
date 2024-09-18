@@ -1,0 +1,41 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Message.MessageForListVm
+@using AspNetCore.ReCaptcha;
+<div class="modal-header">
+    <h1 class="modal-title fs-5" id="SendMessageLabel">Formularz kontaktowy</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+@using (Html.BeginForm("SendEmail", "SendMessage", FormMethod.Post))
+{
+    <div class="modal-body">
+        <div class="row mt-3 mb-5">
+
+            @Html.AntiForgeryToken()
+            <div class="form-group mt-3">
+                @Html.TextBoxFor(x=>x.SenderAddress, new { @class="form-control", placeholder="Adres email nadawcy"})
+                @Html.ValidationMessageFor(model => model.SenderAddress, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group mt-3">
+                @Html.TextBoxFor(x=>x.Title, new { @class="form-control", placeholder="Temat wiadomości"})
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group mt-3 mb-3">
+                @Html.TextAreaFor(x=>x.Body, new { @class="form-control", placeholder="Treść wiadomości", @rows=4})
+                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+            </div>           
+            <div class="form-group mt-3">
+                @Html.HiddenFor(x=>x.AntySpamResult)
+                @Html.ValidationMessageFor(model=> model.AntySpamResult)
+            </div>
+            @Html.ReCaptcha();
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Wyślij widomość</button>
+    </div>
+}
+
+
+
+

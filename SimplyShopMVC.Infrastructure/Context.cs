@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SimplyShopMVC.Domain.Model;
+using SimplyShopMVC.Domain.Model.Messages;
 using SimplyShopMVC.Domain.Model.Order;
 using SimplyShopMVC.Domain.Model.Sets;
 using SimplyShopMVC.Domain.Model.Suppliers;
@@ -43,6 +44,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<Delivery> Delivery { get; set; }
         public DbSet<ConnectCategoryGroup> ConnectCategoryGroups { get; set; }
         public DbSet<FavoriteItem> FavoriteItems { get; set; }
+        public DbSet<Message> Messages { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }

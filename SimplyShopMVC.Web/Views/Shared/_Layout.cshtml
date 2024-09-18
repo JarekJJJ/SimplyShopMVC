@@ -10,6 +10,9 @@
     <title>@ViewData["Title"] - HKR24.PL - strona firmowa - sklep</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/customStyle.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SimplyShopMVC.Web.styles.css" asp-append-version="true" />
@@ -49,7 +52,7 @@
                 <p class="text-dark-emphasis fs-4 fw-bold pt-2 opacity-50">TEL: 880 394 394</p>
             </div>
             <div class="d-flex d-inline-block align-items-center justify-content-end flex-fill">
-                <button type="button" class="frameButton" data-bs-toggle="offcanvas" data-bs-target="#contactPanel">
+                <button type="button" class="frameButton" data-bs-toggle="modal" data-bs-target="#SendMessage">
                     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-headset" viewBox="0 0 16 16">
                         <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" />
                     </svg>
@@ -63,9 +66,9 @@
             </div>
         </div>
     </div>
-    <header class="container-fluid navbar navbar-expand-lg bd-navbar sticky-top shadow-sm" id="elementToToggle" style="background-color:rgb(111, 66, 193);">
+    <header class="container-fluid navbar navbar-expand-lg bd-navbar border border-1 sticky-top shadow-sm" id="elementToToggle" style="background-color:white">
 
-        <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap " style="background-color:rgb(111, 66, 193)">
+        <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap navbar-light">
 
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -77,29 +80,29 @@
 
                 <ul class="navbar-nav col-lg-8 flex-grow-1 fs-5 fw-semibold">
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link text-bg-info text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
                     <li>
                         <a class="nav-link" asp-area="" asp-controller="Item" asp-action="index"><span class="position-relative">Sklep<span style="font-size:x-small" class="position-absolute p-1 top-0 start-100 translate-middle te badge rounded-pill bg-danger">beta</span></span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="GetInfoArticle">Informacje</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="GetInfoArticle">Informacje</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link text-light dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Oferty</a>
+                        <a class="nav-link text-dark dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Oferty</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" asp-controller="Article" asp-action="GetFiskalneArticle">Urządzenia Fiskalne</a></li>
 
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Article" asp-action="GetSerwisArticle">Serwis</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="GetSerwisArticle">Serwis</a>
                     </li>
-                    <li><a class="nav-link text-warning" asp-controller="Item" asp-action="PcSetViewForUser">Komputery Gaming</a></li>
+                    <li><a class="nav-link text-warning" asp-controller="Item" asp-action="PcSetViewForUser">Komputery Gaming</a></li>                 
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item dropdown">
-                            <a class="nav-link text-light dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Panel Administracyjny</a>
+                            <a class="nav-link text-dark dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Panel Administracyjny</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="AddItem">Dodaj Towar</a></li>
                                 <li><a class="dropdown-item" asp-controller="Shop" asp-action="ListItemWarehouse">Przyjęcie magazynowe</a></li>
@@ -128,7 +131,7 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link text-light dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dostawy Xml</a>
+                            <a class="nav-link text-dark dropdown-toggle" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dostawy Xml</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddnewIncomXML">nowy Incom XML - beta</a></li>
                                 <li><a class="dropdown-item" asp-controller="Supplier" asp-action="AddIncomItemsXML">Dostawa Incom XML</a></li>
@@ -140,9 +143,9 @@
                             </ul>
                         </li>
 
-                    }         
-                </ul>
-
+                    } 
+                    <li><a class="nav-link text-dark " asp-controller="Home" asp-action="Contact">Kontakt</a></li>
+                </ul>             
             </div>
         </nav>
 
@@ -150,28 +153,19 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
-        </main>
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="contactPanel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasExampleLabel">Dane kontaktowe</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <div>
-                    <p class="text-center h1 fs-3">PUH HKR Jarosław Jaśkiewicz</p>
-                    <p class="text-center">Ul. Kręta 22c , 78-520 Złocieniec</p>
-                    <ul>
-                        <li>Telefon: 880 394 394</li>
-                        <li>Email: info@hkr.net.pl</li>
-                    </ul>
-                </div>
+        </main>   
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="SendMessage" tabindex="-1" aria-labelledby="SendMessageLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <vc:send-message />
             </div>
         </div>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container" id="footer">
-            &copy; @DateTime.Now.Year - HKR24.PL - v1.16 (02-09-2024) <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - HKR24.PL - v1.17 (14-09-2024) <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery-3.7.1.min.js"></script>
@@ -185,6 +179,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
 
     <div class="privacy-police-info" style="display:none">
         Serwis wykorzystuje pliki cookies. Korzystając ze strony wyrażasz zgodę na wykorzystanie plików cookies.

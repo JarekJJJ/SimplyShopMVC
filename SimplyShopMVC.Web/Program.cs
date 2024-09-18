@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IEmailSender, EmailSenderService>();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Context>();
 //Tutaj trzeba powiązać interfejsy z repository !!!
+builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 

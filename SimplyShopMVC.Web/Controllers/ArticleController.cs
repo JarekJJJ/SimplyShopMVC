@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimplyShopMVC.Application.Interfaces;
 using SimplyShopMVC.Application.Services;
 using SimplyShopMVC.Application.ViewModels.Article;
+using SimplyShopMVC.Domain.Model;
 using SimplyShopMVC.Web.Filters;
 
 namespace SimplyShopMVC.Web.Controllers
@@ -137,7 +138,10 @@ namespace SimplyShopMVC.Web.Controllers
         }
         public IActionResult ArticleDetail(int id)
         {
-            var articleDetail = _articleService.GetArticleDetails(id);         
+            var articleDetail = _articleService.GetArticleDetails(id);
+            var fullUrl = Url.Action("ArticleDetail", "Article", new { id = articleDetail.Id }, Request.Scheme);
+            ViewBag.FullUrl = fullUrl;
+            ViewBag.ImgUrl = Request.Scheme + "://" + Request.Host.Host + "/media/articleimg/" + articleDetail.Id + "/";
 
             return View(articleDetail);
         }
