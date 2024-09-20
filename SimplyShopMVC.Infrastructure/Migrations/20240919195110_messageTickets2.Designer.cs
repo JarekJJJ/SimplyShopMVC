@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimplyShopMVC.Infrastructure;
 
@@ -11,9 +12,10 @@ using SimplyShopMVC.Infrastructure;
 namespace SimplyShopMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240919195110_messageTickets2")]
+    partial class messageTickets2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -529,7 +531,7 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MessageTicketId")
+                    b.Property<int?>("MessageTicketId")
                         .HasColumnType("int");
 
                     b.Property<bool>("PrivacyPolicy")
@@ -579,6 +581,9 @@ namespace SimplyShopMVC.Infrastructure.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1506,9 +1511,7 @@ namespace SimplyShopMVC.Infrastructure.Migrations
                 {
                     b.HasOne("SimplyShopMVC.Domain.Model.Messages.MessageTicket", "MessageTicket")
                         .WithMany("Messages")
-                        .HasForeignKey("MessageTicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MessageTicketId");
 
                     b.Navigation("MessageTicket");
                 });

@@ -24,6 +24,7 @@ namespace SimplyShopMVC.Application.ViewModels.Message
         public string? SenderUserId { get; set; }
         public string TicketMessage { get; set; } = string.Empty;
         public bool IsDeleted { get; set; } = false;
+        public int MessageTicketId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime UpdateDateTime { get; set; } = DateTime.Now;
         public StatusMessage StatusMessage { get; set; }
@@ -31,6 +32,7 @@ namespace SimplyShopMVC.Application.ViewModels.Message
         [MustBeTrue(ErrorMessage= "Musisz zaakceptować warunki.")]
         [Display(Name = "Akceptuję Politykę Prywatności")]
         public bool PrivacyPolicy { get; set; } 
+        public string? senderTrueEmail { get; set; }
         public string? AntySpamResult { get; set; }
         public void Mapping(Profile profile)
         {

@@ -1,0 +1,86 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Message.MessageForViewVm
+@using AspNetCore.ReCaptcha;
+
+<div class="container">
+    <div class="border border-1 border-dark rounded-1 mt-3 p-1">
+        <h2>Szczegóły wiadomości:</h2>
+        <div class="card m-1 p-2">
+            <div class="card-body">
+                <h5 class="card-title"> <span class="fw-bold">Tytuł: </span>@Model.messageForViewVm.Title</h5>
+                <p class="card-text"> <span class="fw-bold">Treść:</span> <br />@Html.Raw(Model.messageForViewVm.Body)</p>
+            </div>
+            <div class="card-footer text-body-secondary">
+                <span>Utworzono: @Model.messageForViewVm.CreatedDate </span>
+                <span>Od: @Model.messageForViewVm.SenderAddress (@(Model.messageForViewVm.senderTrueEmail != null ? Model.messageForViewVm.senderTrueEmail : "gość"))</span>
+                <span>Status: @Model.messageForViewVm.StatusMessage</span>
+                <span>Ticket: @Model.messageForViewVm.TicketMessage</span>
+                <span> Wysłano z IP: @Model.messageForViewVm.SenderIpAddress</span>
+            </div>
+        </div>
+    </div>
+    <div class=" mt-2 border border-1 rounded p-2">
+        <div>
+            <h2 class="fs-5" id="SendMessageLabel">Formularz kontaktowy</h2>
+        </div>
+        @{
+            Model.mainMessageId = Model.messageForViewVm.Id;
+            Model.messageForSend.SenderAddress = Model.messageForViewVm.SenderAddress;
+            Model.messageForSend.Title = "Re: "+ Model.messageForViewVm.Title;
+            Model.messageForSend.TicketMessage = Model.messageForViewVm.TicketMessage;
+        }
+        @using (Html.BeginForm("SendMessageRe", "Message", FormMethod.Post))
+        {
+            <div class="">
+                <div class="row mt-3 mb-5 m-2">
+
+                    @Html.AntiForgeryToken()
+                    <div class="form-group mt-3">
+                        @Html.TextBoxFor(x=>x.messageForSend.SenderAddress, new { @class="form-control", placeholder="Adres email odbiorcy"})
+                        @Html.ValidationMessageFor(model => model.messageForSend.SenderAddress, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mt-3">
+                        @Html.TextBoxFor(x=>x.messageForSend.Title, new { @class="form-control", placeholder="Temat wiadomości"})
+                        @Html.ValidationMessageFor(model => model.messageForSend.Title, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mt-3 mb-3">
+                        @Html.TextAreaFor(x=>x.messageForSend.Body, new { @class="form-control", placeholder="Treść wiadomości", @rows=4})
+                        @Html.ValidationMessageFor(model => model.messageForSend.Body, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-check mt-3 mb-3">
+                        @Html.CheckBoxFor(x=>x.messageForSend.PrivacyPolicy, new { @class="form-check-input"})
+                        <label for="PrivacyPolicy" class="form-check-label">
+                            Akceptuję <a asp-controller="Home" asp-action="Privacy" target="_blank">Politykę Prywatności</a> <span> oraz Zgadzam się na przetwarzanie moich danych osobowych przez Puh Hkr, z siedzibą w Złocieńcu ul. Kręta 22c, w celu odpowiedzi na moją wiadomość, drogą telefoniczną lub poprzez e‑mail.</span>
+                        </label>
+                        @Html.ValidationMessageFor(model => model.messageForSend.PrivacyPolicy, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mt-3">
+                        @Html.HiddenFor(x=>x.messageForSend.AntySpamResult)
+                        @Html.ValidationMessageFor(model=> model.messageForSend.AntySpamResult)
+                    </div>
+                    <div class="form-group mt-3">
+                        @Html.HiddenFor(x=>x.mainMessageId)
+                        @Html.HiddenFor(x=>x.messageForSend.TicketMessage)
+                    </div>
+                    @Html.ReCaptcha()
+                    <br>
+                </div>
+
+                <div class="">
+                    <button type="submit" class="btn btn-primary">Wyślij odpowiedź</button>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+@section Scripts {
+    <script>
+        if ('@TempData["Success"]') {
+            toastr.success('@TempData["Success"]')
+        }
+        if ('@TempData["Error"]') {
+            toastr.error('@TempData["Error"]')
+        }
+    </script>
+
+}

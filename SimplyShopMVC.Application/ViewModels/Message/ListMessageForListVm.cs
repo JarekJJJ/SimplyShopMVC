@@ -9,6 +9,7 @@ namespace SimplyShopMVC.Application.ViewModels.Message
     public class ListMessageForListVm
     {
         public List<MessageForListVm> listMessages { get; set; }
+        public List<MessageTicketForListVm> listTicketMessages { get; set; }
         public MessageForListVm message { get; set; }
     }
 }

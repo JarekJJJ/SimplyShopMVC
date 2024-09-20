@@ -14,4 +14,8 @@ public interface IMessageRepository
     void DeleteMessage(int id);
     Message GetMessage(int id);
     IQueryable<Message> GetAllMessage();
+    int AddMessageTicket(MessageTicket messageTicket);
+    void UpdateMessageTicket(MessageTicket messageTicket);
+    void DeleteMessageTicket(int id);
+    IQueryable<MessageTicket> GetAllMessageTicket();
 }

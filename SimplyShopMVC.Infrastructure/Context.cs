@@ -45,6 +45,7 @@ namespace SimplyShopMVC.Infrastructure
         public DbSet<ConnectCategoryGroup> ConnectCategoryGroups { get; set; }
         public DbSet<FavoriteItem> FavoriteItems { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<MessageTicket> MessageTickets { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
         }

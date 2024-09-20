@@ -9,7 +9,10 @@ namespace SimplyShopMVC.Application.Interfaces;
 
 public interface IMessageService
 {
-    public bool SendMessage(MessageForListVm message);
-    public List<MessageForListVm> GetMessagesForUser(string userId);
-    public List<MessageForListVm> GetMessageForAdmin();
+    bool SendMessage(MessageForListVm message);
+    List<MessageForListVm> GetMessagesForUser(string userId);
+    List<TicketMessageGroupForListVm> GetMessageForAdmin();
+    MessageForListVm GetMessageDetail(int messageId, bool isAdmin, string? userId);
+    bool SendMessageRe(MessageForListVm message);
+
 }

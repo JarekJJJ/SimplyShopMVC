@@ -16,9 +16,11 @@ public class Message
     public string? SenderUserId { get; set; }
     public string TicketMessage { get; set; } = string.Empty;
     public bool IsDeleted { get; set; } = false;
+    public int MessageTicketId { get; set; }
     public DateTime? CreatedDate { get; set; }
     public DateTime UpdateDateTime { get; set; } = DateTime.Now;
     public StatusMessage StatusMessage { get; set; }
     public string? SenderIpAddress { get; set; } = string.Empty;
     public bool PrivacyPolicy { get; set; }
+    public virtual MessageTicket MessageTicket { get; set; }
 }
