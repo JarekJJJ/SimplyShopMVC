@@ -1,5 +1,6 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Message.MessageForViewVm
 @using AspNetCore.ReCaptcha;
+@using SimplyShopMVC.Application.Helpers;
 
 <div class="container">
     <div class="border border-1 border-dark rounded-1 mt-3 p-1">
@@ -11,10 +12,9 @@
             </div>
             <div class="card-footer text-body-secondary">
                 <span>Utworzono: @Model.messageForViewVm.CreatedDate </span>
-                <span>Od: @Model.messageForViewVm.SenderAddress (@(Model.messageForViewVm.senderTrueEmail != null ? Model.messageForViewVm.senderTrueEmail : "gość"))</span>
-                <span>Status: @Model.messageForViewVm.StatusMessage</span>
+                <span>Od: @Model.messageForViewVm.SenderAddress </span>
+                <span>Status: @Model.messageForViewVm.StatusMessage.GetDisplayName()</span>
                 <span>Ticket: @Model.messageForViewVm.TicketMessage</span>
-                <span> Wysłano z IP: @Model.messageForViewVm.SenderIpAddress</span>
             </div>
         </div>
     </div>
@@ -25,11 +25,10 @@
         @{
             Model.mainMessageId = Model.messageForViewVm.Id;
             Model.messageForSend.SenderAddress = Model.messageForViewVm.SenderAddress;
-            Model.messageForSend.Title = "Re: "+ Model.messageForViewVm.Title;
+            Model.messageForSend.Title = "Re: " + Model.messageForViewVm.Title;
             Model.messageForSend.TicketMessage = Model.messageForViewVm.TicketMessage;
-            Model.messageForSend.SenderUserId = Model.messageForViewVm.SenderUserId;
         }
-        @using (Html.BeginForm("SendMessageRe", "Message", FormMethod.Post))
+        @using (Html.BeginForm("SendMessage", "Message", FormMethod.Post))
         {
             <div class="">
                 <div class="row mt-3 mb-5 m-2">
@@ -61,7 +60,6 @@
                     <div class="form-group mt-3">
                         @Html.HiddenFor(x=>x.mainMessageId)
                         @Html.HiddenFor(x=>x.messageForSend.TicketMessage)
-                        @Html.HiddenFor(x=>x.messageForSend.SenderUserId)
                     </div>
                     @Html.ReCaptcha()
                     <br>

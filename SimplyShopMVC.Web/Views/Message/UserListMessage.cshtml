@@ -1,0 +1,54 @@
+﻿@model SimplyShopMVC.Application.ViewModels.Message.ListTicketMessageGroupForListVm
+
+<div class="container">
+    <div>
+        <h2>Widomości:</h2>
+    </div>
+    <div>
+        <div class="accordion" id="accordionExample">
+            @if (Model.listTicketMessageGroup != null)
+            {
+                @foreach (var listTicket in Model.listTicketMessageGroup)
+                {
+                    <div class="accordion-item ">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button bg-dark-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#Collapse_@listTicket.messageTicketForListVm.Id" aria-expanded="true" aria-controls="collapseOne">
+                                <span>@listTicket.messageTicketForListVm.Name  - utworzono: @listTicket.messageTicketForListVm.Created.ToString("yyyy-MM-dd")  Status: @listTicket.messageTicketForListVm.StatusTicket</span>
+                            </button>
+                        </h2>
+                        <div id="Collapse_@listTicket.messageTicketForListVm.Id" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <ul class="list-group">
+                                    <div class="accordion" id="accordionMessage">
+                                        @foreach (var message in listTicket.messageForListVm)
+                                        {
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button bg-light-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#Collapse_@message.Id" aria-expanded="true" aria-controls="collapseMessage">
+                                                        <span>@message.Title  - utworzono: @message.CreatedDate.Value.ToString("yyyy-MM-dd") </span> <span>Status: @message.StatusMessage </span> <span class="ms-auto">From: @message.SenderAddress</span>
+                                                    </button>
+                                                </h2>
+                                                <div id="Collapse_@message.Id" class="accordion-collapse collapse" data-bs-parent="#accordionMessage">
+     
+                                                            <div class="accordion-body">
+                                                                <span>@Html.Raw(@message.Body)</span>
+                                                               <div class="d-flex justify-content-end mt-2">
+                                                                    <button class="btn btn-outline-info ms-auto mt-auto m-2 biHover" type="button">
+                                                                    @Html.ActionLink("Szczegóły","DetailMessageUser", new {id=message.Id}, new{ @class="text-decoration-none text-info"})
+                                                                    </button>
+                                                                </div>
+                                                                </div>
+                                               </div
+                                             </div>
+                                        }
+                                    </div>
+                                </ul>
+                            </div>
+                         </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+

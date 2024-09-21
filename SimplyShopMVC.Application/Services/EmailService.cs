@@ -125,7 +125,7 @@ namespace SimplyShopMVC.Application.Services
                 {
                     mailMessage.From = new MailAddress(from);
                     mailMessage.To.Add(to);
-                    mailMessage.Subject = "#"+ticket + "# " + subject;
+                    mailMessage.Subject = "#"+ticket + "# " + "Re: " + subject;
                     mailMessage.Body = body;
                     mailMessage.IsBodyHtml = true; // Ustaw to na false, jeśli treść wiadomości ma być zwykłym tekstem               
                     smtpClient.Send(mailMessage);

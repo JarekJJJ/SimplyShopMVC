@@ -28,8 +28,9 @@ public class MessageService : IMessageService
     }
     public List<TicketMessageGroupForListVm> GetMessageForAdmin()
     {
-        var listTicketMessage = _messageRepo.GetAllMessageTicket().ProjectTo<MessageTicketForListVm>(_mapper.ConfigurationProvider).ToList();
         var listMessage = _messageRepo.GetAllMessage().ProjectTo<MessageForListVm>(_mapper.ConfigurationProvider).ToList();
+        var listTicketMessage = _messageRepo.GetAllMessageTicket().ProjectTo<MessageTicketForListVm>(_mapper.ConfigurationProvider).ToList();
+       
         var groupMesageByTicket = listMessage.OrderByDescending(d => d.CreatedDate)
             .GroupBy(t => t.MessageTicketId)
             .Select(g => new TicketMessageGroupForListVm
@@ -41,9 +42,35 @@ public class MessageService : IMessageService
         return groupMesageByTicket;
     }
 
-    public List<MessageForListVm> GetMessagesForUser(string userId)
+    public List<TicketMessageGroupForListVm> GetMessagesForUser(string userId)
     {
-        throw new NotImplementedException();
+        List<MessageTicketForListVm> listTicketMessage = new List<MessageTicketForListVm>();
+        var listMessage = _messageRepo.GetAllMessage().Where(u=>u.SenderUserId == userId).ProjectTo<MessageForListVm>(_mapper.ConfigurationProvider).ToList();
+        var listAllTicketMessage = _messageRepo.GetAllMessageTicket().ToList();
+        if (listMessage.Any())
+        {
+            foreach (var message in listMessage)
+            {
+                var ticketMessage = listAllTicketMessage.FirstOrDefault(m => m.Id == message.MessageTicketId);
+                if (ticketMessage != null)
+                {
+                    if (!listTicketMessage.Any(m => m.Id == ticketMessage.Id))
+                    {
+                        listTicketMessage.Add(_mapper.Map<MessageTicketForListVm>(ticketMessage));
+                    }
+                }
+            }
+            var groupMesageByTicket = listMessage.OrderByDescending(d => d.CreatedDate)
+           .GroupBy(t => t.MessageTicketId)
+           .Select(g => new TicketMessageGroupForListVm
+           {
+               messageTicketForListVm = listTicketMessage.First(t => t.Id == g.Key),
+               messageForListVm = g.ToList()
+           }).ToList();
+            return groupMesageByTicket;
+        }
+        return new List<TicketMessageGroupForListVm>();
+
     }
 
     public bool SendMessage(MessageForListVm message)
@@ -106,6 +133,43 @@ public class MessageService : IMessageService
                 {
                     // _emailService.SendContactEmail(message.SenderAddress, message.Title, message.Body, message.TicketMessage);
                     _emailService.SendEmail(message.SenderAddress, message.Title + " Ticket: #" + message.TicketMessage + "#", message.Body);
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+    public bool SendMessageUserRe(MessageForListVm message) // Wysyłka wiadomości przez klienta do Administracji
+    {
+        MessageTicket resultTicket = new MessageTicket();
+        if (message != null)
+        {
+            message.CreatedDate = DateTime.Now;
+            message.StatusMessage = StatusMessage.Replied;
+            if (String.IsNullOrEmpty(message.TicketMessage))
+            {
+                Random random = new Random();
+                int randomNumber = random.Next(1, 1000);
+                string ticket = DateTime.Now.ToString("yyyyMMddHHmmss") + randomNumber.ToString();
+                resultTicket = GetOrCreateMessageTicket(ticket);
+            }
+            else
+            {
+                resultTicket = GetOrCreateMessageTicket(message.TicketMessage);
+            }
+
+
+            if (resultTicket != null)
+            {
+                message.TicketMessage = resultTicket.Name;
+                message.MessageTicketId = resultTicket.Id;
+                var id = _messageRepo.AddMessage(_mapper.Map<Message>(message));
+
+                if (id > 0)
+                {
+                    _emailService.SendContactEmail(message.SenderAddress, message.Title, message.Body, message.TicketMessage);
+                    //_emailService.SendEmail(message.SenderAddress, message.Title + " Ticket: #" + message.TicketMessage + "#", message.Body);
                     return true;
                 }
             }
