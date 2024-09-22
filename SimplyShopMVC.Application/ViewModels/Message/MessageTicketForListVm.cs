@@ -13,6 +13,7 @@ namespace SimplyShopMVC.Application.ViewModels.Message
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Author { get; set; }
         public StatusTicket StatusTicket { get; set; }
         public DateTime Created { get; set; } 
         public DateTime Updated { get; set; } 

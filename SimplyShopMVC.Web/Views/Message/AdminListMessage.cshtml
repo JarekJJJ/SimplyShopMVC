@@ -1,4 +1,5 @@
 ﻿@model SimplyShopMVC.Application.ViewModels.Message.ListTicketMessageGroupForListVm
+@using SimplyShopMVC.Domain.Model.Messages.Enums
 
 <div class="container">
     <div>
@@ -24,9 +25,18 @@
                                         {
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header">
-                                                    <button class="accordion-button bg-light-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#Collapse_@message.Id" aria-expanded="true" aria-controls="collapseMessage">
+                                                    @if (message.StatusMessage == StatusMessage.Delivered)
+                                                    {
+                                                         <button class="accordion-button bg-danger-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#Collapse_@message.Id" aria-expanded="true" aria-controls="collapseMessage">
                                                         <span>@message.Title  - utworzono: @message.CreatedDate.Value.ToString("yyyy-MM-dd") </span> <span>Status: @message.StatusMessage </span> <span class="ms-auto">From: @message.SenderAddress</span>
-                                                    </button>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                         <button class="accordion-button bg-light-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#Collapse_@message.Id" aria-expanded="true" aria-controls="collapseMessage">
+                                                        <span>@message.Title  - utworzono: @message.CreatedDate.Value.ToString("yyyy-MM-dd") </span> <span>Status: @message.StatusMessage </span> <span class="ms-auto">From: @message.SenderAddress</span>
+                                                        </button>
+                                                    }
                                                 </h2>
                                                 <div id="Collapse_@message.Id" class="accordion-collapse collapse" data-bs-parent="#accordionMessage">
      

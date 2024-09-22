@@ -11,6 +11,8 @@ public class Message
 {
     public int Id { get; set; }
     public string SenderAddress { get; set; } = string.Empty;
+    public string RecipientMessage { get; set; } = string.Empty;
+    public string ReplayTo { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
     public string? SenderUserId { get; set; }

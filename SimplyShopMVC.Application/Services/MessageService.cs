@@ -19,12 +19,14 @@ public class MessageService : IMessageService
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
     private readonly IUserRepository _userRepo;
-    public MessageService(IMessageRepository messageRepository, IMapper mapper, IEmailService emailService, IUserRepository userRepository)
+    private readonly IEmailConfiguration _emailConfiguration;
+    public MessageService(IMessageRepository messageRepository, IMapper mapper, IEmailService emailService, IUserRepository userRepository, IEmailConfiguration emailConfiguration) 
     {
         _messageRepo = messageRepository;
         _mapper = mapper;
         _emailService = emailService;
         _userRepo = userRepository;
+        _emailConfiguration = emailConfiguration;
     }
     public List<TicketMessageGroupForListVm> GetMessageForAdmin()
     {
@@ -79,14 +81,17 @@ public class MessageService : IMessageService
         {
             message.CreatedDate = DateTime.Now;
             message.StatusMessage = StatusMessage.Delivered;
+            string author = message.SenderAddress;
+            message.ReplayTo = message.SenderAddress;
             Random random = new Random();
             int randomNumber = random.Next(1, 1000);
             string ticket = DateTime.Now.ToString("yyyyMMddHHmmss") + randomNumber.ToString();
-            var resultTicket = GetOrCreateMessageTicket(ticket);
+            var resultTicket = GetOrCreateMessageTicket(ticket,author);
             if (resultTicket != null)
             {
                 message.TicketMessage = resultTicket.Name;
                 message.MessageTicketId = resultTicket.Id;
+                message.RecipientMessage = _emailConfiguration.SmtpUsername;
                 var id = _messageRepo.AddMessage(_mapper.Map<Message>(message));
 
                 if (id > 0)
@@ -110,16 +115,20 @@ public class MessageService : IMessageService
         {
             message.CreatedDate = DateTime.Now;
             message.StatusMessage = StatusMessage.Replied;
+            message.RecipientMessage = message.ReplayTo; // zmiana pola z nadawcy na odbiorcę - przy wysyłcę przez administrację sklepu
+            message.SenderAddress = _emailConfiguration.SmtpUsername;
+            message.ReplayTo= _emailConfiguration.SmtpUsername;
+            string author = message.RecipientMessage;
             if (String.IsNullOrEmpty(message.TicketMessage))
             {
                 Random random = new Random();
                 int randomNumber = random.Next(1, 1000);
                 string ticket = DateTime.Now.ToString("yyyyMMddHHmmss") + randomNumber.ToString();
-                resultTicket = GetOrCreateMessageTicket(ticket);
+                resultTicket = GetOrCreateMessageTicket(ticket, author);
             }
             else
             {
-                resultTicket = GetOrCreateMessageTicket(message.TicketMessage);
+                resultTicket = GetOrCreateMessageTicket(message.TicketMessage, author);
             }
 
 
@@ -132,7 +141,7 @@ public class MessageService : IMessageService
                 if (id > 0)
                 {
                     // _emailService.SendContactEmail(message.SenderAddress, message.Title, message.Body, message.TicketMessage);
-                    _emailService.SendEmail(message.SenderAddress, message.Title + " Ticket: #" + message.TicketMessage + "#", message.Body);
+                    _emailService.SendEmail(message.RecipientMessage, message.Title + " Ticket: #" + message.TicketMessage + "#", message.Body);
                     return true;
                 }
             }
@@ -146,17 +155,19 @@ public class MessageService : IMessageService
         if (message != null)
         {
             message.CreatedDate = DateTime.Now;
-            message.StatusMessage = StatusMessage.Replied;
+            message.StatusMessage = StatusMessage.Delivered;
+            message.RecipientMessage = _emailConfiguration.SmtpUsername;
+            string author = message.SenderAddress;
             if (String.IsNullOrEmpty(message.TicketMessage))
             {
                 Random random = new Random();
                 int randomNumber = random.Next(1, 1000);
                 string ticket = DateTime.Now.ToString("yyyyMMddHHmmss") + randomNumber.ToString();
-                resultTicket = GetOrCreateMessageTicket(ticket);
+                resultTicket = GetOrCreateMessageTicket(ticket, author);
             }
             else
             {
-                resultTicket = GetOrCreateMessageTicket(message.TicketMessage);
+                resultTicket = GetOrCreateMessageTicket(message.TicketMessage, author);
             }
 
 
@@ -164,11 +175,13 @@ public class MessageService : IMessageService
             {
                 message.TicketMessage = resultTicket.Name;
                 message.MessageTicketId = resultTicket.Id;
+                message.SenderAddress = message.ReplayTo;
+
                 var id = _messageRepo.AddMessage(_mapper.Map<Message>(message));
 
                 if (id > 0)
                 {
-                    _emailService.SendContactEmail(message.SenderAddress, message.Title, message.Body, message.TicketMessage);
+                    _emailService.SendContactEmail(message.RecipientMessage, message.Title, message.Body, message.TicketMessage);
                     //_emailService.SendEmail(message.SenderAddress, message.Title + " Ticket: #" + message.TicketMessage + "#", message.Body);
                     return true;
                 }
@@ -177,10 +190,10 @@ public class MessageService : IMessageService
         }
         return false;
     }
-    public MessageTicket GetOrCreateMessageTicket(string ticketName)
+    public MessageTicket GetOrCreateMessageTicket(string ticketName, string author)
     {
         MessageTicket ticket = new MessageTicket();
-        if (!String.IsNullOrEmpty(ticketName))
+        if (!String.IsNullOrEmpty(ticketName) && !String.IsNullOrEmpty(author))
         {
             var result = _messageRepo.GetAllMessageTicket().Where(n => n.Name == ticketName).FirstOrDefault();
             if (result == null)
@@ -188,10 +201,21 @@ public class MessageService : IMessageService
 
                 ticket.Name = ticketName;
                 ticket.StatusTicket = StatusTicket.NewTicket;
+                ticket.Author = author;
                 ticket.IsDeleted = false;
                 _messageRepo.AddMessageTicket(ticket);
                 result = ticket;
             }
+            return result;
+        }
+        return ticket;
+    }
+    public MessageTicket GetMessageTicket(string ticketName)
+    {
+        MessageTicket ticket = new MessageTicket();
+        if (!String.IsNullOrEmpty(ticketName))
+        {
+            var result = _messageRepo.GetAllMessageTicket().Where(n => n.Name == ticketName).FirstOrDefault();          
             return result;
         }
         return ticket;
@@ -202,6 +226,7 @@ public class MessageService : IMessageService
         bool userAccess = false;
         if (messageDetail != null)
         {
+            messageDetail.RecipientMessage = messageDetail.SenderAddress;
             if (!String.IsNullOrEmpty(messageDetail.SenderUserId))
             {
                 var userSenderDetail = _userRepo.GetAllUsers().FirstOrDefault(u => u.UserId == messageDetail.SenderUserId);

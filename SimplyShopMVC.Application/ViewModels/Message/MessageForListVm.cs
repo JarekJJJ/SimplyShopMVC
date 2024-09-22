@@ -17,6 +17,8 @@ namespace SimplyShopMVC.Application.ViewModels.Message
         [Required(ErrorMessage ="Pole jest wymagane.")]
         [EmailAddress(ErrorMessage ="Nieprawidłowy adres email")]
         public string SenderAddress { get; set; } = string.Empty;
+        public string RecipientMessage { get; set; } = string.Empty;
+        public string ReplayTo { get; set; } = string.Empty;
         [Required(ErrorMessage = "Pole jest wymagane.")]
         public string Title { get; set; } = string.Empty;
         [Required(ErrorMessage = "Pole jest wymagane.")]

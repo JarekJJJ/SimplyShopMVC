@@ -24,7 +24,9 @@
         </div>
         @{
             Model.mainMessageId = Model.messageForViewVm.Id;
-            Model.messageForSend.SenderAddress = Model.messageForViewVm.SenderAddress;
+            Model.messageForSend.SenderAddress = Model.messageForViewVm.RecipientMessage;
+            Model.messageForSend.RecipientMessage = Model.messageForViewVm.ReplayTo;
+            Model.messageForSend.ReplayTo = Model.messageForViewVm.RecipientMessage;
             Model.messageForSend.Title = "Re: "+ Model.messageForViewVm.Title;
             Model.messageForSend.TicketMessage = Model.messageForViewVm.TicketMessage;
             Model.messageForSend.SenderUserId = Model.messageForViewVm.SenderUserId;
@@ -62,6 +64,8 @@
                         @Html.HiddenFor(x=>x.mainMessageId)
                         @Html.HiddenFor(x=>x.messageForSend.TicketMessage)
                         @Html.HiddenFor(x=>x.messageForSend.SenderUserId)
+                        @Html.HiddenFor(x=>x.messageForSend.RecipientMessage)
+                        @Html.HiddenFor(x=>x.messageForSend.ReplayTo)
                     </div>
                     @Html.ReCaptcha()
                     <br>
