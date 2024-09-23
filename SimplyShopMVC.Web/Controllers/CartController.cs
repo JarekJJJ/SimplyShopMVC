@@ -99,13 +99,19 @@ namespace SimplyShopMVC.Web.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var userDetail = _orderService.GetUserDetailById(userId);
-            if(userDetail.IsActive == true)
+            if(userDetail != null)
             {
-                var newOrderId = _orderService.AddOrder(_orderForList);
-                var orderFinished = _orderService.FinishOrder(_orderForList, newOrderId);
-                return RedirectToAction("Index");
-            }
-           
+                _orderForList.userDetail.IsActive = userDetail.IsActive;
+                _orderForList.userDetail.IsBlocked= userDetail.IsBlocked;
+                _orderForList.userDetail.IsClientBusiness= userDetail.IsClientBusiness;
+                _orderForList.userDetail.PriceLevel=userDetail.PriceLevel;
+                if (userDetail.IsActive == true)
+                {
+                    var newOrderId = _orderService.AddOrder(_orderForList);
+                    var orderFinished = _orderService.FinishOrder(_orderForList, newOrderId);
+                    return RedirectToAction("Index");
+                }
+            }                   
             string message = "Konto nieaktywne, prosimy o kontakt z obsługą sklepu.";
             TempData["messageError"] = message;
            return RedirectToAction("ErrorPage");          
