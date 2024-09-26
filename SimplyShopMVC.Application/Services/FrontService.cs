@@ -53,7 +53,7 @@ namespace SimplyShopMVC.Application.Services
 
         public FrontItemForList GetItemDetail(int id, string userId)
         {
-            List<FrontItemForList> frontItemList = new List<FrontItemForList>();              
+            List<FrontItemForList> frontItemList = new List<FrontItemForList>();
             List<Item> itemList = new List<Item>();
             var itemToMap = _itemRepo.GetItemById(id);
             itemList.Add(itemToMap);
@@ -61,11 +61,11 @@ namespace SimplyShopMVC.Application.Services
             var frontItem = mappedList.FirstOrDefault();
             if (!string.IsNullOrEmpty(frontItem.eanCode))
             {
-                var bestPricelist = _omnibusHelper.GetAllOmnibusPrice(frontItem.eanCode, 12).ToList(); 
-                foreach(var priceItem in bestPricelist)
+                var bestPricelist = _omnibusHelper.GetAllOmnibusPrice(frontItem.eanCode, 12).ToList();
+                foreach (var priceItem in bestPricelist)
                 {
                     priceItem.PriceDetB = _priceCalculate.omnibusPriceCalc(itemToMap.Id, priceItem.PriceN, userId);
-                    
+
                 }
                 var bestPrice = bestPricelist.Where(x => x.ChangeTime >= DateTime.Now.AddDays(-31)).OrderBy(p => p.PriceN).Take(1).ToList();
                 frontItem.omnibusBestPrice = bestPrice.FirstOrDefault();
@@ -120,15 +120,24 @@ namespace SimplyShopMVC.Application.Services
 
             if (selectedTags > 0)
             {
-                itemList = _itemRepo.GetItemsByTagId(selectedTags).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem) && i.CategoryId == categoryId).OrderBy(i => i.Name).ToList();
+                var resultItemList = _itemRepo.GetItemsByTagId(selectedTags).Where(i => i.CategoryId == categoryId).ToList();
+                if(resultItemList.Count > 0)
+                {
+                    itemList = SearchResult(resultItemList, searchItem);
+                }              
             }
             else
             {
-                itemList = _itemRepo.GetItemsByCategoryId(categoryId).Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
+                var resultItemList = _itemRepo.GetItemsByCategoryId(categoryId).ToList();
+                if (resultItemList.Count > 0)
+                {
+                    itemList = SearchResult(resultItemList, searchItem);
+                }
             }
             if (itemList.Count == 0 && !String.IsNullOrEmpty(searchItem))
             {
-                itemList = _itemRepo.GetAllItems().Where(i => i.Name.Contains(searchItem) || i.EanCode.Contains(searchItem) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).Take(200).ToList();
+               var resultItemList = _itemRepo.GetAllItems().ToList();
+                itemList = SearchResult(resultItemList, searchItem);
             }
             var mappedItems = mapItemToList(itemList, frontItemForLists, userId);
             var mappedItemsToShow = mappedItems.Skip(pageSize * (pageNo - 1)).Take(pageSize).ToList();
@@ -172,6 +181,70 @@ namespace SimplyShopMVC.Application.Services
             return listItemShopIndexVm;
         }
         //funkcje 
+        public List<Item> SearchResult(List<Item> listItem, string searchItem)
+        {
+            List<Item> resultItemList = new List<Item>();
+            string[] searchWord = searchItem.Split(' ');
+            if (searchWord.Count() == 1)
+            {
+                resultItemList = listItem.Where(i => i.Name.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || (i.EanCode?.Contains(searchItem) ?? false) || i.ItemSymbol.Contains(searchItem)).OrderBy(i => i.Name).ToList();
+            }
+            else
+            {
+                resultItemList = Search(listItem, searchWord);
+                while (resultItemList.Count == 0 && searchWord.Length > 1)
+                {
+                    searchWord = searchWord.Take(searchWord.Length - 1).ToArray();
+                    resultItemList = Search(listItem, searchWord);
+                }
+            }
+            // funkcja pomocnicza
+            List<Item> Search(List<Item> items, string[] words)
+            {
+                List<Item> results = new List<Item>();
+                foreach (var item in items)
+                {
+                    bool allWordsMatch = true;
+                    foreach (var word in words)
+                    {
+                        if (word.Length >= 2)
+                        {
+                            if (!item.Name.Contains(word, StringComparison.OrdinalIgnoreCase))
+                            {
+                                allWordsMatch = false;
+                                break;
+                            }
+                        }
+
+
+                    }
+                    if (allWordsMatch)
+                    {
+                        results.Add(item);
+                    }
+                    else
+                    {
+                        if (!String.IsNullOrEmpty(item.Description))
+                        {
+                            foreach (var word in words)
+                            {
+                                if (word.Length >= 2)
+                                {
+                                    if (!item.Description.Contains(word, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        allWordsMatch = false;
+                                        break;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+                return results;
+            }
+            return resultItemList;
+        }
         public FrontItemForList GetItemToList(int itemId, string userId)
         {
             FrontItemForList indexItem = new FrontItemForList();
@@ -310,10 +383,10 @@ namespace SimplyShopMVC.Application.Services
                     var resultPriceB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
                     var resultPriceLevelA = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupA);
                     var resultPriceLevelB = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupB);
-                    var resultPriceLevelC = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupC);                        
+                    var resultPriceLevelC = GetPriceDetalB((decimal)indexItemWare.NetPurchasePrice.Value, vatRateResoult.Value, groupIdresoult.PriceMarkupC);
                     if (userDetail == null)
                     {
-                        if(indexItemWare.FinalPriceA != null && indexItemWare.FinalPriceA > 0)
+                        if (indexItemWare.FinalPriceA != null && indexItemWare.FinalPriceA > 0)
                         {
                             indexItem.priceB = GetPriceDetalB((decimal)indexItemWare.FinalPriceA.Value, vatRateResoult.Value);
                         }
