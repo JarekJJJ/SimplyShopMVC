@@ -160,7 +160,7 @@ namespace SimplyShopMVC.Application.Services
             listConnectionCategory.listConnectedIncomGroups = new List<IncomGroupForListVm>();
             foreach (var item in listConnectionCategory.listConnectionCategory)
             {
-                foreach(var incomGroups in item.listIncomGroup)
+                foreach (var incomGroups in item.listIncomGroup)
                 {
                     listConnectionCategory.listConnectedIncomGroups.Add(_mapper.Map<IncomGroupForListVm>(incomGroups));
                 }
@@ -279,7 +279,6 @@ namespace SimplyShopMVC.Application.Services
                         idSelectedCategory.Add(listCategory.GroupId);
                     }
                 }
-
             }
 
             if (incomItems.warehouseId != 0)
@@ -375,8 +374,7 @@ namespace SimplyShopMVC.Application.Services
                             if (String.IsNullOrEmpty(itemVm.urlImage))
                             {
                                 itemVm.urlImage = " ";
-                            }
-                            //string cleanedText = new string(stan_magazynowy.Value.Where(char.IsDigit).ToArray());                             
+                            }                           
                             itemVm.stan_magazynowy = changeToInt(stan_magazynowy.Value);
                             itemVm.cena = decimal.Parse(cena.Value, cultureInfo);
                             itemVm.dlugosc = changeToDecimal(dlugosc.Value);
@@ -385,25 +383,6 @@ namespace SimplyShopMVC.Application.Services
                             itemVm.waga = changeToDecimal(waga.Value);
                             itemVm.createDate = dateTime; // Tutaj zrobić podział na update i Add !!!
                             var raport = await AddNewIncomItemToShop(itemVm, incomItems.warehouseId);
-                            //var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
-                            //var mapedItemVm = _mapper.Map<Incom>(itemVm);
-                            //int itemId = 0;
-                            //if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
-                            //{
-                            //    mapedItemVm.createDate = itemToCheck.createDate;
-                            //    mapedItemVm.updateTime = dateTime;
-                            //    await _supplierRepo.UpdateIncomAsync(mapedItemVm);
-                            //    await UpdateItemInShopAsync(mapedItemVm);
-                            //    countItemUpdate++;
-                            //    itemId = itemToCheck.Id;
-                            //}
-                            //if (itemToCheck == null && !string.IsNullOrEmpty(itemVm.ean))
-                            //{
-                            //    itemId = await _supplierRepo.AddIncomItemAsync(mapedItemVm);
-                            //    //var result = ImageHelper.SaveImageFromUrl(linkImage, itemVm.ean, _webHost);
-                            //    //countImageAdd = countImageAdd + result;
-                            //    countItemAdd++;
-                            //}
                             OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
                             var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
                             mapedOmnibusPrice.PriceN = itemVm.cena;
@@ -671,7 +650,7 @@ namespace SimplyShopMVC.Application.Services
             returnRaport.raportAddItem = new List<string>();
             if (incomItems.warehouseId != 0)
             {
-                var allIncomItems = _supplierRepo.GetAllIncom();
+                var allIncomItems = _supplierRepo.GetAllIncom().ToList();
                 CultureInfo cultureInfo = new CultureInfo("pl-PL");
                 cultureInfo.NumberFormat.NumberDecimalSeparator = ",";
                 DateTime dateTime = DateTime.Now;
@@ -696,11 +675,41 @@ namespace SimplyShopMVC.Application.Services
                         itemVm.stan_magazynowy = changeToInt(stan_magazynowy.Value);
                         itemVm.cena = decimal.Parse(cena.Value, cultureInfo);
                         itemVm.updateTime = dateTime; // Tutaj zrobić podział na update i Add !!!
-                        var itemToCheck = allIncomItems.FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
-                        var mapedItemVm = _mapper.Map<IncomItemsForListVm>(itemToCheck);
-                        int itemId = 0;
+                        var itemToCheck = allIncomItems.FirstOrDefault(i => i.ean == itemVm.ean);
+                        Item tempItem = new Item();
+                        bool omnibusWritePrice = false;
+                        if (itemToCheck == null)
+                        {
+                            itemToCheck = allIncomItems.FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
+                            if (itemToCheck == null)
+                            {
+                                tempItem = _itemRepo.GetAllItems().FirstOrDefault(i => i.EanCode == itemVm.ean || i.ItemSymbol == itemVm.symbol_produktu);
+                                if (tempItem != null)
+                                {
+                                    var itemWarehouse = _itemRepo.GetAllItemWarehouses().Where(i => i.ItemId == tempItem.Id && i.WarehouseId == 3).FirstOrDefault();
+                                    if (itemWarehouse != null)
+                                    {
+                                        itemWarehouse.NetPurchasePrice = itemVm.cena;
+                                        itemWarehouse.Quantity = itemVm.stan_magazynowy;
+                                        _itemRepo.UpdateItemWarehouse(itemWarehouse);
+                                        OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                                        var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                                        mapedOmnibusPrice.PriceN = itemVm.cena;
+                                        mapedOmnibusPrice.Ean = itemVm.ean;
+                                        mapedOmnibusPrice.ChangeTime = dateTime;
+                                        mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
+                                        _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);
+                                        omnibusWritePrice = true;
+                                    }
+                                }
+
+                            }
+                        }
                         if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
                         {
+                            var mapedItemVm = _mapper.Map<IncomItemsForListVm>(itemToCheck);
+                            int itemId = 0;
+
                             itemToCheck.cena = itemVm.cena;
                             itemToCheck.stan_magazynowy = itemVm.stan_magazynowy;
                             itemToCheck.updateTime = dateTime;
@@ -708,13 +717,17 @@ namespace SimplyShopMVC.Application.Services
                             UpdateItemInShop(itemToCheck);
                             countItemUpdate++;
                             itemId = itemToCheck.Id;
-                            OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
-                            var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
-                            mapedOmnibusPrice.PriceN = itemVm.cena;
-                            mapedOmnibusPrice.Ean = itemVm.ean;
-                            mapedOmnibusPrice.ChangeTime = dateTime;
-                            mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
-                            _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);                           
+                            if (!omnibusWritePrice)
+                            {
+                                OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                                var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                                mapedOmnibusPrice.PriceN = itemVm.cena;
+                                mapedOmnibusPrice.Ean = itemVm.ean;
+                                mapedOmnibusPrice.ChangeTime = dateTime;
+                                mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
+                                _omnibusPriceRepo.AddOmnibusPrice(mapedOmnibusPrice);
+                            }
+
                         }
                     }
                     catch (Exception)
@@ -759,11 +772,40 @@ namespace SimplyShopMVC.Application.Services
                         itemVm.stan_magazynowy = changeToInt(stan_magazynowy.Value);
                         itemVm.cena = decimal.Parse(cena.Value, cultureInfo);
                         itemVm.updateTime = dateTime; // Tutaj zrobić podział na update i Add !!!
-                        var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
-                        var mapedItemVm = _mapper.Map<IncomItemsForListVm>(itemToCheck);
-                        int itemId = 0;
+                        var itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.ean == itemVm.ean);
+                        Item tempItem = new Item();
+                        bool omnibusWritePrice = false;
+                        if (itemToCheck == null)
+                        {
+                            itemToCheck = _supplierRepo.GetAllIncom().FirstOrDefault(i => i.symbol_produktu == itemVm.symbol_produktu);
+                            if (itemToCheck == null)
+                            {
+                                tempItem = _itemRepo.GetAllItems().FirstOrDefault(i => i.EanCode == itemVm.ean || i.ItemSymbol == itemVm.symbol_produktu);
+                                if (tempItem != null)
+                                {
+                                    var itemWarehouse = _itemRepo.GetAllItemWarehouses().Where(i => i.ItemId == tempItem.Id && i.WarehouseId == 3).FirstOrDefault();
+                                    if (itemWarehouse != null)
+                                    {
+                                        itemWarehouse.NetPurchasePrice = itemVm.cena;
+                                        itemWarehouse.Quantity = itemVm.stan_magazynowy;
+                                        await _itemRepo.UpdateItemWarehouseAsync(itemWarehouse);
+                                        OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                                        var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                                        mapedOmnibusPrice.PriceN = itemVm.cena;
+                                        mapedOmnibusPrice.Ean = itemVm.ean;
+                                        mapedOmnibusPrice.ChangeTime = dateTime;
+                                        mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
+                                        await _omnibusPriceRepo.AddOmnibusPriceAsync(mapedOmnibusPrice);
+                                        omnibusWritePrice = true;
+                                    }
+                                }
+
+                            }
+                        }
                         if (itemToCheck != null && !string.IsNullOrEmpty(itemVm.ean))
                         {
+                            var mapedItemVm = _mapper.Map<IncomItemsForListVm>(itemToCheck);
+                            int itemId = 0;
                             itemToCheck.cena = itemVm.cena;
                             itemToCheck.stan_magazynowy = itemVm.stan_magazynowy;
                             itemToCheck.updateTime = dateTime;
@@ -771,13 +813,16 @@ namespace SimplyShopMVC.Application.Services
                             await UpdateItemInShopAsync(itemToCheck);
                             countItemUpdate++;
                             itemId = itemToCheck.Id;
-                            OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
-                            var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
-                            mapedOmnibusPrice.PriceN = itemVm.cena;
-                            mapedOmnibusPrice.Ean = itemVm.ean;
-                            mapedOmnibusPrice.ChangeTime = dateTime;
-                            mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
-                            await _omnibusPriceRepo.AddOmnibusPriceAsync(mapedOmnibusPrice);
+                            if (!omnibusWritePrice)
+                            {
+                                OmnibusPriceToListVm omnibusPrice = new OmnibusPriceToListVm();
+                                var mapedOmnibusPrice = _mapper.Map<OmnibusPrice>(omnibusPrice);
+                                mapedOmnibusPrice.PriceN = itemVm.cena;
+                                mapedOmnibusPrice.Ean = itemVm.ean;
+                                mapedOmnibusPrice.ChangeTime = dateTime;
+                                mapedOmnibusPrice.WarehouseId = itemVm.warehouseId;
+                                await _omnibusPriceRepo.AddOmnibusPriceAsync(mapedOmnibusPrice);
+                            }
                         }
                     }
                     catch (Exception)
