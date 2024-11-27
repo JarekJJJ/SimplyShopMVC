@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using SimplyShopMVC.Domain.Interface;
+using AspNetCore.ReCaptcha;
 
 namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
 {
@@ -31,6 +32,7 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IEmailConfiguration _emailConfiguration;
+        private readonly IReCaptchaService _reCaptchaService;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -38,7 +40,8 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            IEmailConfiguration emailConfiguration)
+            IEmailConfiguration emailConfiguration,
+            IReCaptchaService reCaptchaService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -46,7 +49,8 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _emailConfiguration= emailConfiguration;
+            _emailConfiguration = emailConfiguration;
+            _reCaptchaService = reCaptchaService;
         }
 
         /// <summary>
@@ -60,6 +64,10 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        /// 
+        [Required]
+        public string Recaptcha { get; set; }
+
         public string ReturnUrl { get; set; }
 
         /// <summary>
@@ -114,6 +122,12 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            var reCaptchaResponse = Request.Form["g-recaptcha-response"];
+            var recaptcha = await _reCaptchaService.VerifyAsync(reCaptchaResponse);
+            if (!recaptcha)
+            {
+                ModelState.AddModelError("Recaptcha", "Zaznacz pole i udowodnij, że nie jesteś robotem!");
+            }
             if (ModelState.IsValid)
             {
               

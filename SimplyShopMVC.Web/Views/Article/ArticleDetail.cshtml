@@ -10,9 +10,9 @@
 @section MetaTags {
     <meta property="og:title" content="@Model.Title" />
     <meta property="og:description" content="Po więcej odwiedź - hkr24.pl" />
-    <meta property="og:image" content=" @ViewBag.ImgUrl@mainImageTofb" />
+    <meta property="og:image" content="@($"{ViewBag.ImgUrl}{mainImageTofb}")" />
     <meta property="og:url" content="@ViewBag.FullUrl" />
-    <meta property="og:type" content="product" />
+    <meta property="og:type" content="article" />
 }
 @{
     if (Model != null)
