@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using AspNetCore.ReCaptcha;
 
 namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
 {
@@ -21,11 +22,13 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IReCaptchaService _reCaptchaService;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IReCaptchaService reCaptchaService)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _reCaptchaService = reCaptchaService;
         }
 
         /// <summary>
@@ -34,6 +37,9 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
+        
+        [Required]
+        public string Recaptcha { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -106,6 +112,12 @@ namespace SimplyShopMVC.Web.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            var reCaptchaResponse = Request.Form["g-recaptcha-response"];
+            var recaptcha = await _reCaptchaService.VerifyAsync(reCaptchaResponse);
+            if (!recaptcha)
+            {
+                ModelState.AddModelError("Recaptcha", "Zaznacz pole i udowodnij, że nie jesteś robotem!");
+            }
 
             if (ModelState.IsValid)
             {

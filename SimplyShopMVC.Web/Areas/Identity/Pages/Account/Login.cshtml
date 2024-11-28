@@ -1,5 +1,6 @@
 ﻿@page
 @model LoginModel
+@using AspNetCore.ReCaptcha;
 
 @{
     ViewData["Title"] = "Log in";
@@ -30,6 +31,10 @@
                             @Html.DisplayNameFor(m => m.Input.RememberMe)
                         </label>
                     </div>
+                </div>
+                <div class="form-floating m-1  mt-2 p-1">
+                    @Html.ReCaptcha()
+                    <span asp-validation-for="Recaptcha" class="text-danger"></span>
                 </div>
                 <div>
                     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Zaloguj</button>
