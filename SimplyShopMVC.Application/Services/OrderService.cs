@@ -27,7 +27,7 @@ namespace SimplyShopMVC.Application.Services
         private readonly IPriceCalculate priceCalc;
         private readonly IDeliveryRepository _deliveryRepo;
         private readonly IFrontService _frontService;
-      
+
         public OrderService(IOrderRepository orderRepository, IMapper mapper, IItemRepository itemRepository, IUserRepository userRepository, IEmailService sendEmail, IGeneratePdf genPdf, IPriceCalculate priceCalculate
         , IDeliveryRepository deliveryRepo, IFrontService frontService)
         {
@@ -66,13 +66,13 @@ namespace SimplyShopMVC.Application.Services
         {
             if (listDelivery.delivery != null)
             {
-                 _deliveryRepo.DeleteDelivery(listDelivery.delivery.Id);
+                _deliveryRepo.DeleteDelivery(listDelivery.delivery.Id);
             }
         }
         public ListCartItemsForListVm AddToCart(CartItemsForListVm cartItem)
         {
             ListCartItemsForListVm listCartItems = new ListCartItemsForListVm();
-            var itemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(a => a.ItemId == cartItem.ItemId);
+            var itemWare = _itemRepo.GetAllItemWarehouses().FirstOrDefault(a => a.ItemId == cartItem.ItemId && a.WarehouseId == cartItem.WarehouseId);  
             if (cartItem != null && cartItem.CartId != 0 && itemWare.VatRateId != 0 && itemWare.Quantity > 0)
             {
                 var mappedCartItems = _mapper.Map<CartItems>(cartItem);
@@ -239,7 +239,7 @@ namespace SimplyShopMVC.Application.Services
         {
             OrderFromCartVm newOrder = new OrderFromCartVm();
             newOrder.orderItems = new List<OrderItemsForListVm>();
-           
+
 
             _userRepo.UpdateUserDetail(_mapper.Map<UserDetail>(orderForList.userDetail));
             var listCartItem = _orderRepo.GetAllCartItems().Where(c => c.CartId == orderForList.cartIdToOrder)
@@ -457,26 +457,26 @@ namespace SimplyShopMVC.Application.Services
         public int AddFavoriteItemToCart(int itemId, int quantity, string userId)
         {
             CartItemsForListVm cartItem = new CartItemsForListVm();
-            if(itemId> 0 && quantity >0 && !String.IsNullOrEmpty(userId))
+            if (itemId > 0 && quantity > 0 && !String.IsNullOrEmpty(userId))
             {
                 cartItem.ItemId = itemId;
                 cartItem.Quantity = quantity;
                 var cartId = _frontService.GetCart(userId);
-                if(cartId != null)
+                if (cartId != null)
                 {
                     cartItem.CartId = cartId.Id;
                     var itemDetail = _frontService.GetItemDetail(itemId, userId);
                     if (itemDetail != null)
                     {
                         cartItem.PriceN = itemDetail.priceB;
-                       // cartItem.VatRateId = (int)itemDetail.vatRateId; // vatRateId jest pobierane w AddToCart ! 
+                        // cartItem.VatRateId = (int)itemDetail.vatRateId; // vatRateId jest pobierane w AddToCart ! 
                         cartItem.WarehouseId = itemDetail.warehouseId;
                         cartItem.Name = itemDetail.name;
                         AddToCart(cartItem);
                         return 1;
                     }
                 }
-                
+
             }
             return 0;
         }
